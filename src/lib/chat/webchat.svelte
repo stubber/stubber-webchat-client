@@ -2,8 +2,8 @@
     import { onDestroy, onMount } from "svelte";
 
     import WhatsappSwitch from "../switch/whatsappSwitch.svelte";
-    import SmsSwitch from "../switch/smsSwitch.svelte";
     import EmailSwitch from "../switch/emailSwitch.svelte";
+    import SmsSwitch from "../switch/smsSwitch.svelte";
 
     import io from "socket.io-client";
 
