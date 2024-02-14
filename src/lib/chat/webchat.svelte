@@ -24,7 +24,7 @@
     });
 
     let connectSocket = () => {
-        socket = io("http://api.dev.stubber.zone:6026");
+        socket = io("http://api.stubber.zone:6026");
 
         socket.on("connect", async () => {
             console.log("___Connected to server");
