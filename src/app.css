@@ -1,0 +1,289 @@
+/* Start Chat Button */
+
+.stubber_webchat_enable_button {
+  background-color: gray;
+  color: white;
+  position: fixed;
+  bottom: 10vh;
+  right: 5vh;
+  z-index: 1000;
+  border-radius: 20px;
+  width: 60px;
+  height: 40px;
+  align-items: center;
+}
+
+.stubber_webchat_enable_button:hover {
+  background-color: rgb(96, 96, 96);
+  color: white;
+}
+
+.stubber_webchat_primary_color {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Start Chat Button */
+
+/* WebChat box */
+
+.stubber_webchat_box {
+  font-family: "Arial", sans-serif;
+  background-color: white;
+  color: black;
+  position: fixed;
+  bottom: 10vh;
+  right: 5vh;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  width: 400px;
+  height: 600px;
+  z-index: 1000;
+}
+
+/* WebChat box */
+
+/* Webchat message box */
+
+.stubber_message_box {
+  font-family: "Arial", sans-serif;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  height: 93%;
+  background-color: rgb(215, 215, 215);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+/* Webchat message box */
+
+/* Webchat input box */
+
+.stubber_message_input_box {
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  width: 100%;
+  height: 7%;
+  position: absolute;
+  bottom: 0;
+  display: flex;
+}
+
+.stubber_message_input {
+  background-color: rgb(215, 215, 215);
+  width: 90%;
+  border: none;
+  padding: 10px;
+  border-bottom-left-radius: 20px;
+}
+
+.stubber_message_input:focus {
+  outline: none;
+}
+
+.stubber_message_send_button {
+  background-color: gray;
+  color: white;
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+  border-bottom-right-radius: 20px;
+}
+
+.stubber_message_send_button:hover {
+  background-color: rgb(96, 96, 96);
+  color: white;
+}
+
+.stubber_message_send_button_svg {
+  color: white;
+  width: 20px;
+  height: 20px;
+}
+
+/* Webchat input box */
+
+/* Webchat messsage bubbles outgoing */
+
+.stubber_webchat_message_out {
+  background-color: #f0f0f0;
+  float: right;
+  text-align: left;
+}
+
+.stubber_webchat_message_info_sent,
+.stubber_webchat_message_info_sent_delivered {
+  background-size: contain;
+  width: 20px;
+  height: 20px;
+}
+
+.stubber_webchat_message_info_sent {
+  color: grey;
+}
+
+.stubber_webchat_message_info_sent_delivered {
+  color: blue;
+}
+
+.stubber_webchat_message_info_time_out {
+  color: black;
+}
+
+/* Webchat messsage bubbles outgoing */
+
+/* Webchat messsage bubbles incoming */
+
+.stubber_webchat_message_in {
+  background-color: #0c74f1;
+  float: left;
+  text-align: left;
+  color: white;
+}
+
+.stubber_webchat_message_info_time_in {
+  color: white;
+}
+
+/* Webchat messsage bubbles outgoing */
+
+/* Webchat message bubbles common */
+
+@media (max-width: 600px) {
+  .stubber_webchat_message_out,
+  .stubber_webchat_message_in {
+    max-width: 70%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .stubber_webchat_message_out,
+  .stubber_webchat_message_in {
+    max-width: 50%;
+  }
+}
+
+.stubber_webchat_message_out,
+.stubber_webchat_message_in {
+  margin: 10px;
+  padding: 15px;
+  border-radius: 9px;
+  clear: both;
+  min-width: 300px;
+  min-height: 50px;
+  max-width: 80%;
+  word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stubber_webchat_message_info_box {
+  margin-top: 5px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.stubber_webchat_message_info_time_in,
+.stubber_webchat_message_info_time_out {
+  font-size: 0.75rem;
+}
+
+/* Webchat message bubbles common */
+
+/*
+
+.stubber_message_send_button .h-6 {
+  height: 24px;
+  width: 24px;
+  color: white;
+}
+
+.stubber_message_send_button:disabled {
+  background-color: #f0f0f0;
+  color: #ccc;
+}
+
+.stubber_message_send_button:focus {
+  outline: none;
+}
+
+.stubber_message_send_button_svg {
+  color: white;
+  width: 20px;
+  height: 20px;
+}
+
+.svg {
+  height: 24px;
+  width: 24px;
+}
+
+.stubber_message_move_whatsapp {
+  background-color: #25d366;
+  border: none;
+  border-radius: 50%;
+  padding: 10px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stubber_message_box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.stubber_message_box::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 20px;
+}
+
+.stubber_message_box::-webkit-scrollbar-track {
+  background-color: #efefef;
+}
+
+.stubber_chat_switch_box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.stubber_chat_switch_text {
+  flex-grow: 1;
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+}
+
+.stubber_chat_switch_button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  font-size: 14px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stubber_chat_switch_button:hover {
+  background-color: #0056b3;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+} */
