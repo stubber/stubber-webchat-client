@@ -69,6 +69,7 @@
     };
 
     let sendMessage = async () => {
+        let tempMessage = message;
         messages.push({
             direction: "out",
             sent: false,
@@ -83,7 +84,7 @@
             index: messages.length,
             orguuid,
             chatPath,
-            message,
+            message: tempMessage,
         });
     };
 
