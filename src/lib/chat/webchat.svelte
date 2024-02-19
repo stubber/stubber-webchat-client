@@ -8,7 +8,7 @@
     import io from "socket.io-client";
 
     export let orguuid;
-    export let chatPath;
+    export let chatname;
     export let connectOnLoad;
 
     let message = ``;
@@ -20,6 +20,7 @@
     let mode_switch = "";
 
     onMount(() => {
+        console.log("__Mounted");
         if (connectOnLoad === "true") connectSocket();
     });
 
@@ -31,8 +32,11 @@
 
             if (messages.length == 0) {
                 await socket.emit("initialize", {
-                    orguuid,
-                    chatPath,
+                    webchat_configuration: {
+                        orguuid,
+                        chatname,
+                        initialize: true
+                    }
                 });
             }
         });
@@ -41,17 +45,13 @@
             console.log("___Disconnected from server");
         });
 
-        socket.on("recieve", (data) => {
-            messages[data.index - 1].recieved = true;
-            messages = messages;
-        });
-
         socket.on("message", (data) => {
             messages.push({
                 direction: "in",
                 sent: false,
                 recieved: false,
                 dateTime: new Date(),
+                messageuuid: crypto.randomUUID(),
                 message: data.message,
             });
             messages = messages;
@@ -59,6 +59,10 @@
 
         socket.on("params", (data) => {
             allow_switch = data?.switch;
+        });
+
+        socket.on("error", (data) => {
+            console.log("__Stubber Webchat : " + data?.error);
         });
     };
 
@@ -69,23 +73,35 @@
     };
 
     let sendMessage = async () => {
-        let tempMessage = message;
-        messages.push({
+        let messageObject = {
             direction: "out",
             sent: false,
             recieved: false,
             dateTime: new Date(),
+            messageuuid: crypto.randomUUID(),
             message,
-        });
+        }
+        messages.push(messageObject);
         messages = messages;
         message = "";
 
-        await socket.emit("message", {
-            index: messages.length,
-            orguuid,
-            chatPath,
-            message: tempMessage,
-        });
+        autoScroll()
+
+        if (socket.connected){
+            await socket.emit("message", {
+                webchat_configuration: {
+                    orguuid,
+                    chatname,
+                },
+                webchat_message: {
+                    type: "text",
+                    message: messageObject.message,
+                    messageuuid: messageObject.messageuuid
+                }
+            });
+            messageObject.recieved = true;
+            messages = messages;
+        }
     };
 
     let timeFormat = (dateTime) => {
@@ -98,6 +114,16 @@
         mode_switch = mode;
         details_switch = true;
     };
+
+    let autoScroll = () => {
+        // this is dirty i feel like there is a cleaner way to do this
+        // however the latest message wont be recieved if the scroll is moved after a message is sent
+        // i have to auto scroll when an ellement is created
+        setTimeout(() => {
+            let message_box = document.getElementById("stubber_message_box");
+            message_box.scrollTop = message_box.scrollHeight;
+        }, 100);
+    }
 
     onDestroy(() => {
         if (ws) {
@@ -249,15 +275,15 @@
             {/if}
 
             {#if mode_switch == "Whatsapp"}
-                <WhatsappSwitch {socket} {orguuid} {chatPath} />
+                <WhatsappSwitch {socket} {orguuid} {chatname} />
             {/if}
 
             {#if mode_switch == "SMS"}
-                <SmsSwitch {socket} {orguuid} {chatPath} />
+                <SmsSwitch {socket} {orguuid} {chatname} />
             {/if}
 
             {#if mode_switch == "Email"}
-                <EmailSwitch {socket} {orguuid} {chatPath} />
+                <EmailSwitch {socket} {orguuid} {chatname} />
             {/if}
         </div>
     {/if}

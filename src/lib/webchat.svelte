@@ -9,7 +9,7 @@
   import Webchat from "./chat/webchat.svelte";
 
   export let orguuid;
-  export let chatPath;
+  export let chatname;
   export let connectOnLoad;
 
   let webchatEnable = false;
@@ -27,5 +27,5 @@
   </button>
 {/if}
 {#if webchatEnable}
-  <Webchat orguuid={orguuid} chatPath={chatPath} connectOnLoad={connectOnLoad}/>
+  <Webchat orguuid={orguuid} chatname={chatname} connectOnLoad={connectOnLoad}/>
 {/if}
