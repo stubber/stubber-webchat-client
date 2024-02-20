@@ -1,23 +1,25 @@
 <script>
     import { onDestroy, onMount } from "svelte";
-
+    
     import WhatsappSwitch from "../switch/whatsappSwitch.svelte";
     import EmailSwitch from "../switch/emailSwitch.svelte";
     import SmsSwitch from "../switch/smsSwitch.svelte";
-
+    
     import io from "socket.io-client";
-
+    
     export let orguuid;
     export let chatname;
     export let connectOnLoad;
-
+    
     let message = ``;
     let messages = [];
-
+    
     let socket;
     let allow_switch = false;
     let details_switch = false;
     let mode_switch = "";
+    
+    let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
     onMount(() => {
         console.log("__Mounted");
@@ -25,7 +27,7 @@
     });
 
     let connectSocket = () => {
-        socket = io("http://api.stubber.zone:6026");
+        socket = io(WEBCHAT_API_URL);
 
         socket.on("connect", async () => {
             console.log("___Connected to server");

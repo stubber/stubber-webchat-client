@@ -7,6 +7,7 @@
 
 <script>
   import Webchat from "./chat/webchat.svelte";
+  import "../app.css";
 
   export let orguuid;
   export let chatname;
@@ -14,12 +15,6 @@
 
   let webchatEnable = false;
 </script>
-
-<svelte:head>
-  <style>
-    @import "../app.css";
-  </style>
-</svelte:head>
 
 {#if !webchatEnable}
   <button class="stubber_webchat_enable_button" id="stubber_webchat_enable_button" on:click={() => webchatEnable = true }>
