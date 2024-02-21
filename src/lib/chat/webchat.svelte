@@ -57,6 +57,8 @@
                 message: data.message,
             });
             messages = messages;
+            
+            autoScroll()
         });
 
         socket.on("params", (data) => {
