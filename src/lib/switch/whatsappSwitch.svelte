@@ -1,16 +1,24 @@
 <script>
   export let socket;
   export let orguuid;
-  export let chatPath;
+  export let chatname;
 
   let number = "";
 
   let sendParams = (params) => {
-    console.log(params);
-    socket.emit("params", {
-      orguuid,
-      chatPath,
-      params,
+    socket.emit("configuration", {
+      webchat_configuration: {
+        orguuid,
+        chatname,
+      },
+      webchat_client_configuration: {
+        platform_switch: {
+          platform_name: "Whatsapp",
+          params: {
+            number
+          }
+        },
+      },
     });
   };
 
@@ -29,7 +37,11 @@
   bind:value={number}
   on:keydown={handleEnterPress}
 />
-<button class="stubber_message_send_button" id="stubber_message_send_button" on:click={sendParams}>
+<button
+  class="stubber_message_send_button"
+  id="stubber_message_send_buttons"
+  on:click={sendParams}
+>
   <svg
     fill="none"
     viewBox="0 0 24 24"
@@ -45,3 +57,9 @@
     />
   </svg>
 </button>
+
+<svelte:head>
+  <style>
+    @import "../../app.css";
+  </style>
+</svelte:head>

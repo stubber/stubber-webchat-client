@@ -211,116 +211,27 @@
   display: flex;
 }
 
+.stubber_chat_switch_box_details {
+  bottom: 0;
+}
+
 .stubber_chat_switch_text {
   width: 40%;
   border: none;
-  /* padding: 10px; */
-  border-bottom-left-radius: 20px;
   text-align: center;
+  font-size: 15px
 }
 
 .stubber_chat_switch_button {
   background-color: gray;
   color: white;
-  width: 10%;
-  display: flex;
+  flex-grow: 1;
+  flex-basis: 0;
   align-items: center;
   justify-content: center;
   border: none;
+  margin: 5px;
+  border-radius: 5px;
 }
 
 /* Webchat switch box */
-
-/*
-
-.stubber_message_send_button .h-6 {
-  height: 24px;
-  width: 24px;
-  color: white;
-}
-
-.stubber_message_send_button:disabled {
-  background-color: #f0f0f0;
-  color: #ccc;
-}
-
-.stubber_message_send_button:focus {
-  outline: none;
-}
-
-.stubber_message_send_button_svg {
-  color: white;
-  width: 20px;
-  height: 20px;
-}
-
-.svg {
-  height: 24px;
-  width: 24px;
-}
-
-.stubber_message_move_whatsapp {
-  background-color: #25d366;
-  border: none;
-  border-radius: 50%;
-  padding: 10px;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stubber_message_box::-webkit-scrollbar {
-  width: 8px;
-}
-
-.stubber_message_box::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 20px;
-}
-
-.stubber_message_box::-webkit-scrollbar-track {
-  background-color: #efefef;
-}
-
-.stubber_chat_switch_box {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  border: 1px solid #dcdcdc;
-  padding: 10px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.stubber_chat_switch_text {
-  flex-grow: 1;
-  font-size: 16px;
-  color: #333;
-  text-align: center;
-}
-
-.stubber_chat_switch_button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
-  margin: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: bold;
-  font-size: 14px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stubber_chat_switch_button:hover {
-  background-color: #0056b3;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-} */

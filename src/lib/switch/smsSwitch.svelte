@@ -1,7 +1,7 @@
 <script>
   export let socket;
   export let orguuid;
-  export let chatPath;
+  export let chatname;
 
   let number = "";
 
@@ -9,7 +9,7 @@
     console.log(params);
     socket.emit("params", {
       orguuid,
-      chatPath,
+      chatname,
       params,
     });
   };
@@ -45,3 +45,9 @@
     />
   </svg>
 </button>
+
+<svelte:head>
+    <style>
+        @import "../../app.css";
+    </style>
+</svelte:head>

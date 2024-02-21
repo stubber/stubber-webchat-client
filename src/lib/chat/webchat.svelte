@@ -123,6 +123,7 @@
     let startSwitch = (mode) => {
         mode_switch = mode;
         details_switch = true;
+        switching = false;
     };
 
     let autoScroll = () => {
@@ -260,27 +261,28 @@
             </button>
         </div>
     {/if}
+
     {#if switching}
-        <div class="stubber_chat_switch_box" id="stubber_chat_switch_box">
+        <div class="stubber_chat_switch_box" id="stubber_chat_switch_box" class:stubber_chat_switch_box_details={details_switch}>
             {#if !details_switch}
                 <p class="stubber_chat_switch_text">Continue Chat On</p>
                 <button
                     class="stubber_chat_switch_button primary_colors"
                     on:click={() => startSwitch("Whatsapp")}
                 >
-                    WH
+                    Whatsapp
                 </button>
                 <button
                     class="stubber_chat_switch_button"
                     on:click={() => startSwitch("SMS")}
                 >
-                    SM
+                    SMS
                 </button>
                 <button
                     class="stubber_chat_switch_button"
                     on:click={() => startSwitch("Email")}
                 >
-                    EM
+                    Email
                 </button>
             {/if}
 
