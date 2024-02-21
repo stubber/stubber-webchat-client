@@ -2,6 +2,7 @@
 
 .stubber_webchat_enable_button {
   background-color: gray;
+  border: none;
   color: white;
   position: fixed;
   bottom: 10vh;
@@ -56,6 +57,10 @@
   border-top-right-radius: 20px;
 }
 
+.stubber_message_box_switching {
+  height: 86%;
+}
+
 /* Webchat message box */
 
 /* Webchat input box */
@@ -68,6 +73,7 @@
   position: absolute;
   bottom: 0;
   display: flex;
+  border: none;
 }
 
 .stubber_message_input {
@@ -193,6 +199,37 @@
 }
 
 /* Webchat message bubbles common */
+
+/* Webchat switch box */
+
+.stubber_chat_switch_box {
+  background-color: rgb(215, 215, 215);
+  width: 100%;
+  height: 7%;
+  position: absolute;
+  bottom: 7%;
+  display: flex;
+}
+
+.stubber_chat_switch_text {
+  width: 40%;
+  border: none;
+  /* padding: 10px; */
+  border-bottom-left-radius: 20px;
+  text-align: center;
+}
+
+.stubber_chat_switch_button {
+  background-color: gray;
+  color: white;
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+/* Webchat switch box */
 
 /*
 

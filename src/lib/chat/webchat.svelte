@@ -15,7 +15,7 @@
     let messages = [];
     
     let socket;
-    let allow_switch = false;
+    let switching = false;
     let details_switch = false;
     let mode_switch = "";
     
@@ -47,22 +47,28 @@
             console.log("___Disconnected from server");
         });
 
-        socket.on("message", (data) => {
+        socket.on("webchat_message", (data) => {
             messages.push({
                 direction: "in",
                 sent: false,
                 recieved: false,
                 dateTime: new Date(),
                 messageuuid: crypto.randomUUID(),
-                message: data.message,
+                message: data.webchat_message.value,
             });
             messages = messages;
-            
+
             autoScroll()
         });
 
-        socket.on("params", (data) => {
-            allow_switch = data?.switch;
+        socket.on("webchat_client_configuration", (data) => {
+            let settings = Object.keys(data)
+
+            settings.forEach(key => {
+                if (data[key].type == "switching"){
+                    switching = data[key].value;
+                }
+            })
         });
 
         socket.on("error", (data) => {
@@ -137,7 +143,7 @@
 </script>
 
 <div class="stubber_webchat_box" id="stubber_webchat_box">
-    <div class="stubber_message_box" id="stubber_message_box">
+    <div class="stubber_message_box" id="stubber_message_box" class:stubber_message_box_switching={switching}>
         {#each messages as messageObject}
             {#if messageObject.direction == "in"}
                 <div
@@ -254,7 +260,7 @@
             </button>
         </div>
     {/if}
-    {#if allow_switch}
+    {#if switching}
         <div class="stubber_chat_switch_box" id="stubber_chat_switch_box">
             {#if !details_switch}
                 <p class="stubber_chat_switch_text">Continue Chat On</p>
