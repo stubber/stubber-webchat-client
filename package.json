@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "build-serve": "vite build; serve dist -p 6025",
+    "build-serve": "vite build; serve ./ -p 6025",
     "preview": "vite preview --port 6025",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },

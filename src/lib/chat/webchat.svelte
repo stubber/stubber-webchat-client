@@ -4,8 +4,6 @@
     import WhatsappSwitch from "../switch/whatsappSwitch.svelte";
     import EmailSwitch from "../switch/emailSwitch.svelte";
     import SmsSwitch from "../switch/smsSwitch.svelte";
-
-    import "../../app.css";
     
     import io from "socket.io-client";
     
@@ -292,3 +290,9 @@
         </div>
     {/if}
 </div>
+
+<svelte:head>
+    <style>
+        @import "../../app.css";
+    </style>
+</svelte:head>
