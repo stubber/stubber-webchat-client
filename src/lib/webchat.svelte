@@ -13,6 +13,8 @@
   export let connectOnLoad;
 
   let webchatEnable = false;
+
+  console.log("stubber webchat v1.0.9")
 </script>
 
 <svelte:head>
