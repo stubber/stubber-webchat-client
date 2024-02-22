@@ -1,24 +1,21 @@
 <script>
     import { onDestroy, onMount } from "svelte";
-    
-    import WhatsappSwitch from "../switch/whatsappSwitch.svelte";
-    import EmailSwitch from "../switch/emailSwitch.svelte";
-    import SmsSwitch from "../switch/smsSwitch.svelte";
-    
+
     import io from "socket.io-client";
-    
+
     export let orguuid;
     export let chatname;
     export let connectOnLoad;
-    
+
     let message = ``;
     let messages = [];
-    
+
     let socket;
-    let switching = false;
-    let details_switch = false;
+    let switching = true;
+    let switching_details = false;
     let mode_switch = "";
-    
+    let input_placeholder = "";
+
     let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
     onMount(() => {
@@ -37,8 +34,8 @@
                     webchat_configuration: {
                         orguuid,
                         chatname,
-                        initialize: true
-                    }
+                        initialize: true,
+                    },
                 });
             }
         });
@@ -58,17 +55,17 @@
             });
             messages = messages;
 
-            autoScroll()
+            autoScroll();
         });
 
         socket.on("webchat_client_configuration", (data) => {
-            let settings = Object.keys(data)
+            let settings = Object.keys(data);
 
-            settings.forEach(key => {
-                if (data[key].type == "switching"){
+            settings.forEach((key) => {
+                if (data[key].type == "switching") {
                     switching = data[key].value;
                 }
-            })
+            });
         });
 
         socket.on("error", (data) => {
@@ -90,14 +87,14 @@
             dateTime: new Date(),
             messageuuid: crypto.randomUUID(),
             message,
-        }
+        };
         messages.push(messageObject);
         messages = messages;
         message = "";
 
-        autoScroll()
+        autoScroll();
 
-        if (socket.connected){
+        if (socket.connected) {
             await socket.emit("message", {
                 webchat_configuration: {
                     orguuid,
@@ -106,9 +103,23 @@
                 webchat_message: {
                     type: "text",
                     message: messageObject.message,
-                    messageuuid: messageObject.messageuuid
-                }
+                    messageuuid: messageObject.messageuuid,
+                },
             });
+            if (switching_details) {
+                await socket.emit("client_configuration", {
+                    webchat_configuration: {
+                        orguuid,
+                        chatname,
+                    },
+                    webchat_client_configuration: {
+                        platform_switch: {
+                            platform_name: mode_switch,
+                            value: messageObject.message
+                        }
+                    },
+                });
+            }
             messageObject.recieved = true;
             messages = messages;
         }
@@ -122,8 +133,23 @@
 
     let startSwitch = (mode) => {
         mode_switch = mode;
-        details_switch = true;
-        switching = false;
+
+        if (mode_switch == "") {
+            input_placeholder = "Type message...";
+            switching_details = false;
+        }
+        if (mode_switch == "Whatsapp") {
+            input_placeholder = "Enter your number";
+            switching_details = true;
+        }
+        if (mode_switch == "SMS") {
+            input_placeholder = "Enter your number";
+            switching_details = true;
+        }
+        if (mode_switch == "Email") {
+            input_placeholder = "Enter your email";
+            switching_details = true;
+        }
     };
 
     let autoScroll = () => {
@@ -134,7 +160,7 @@
             let message_box = document.getElementById("stubber_message_box");
             message_box.scrollTop = message_box.scrollHeight;
         }, 100);
-    }
+    };
 
     onDestroy(() => {
         if (ws) {
@@ -143,50 +169,32 @@
     });
 </script>
 
-<div class="stubber_webchat_box" id="stubber_webchat_box">
-    <div class="stubber_message_box" id="stubber_message_box" class:stubber_message_box_switching={switching}>
+<div class="stubber_webchat_box">
+    <div
+        class="stubber_message_box"
+        class:stubber_message_box_switching={switching}
+        id="stubber_message_box"
+    >
         {#each messages as messageObject}
             {#if messageObject.direction == "in"}
-                <div
-                    class="stubber_webchat_message_in"
-                    id="stubber_webchat_message_in"
-                >
-                    <div
-                        class="stubber_webchat_message_text_box"
-                        id="stubber_webchat_message_text_box"
-                    >
+                <div class="stubber_webchat_message_in">
+                    <div class="stubber_webchat_message_text_box">
                         {messageObject.message}
                     </div>
-                    <div
-                        class="stubber_webchat_message_info_box"
-                        id="stubber_webchat_message_info_box"
-                    >
-                        <small
-                            class="stubber_webchat_message_info_time_in"
-                            id="stubber_webchat_message_info_time_in"
+                    <div class="stubber_webchat_message_info_box">
+                        <small class="stubber_webchat_message_info_time_in"
                             >{timeFormat(messageObject.dateTime)}</small
                         >
                     </div>
                 </div>
             {/if}
             {#if messageObject.direction == "out"}
-                <div
-                    class="stubber_webchat_message_out"
-                    id="stubber_webchat_message_out"
-                >
-                    <div
-                        class="stubber_webchat_message_text_box"
-                        id="stubber_webchat_message_text_box"
-                    >
+                <div class="stubber_webchat_message_out">
+                    <div class="stubber_webchat_message_text_box">
                         {messageObject.message}
                     </div>
-                    <div
-                        class="stubber_webchat_message_info_box"
-                        id="stubber_webchat_message_info_box"
-                    >
-                        <small
-                            class="stubber_webchat_message_info_time_out"
-                            id="stubber_webchat_message_info_time_out"
+                    <div class="stubber_webchat_message_info_box">
+                        <small class="stubber_webchat_message_info_time_out"
                             >{timeFormat(messageObject.dateTime)}</small
                         >
                         {#if messageObject.recieved == false}
@@ -195,7 +203,6 @@
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
-                                id="stubber_webchat_message_info_sent"
                             >
                                 <path
                                     stroke-linecap="round"
@@ -211,7 +218,6 @@
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
-                                id="stubber_webchat_message_info_sent_delivered"
                             >
                                 <path
                                     stroke-linecap="round"
@@ -227,82 +233,71 @@
         {/each}
     </div>
 
-    {#if !details_switch}
-        <div class="stubber_message_input_box" id="stubber_message_input_box">
-            <input
-                type="text"
-                class="stubber_message_input"
-                id="stubber_message_input"
-                bind:value={message}
-                on:keydown={handleEnterPress}
-                placeholder={details_switch ? "" : "Type something..."}
-                disabled={details_switch}
-            />
-            <button
-                class="stubber_message_send_button"
-                id="stubber_message_send_button"
-                on:click={sendMessage}
-                disabled={message === "" || details_switch}
-            >
-                <svg
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    class="stubber_message_send_button_svg"
-                    id="stubber_message_send_button_svg"
+    <div class="stubber_message_input_box">
+        <input
+            type="text"
+            class="stubber_message_input"
+            bind:value={message}
+            on:keydown={handleEnterPress}
+            placeholder={input_placeholder}
+        />
+        <button
+            class="stubber_message_send_button"
+            on:click={sendMessage}
+            disabled={message === ""}
+        >
+            <svg
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                class="stubber_message_send_button_svg"
+                >9 45
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 12h14M12 5l7 7-7 7"
+                />
+            </svg>
+        </button>
+    </div>
+
+    {#if switching}
+        <div class="stubber_chat_switch_box">
+            {#if !switching_details}
+                <p class="stubber_chat_switch_text">Continue Chat On</p>
+            {/if}
+            {#if switching_details}
+                <button
+                    class="stubber_chat_switch_button"
+                    on:click={() => startSwitch("")}
                 >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M5 12h14M12 5l7 7-7 7"
-                    />
-                </svg>
+                    Back
+                </button>
+            {/if}
+            <button
+                class="stubber_chat_switch_button"
+                class:stubber_chat_switch_button_selected={mode_switch ==
+                    "Whatsapp"}
+                on:click={() => startSwitch("Whatsapp")}
+            >
+                Whatsapp
+            </button>
+            <button
+                class="stubber_chat_switch_button"
+                class:stubber_chat_switch_button_selected={mode_switch == "SMS"}
+                on:click={() => startSwitch("SMS")}
+            >
+                SMS
+            </button>
+            <button
+                class="stubber_chat_switch_button"
+                class:stubber_chat_switch_button_selected={mode_switch ==
+                    "Email"}
+                on:click={() => startSwitch("Email")}
+            >
+                Email
             </button>
         </div>
     {/if}
-
-    {#if switching}
-        <div class="stubber_chat_switch_box" id="stubber_chat_switch_box" class:stubber_chat_switch_box_details={details_switch}>
-            {#if !details_switch}
-                <p class="stubber_chat_switch_text">Continue Chat On</p>
-                <button
-                    class="stubber_chat_switch_button primary_colors"
-                    on:click={() => startSwitch("Whatsapp")}
-                >
-                    Whatsapp
-                </button>
-                <button
-                    class="stubber_chat_switch_button"
-                    on:click={() => startSwitch("SMS")}
-                >
-                    SMS
-                </button>
-                <button
-                    class="stubber_chat_switch_button"
-                    on:click={() => startSwitch("Email")}
-                >
-                    Email
-                </button>
-            {/if}
-
-            {#if mode_switch == "Whatsapp"}
-                <WhatsappSwitch {socket} {orguuid} {chatname} />
-            {/if}
-
-            {#if mode_switch == "SMS"}
-                <SmsSwitch {socket} {orguuid} {chatname} />
-            {/if}
-
-            {#if mode_switch == "Email"}
-                <EmailSwitch {socket} {orguuid} {chatname} />
-            {/if}
-        </div>
-    {/if}
 </div>
-
-<svelte:head>
-    <style>
-        @import "../../app.css";
-    </style>
-</svelte:head>

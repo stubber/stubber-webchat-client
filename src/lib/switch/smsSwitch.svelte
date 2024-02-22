@@ -24,7 +24,6 @@
 <input
   type="text"
   class="stubber_message_input"
-  id="stubber_message_input"
   placeholder="Enter Details"
   bind:value={number}
   on:keydown={handleEnterPress}
@@ -35,7 +34,6 @@
     viewBox="0 0 24 24"
     stroke="currentColor"
     class="stubber_message_send_button_svg"
-    id="stubber_message_send_button_svg"
   >
     <path
       stroke-linecap="round"
@@ -45,9 +43,3 @@
     />
   </svg>
 </button>
-
-<svelte:head>
-    <style>
-        @import "../../app.css";
-    </style>
-</svelte:head>

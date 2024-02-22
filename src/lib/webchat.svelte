@@ -15,12 +15,14 @@
   let webchatEnable = false;
 </script>
 
-<style>
-  @import "../app.css";
-</style>
+<svelte:head>
+  <style>
+      @import "../app.css";
+  </style>
+</svelte:head>
 
 {#if !webchatEnable}
-  <button class="stubber_webchat_enable_button" id="stubber_webchat_enable_button" on:click={() => webchatEnable = true }>
+  <button class="stubber_webchat_enable_button" on:click={() => webchatEnable = true }>
     Chat
   </button>
 {/if}

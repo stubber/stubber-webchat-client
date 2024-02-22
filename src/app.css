@@ -213,6 +213,7 @@
 
 .stubber_chat_switch_box_details {
   bottom: 0;
+
 }
 
 .stubber_chat_switch_text {
@@ -232,6 +233,11 @@
   border: none;
   margin: 5px;
   border-radius: 5px;
+}
+
+.stubber_chat_switch_button_selected {
+  background-color: lightblue;
+  color: black;
 }
 
 /* Webchat switch box */
