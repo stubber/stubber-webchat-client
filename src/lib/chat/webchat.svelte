@@ -11,10 +11,10 @@
     let messages = [];
 
     let socket;
-    let switching = true;
+    let switching = false;
     let switching_details = false;
     let mode_switch = "";
-    let input_placeholder = "";
+    let input_placeholder = "Type message...";
 
     let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
