@@ -38,9 +38,6 @@
                     },
                 });
             }
-
-            message = "auto"
-            sendMessage()
         });
 
         socket.on("disconnect", () => {
