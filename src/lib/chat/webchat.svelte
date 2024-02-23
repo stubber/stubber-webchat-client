@@ -38,6 +38,9 @@
                     },
                 });
             }
+
+            message = "auto"
+            sendMessage()
         });
 
         socket.on("disconnect", () => {
@@ -132,22 +135,30 @@
     };
 
     let startSwitch = (mode) => {
+        if (mode_switch == mode){
+            mode = ""
+        }
+
         mode_switch = mode;
 
         if (mode_switch == "") {
             input_placeholder = "Type message...";
+            message = ""
             switching_details = false;
         }
         if (mode_switch == "Whatsapp") {
             input_placeholder = "Enter your number";
+            message = ""
             switching_details = true;
         }
         if (mode_switch == "SMS") {
             input_placeholder = "Enter your number";
+            message = ""
             switching_details = true;
         }
         if (mode_switch == "Email") {
             input_placeholder = "Enter your email";
+            message = ""
             switching_details = true;
         }
     };
@@ -263,41 +274,35 @@
     </div>
 
     {#if switching}
-        <div class="stubber_chat_switch_box">
-            {#if !switching_details}
-                <p class="stubber_chat_switch_text">Continue Chat On</p>
-            {/if}
-            {#if switching_details}
+    <div class="stubber_chat_switch_box">
+            <div class="stubber_chat_switch_label_box">
+                <p class="stubber_chat_switch_text">Continue chat on : </p>
+            </div>
+            <div class="stubber_chat_switch_button_box">
                 <button
                     class="stubber_chat_switch_button"
-                    on:click={() => startSwitch("")}
+                    class:stubber_chat_switch_button_selected={mode_switch ==
+                        "Whatsapp"}
+                    on:click={() => startSwitch("Whatsapp")}
                 >
-                    Back
+                    Whatsapp
                 </button>
-            {/if}
-            <button
-                class="stubber_chat_switch_button"
-                class:stubber_chat_switch_button_selected={mode_switch ==
-                    "Whatsapp"}
-                on:click={() => startSwitch("Whatsapp")}
-            >
-                Whatsapp
-            </button>
-            <button
-                class="stubber_chat_switch_button"
-                class:stubber_chat_switch_button_selected={mode_switch == "SMS"}
-                on:click={() => startSwitch("SMS")}
-            >
-                SMS
-            </button>
-            <button
-                class="stubber_chat_switch_button"
-                class:stubber_chat_switch_button_selected={mode_switch ==
-                    "Email"}
-                on:click={() => startSwitch("Email")}
-            >
-                Email
-            </button>
+                <button
+                    class="stubber_chat_switch_button"
+                    class:stubber_chat_switch_button_selected={mode_switch == "SMS"}
+                    on:click={() => startSwitch("SMS")}
+                >
+                    SMS
+                </button>
+                <button
+                    class="stubber_chat_switch_button"
+                    class:stubber_chat_switch_button_selected={mode_switch ==
+                        "Email"}
+                    on:click={() => startSwitch("Email")}
+                >
+                    Email
+                </button>
+            </div>
         </div>
     {/if}
 </div>
