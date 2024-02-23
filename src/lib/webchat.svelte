@@ -14,7 +14,7 @@
 
   let webchatEnable = false;
 
-  console.log("stubber webchat v1.0.10")
+  console.log("stubber webchat v1.0.12")
 </script>
 
 <svelte:head>
