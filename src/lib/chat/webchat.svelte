@@ -102,7 +102,7 @@
                 },
                 webchat_message: {
                     type: "text",
-                    message: messageObject.message,
+                    value: messageObject.message,
                     messageuuid: messageObject.messageuuid,
                 },
             });
