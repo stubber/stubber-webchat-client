@@ -10,7 +10,8 @@
 
   export let orguuid;
   export let chatname;
-  export let connectOnLoad;
+  export let connect_on_load;
+  export let passthrough_data;
 
   let webchatEnable = false;
 
@@ -29,5 +30,5 @@
   </button>
 {/if}
 {#if webchatEnable}
-  <Webchat orguuid={orguuid} chatname={chatname} connectOnLoad={connectOnLoad}/>
+  <Webchat orguuid={orguuid} chatname={chatname} connect_on_load={connect_on_load} passthrough_data={passthrough_data}/>
 {/if}

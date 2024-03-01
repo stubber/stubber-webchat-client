@@ -5,7 +5,8 @@
 
     export let orguuid;
     export let chatname;
-    export let connectOnLoad;
+    export let connect_on_load;
+    export let passthrough_data;
 
     let message = ``;
     let messages = [];
@@ -20,7 +21,7 @@
 
     onMount(() => {
         console.log("__Mounted");
-        if (connectOnLoad === "true") connectSocket();
+        if (connect_on_load === "true") connectSocket();
     });
 
     let connectSocket = () => {
@@ -36,8 +37,13 @@
                         orguuid,
                         chatname,
                         initialize: true,
+                        passthrough_data
                     },
                 });
+            }
+
+            if (message.length > 0){
+                sendMessage()
             }
         });
 
@@ -49,7 +55,7 @@
             messages.push({
                 direction: "in",
                 sent: false,
-                recieved: false,
+                received: false,
                 dateTime: new Date(),
                 messageuuid: crypto.randomUUID(),
                 message: data.webchat_message.value,
@@ -81,10 +87,15 @@
     };
 
     let sendMessage = async () => {
+        if (!socket){
+            connectSocket()
+            return
+        }
+
         let messageObject = {
             direction: "out",
             sent: false,
-            recieved: false,
+            received: false,
             dateTime: new Date(),
             messageuuid: crypto.randomUUID(),
             message,
@@ -100,6 +111,7 @@
                 webchat_configuration: {
                     orguuid,
                     chatname,
+                    passthrough_data
                 },
                 webchat_message: {
                     type: "text",
@@ -112,6 +124,7 @@
                     webchat_configuration: {
                         orguuid,
                         chatname,
+                        passthrough_data
                     },
                     webchat_client_configuration: {
                         platform_switch: {
@@ -121,7 +134,7 @@
                     },
                 });
             }
-            messageObject.recieved = true;
+            messageObject.received = true;
             messages = messages;
         }
     };
@@ -163,7 +176,7 @@
 
     let autoScroll = () => {
         // this is dirty i feel like there is a cleaner way to do this
-        // however the latest message wont be recieved if the scroll is moved after a message is sent
+        // however the latest message wont be received if the scroll is moved after a message is sent
         // i have to auto scroll when an ellement is created
         setTimeout(() => {
             let message_box = document.getElementById("stubber_message_box");
@@ -206,7 +219,7 @@
                         <small class="stubber_webchat_message_info_time_out"
                             >{timeFormat(messageObject.dateTime)}</small
                         >
-                        {#if messageObject.recieved == false}
+                        {#if messageObject.received == false}
                             <svg
                                 class="stubber_webchat_message_info_sent"
                                 fill="none"
@@ -221,7 +234,7 @@
                                 />
                             </svg>
                         {/if}
-                        {#if messageObject.recieved == true}
+                        {#if messageObject.received == true}
                             <svg
                                 class="stubber_webchat_message_info_sent_delivered"
                                 fill="none"
