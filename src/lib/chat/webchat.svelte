@@ -25,6 +25,7 @@
 
     let connectSocket = () => {
         socket = io(WEBCHAT_API_URL);
+        console.log(WEBCHAT_API_URL);
 
         socket.on("connect", async () => {
             console.log("___Connected to server");

@@ -20,11 +20,6 @@
   color: white;
 }
 
-.stubber_webchat_primary_color {
-  background-color: #007bff;
-  color: white;
-}
-
 /* Start Chat Button */
 
 /* WebChat box */
@@ -197,6 +192,10 @@
 .stubber_webchat_message_info_time_in,
 .stubber_webchat_message_info_time_out {
   font-size: 0.75rem;
+}
+
+.stubber_webchat_message_text_box {
+  white-space:pre-wrap;
 }
 
 /* Webchat message bubbles common */
