@@ -262,6 +262,7 @@
             bind:value={message}
             on:keydown={handleEnterPress}
             placeholder={input_placeholder}
+            autocomplete="off"
         />
         <button
             class="stubber_message_send_button"
