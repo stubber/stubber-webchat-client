@@ -35,14 +35,12 @@
 
 /* chat button */
 
-.stubber_webchat_enable_button, 
-.stubber_webchat_switch_button {
+.stubber_webchat_enable_button {
   background-color: white;
   color: black;
 }
 
-.stubber_webchat_enable_button:hover,
-.stubber_webchat_switch_button:hover {
+.stubber_webchat_enable_button:hover {
   background-color: grey;
   color: white;
 }

@@ -19,8 +19,8 @@
   export let connect_on_load;
   export let passthrough_data;
 
-  let webchatEnable = false;
-  let webchatOpened = false;
+  let webchat_enable = false;
+  let webchat_opened = false;
 
   console.log("stubber webchat v1.1.2");
 
@@ -203,11 +203,11 @@
   };
 
   let openWebchat = () => {
-    webchatEnable = true;
+    webchat_enable = true;
 
-    if (connect_on_load === "true" && !webchatOpened) connectSocket();
+    if (connect_on_load === "true" && !webchat_opened) connectSocket();
 
-    webchatOpened = true;
+    webchat_opened = true;
   };
 
   onDestroy(() => {
@@ -216,10 +216,15 @@
     }
   });
 
-  DOMPurify.addHook('afterSanitizeAttributes', function (node) {
-    if ('target' in node) { node.setAttribute('target', '_blank'); }
-    if (!node.hasAttribute('target') && (node.hasAttribute('xlink:href') || node.hasAttribute('href'))) {
-       node.setAttribute('xlink:show', 'new');
+  DOMPurify.addHook("afterSanitizeAttributes", function (node) {
+    if ("target" in node) {
+      node.setAttribute("target", "_blank");
+    }
+    if (
+      !node.hasAttribute("target") &&
+      (node.hasAttribute("xlink:href") || node.hasAttribute("href"))
+    ) {
+      node.setAttribute("xlink:show", "new");
     }
   });
 </script>
@@ -230,16 +235,8 @@
   </style>
 </svelte:head>
 
-<!-- {#if !webchatEnable} -->
+{#if !webchat_enable}
   <div class="fixed bottom-0 right-0 mb-4 mr-4 w-96 flex justify-end">
-    {#if webchatEnable && switching}
-      <button
-        class="stubber_webchat_switch_button py-2 px-4 rounded-md transition duration-300 flex items-center"
-        on:click={openWebchat}
-      >
-        Switch platforms
-      </button>
-    {/if} 
     <button
       class="stubber_webchat_enable_button ml-2 py-2 px-4 rounded-md transition duration-300 flex items-center"
       on:click={openWebchat}
@@ -247,8 +244,8 @@
       Chat
     </button>
   </div>
-<!-- {/if} -->
-{#if webchatEnable}
+{/if}
+{#if webchat_enable}
   <div
     class="stubber_webchat_container fixed bottom-16 right-4 w-96 rounded-lg"
   >
@@ -256,12 +253,14 @@
       <div
         class="stubber_webchat_top_container_row p-4 border-b bg-blue-500 text-white rounded-t-lg flex justify-between items-center"
       >
-        <p class="text-lg font-semibold">{!chat_display_name ? "" : chat_display_name}</p>
+        <p class="text-lg font-semibold">
+          {!chat_display_name ? "" : chat_display_name}
+        </p>
         <button
           id="close-chat"
           class="stubber_webchat_minimize_button text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400"
           on:click={() => {
-            webchatEnable = false;
+            webchat_enable = false;
           }}
         >
           <svg
@@ -280,10 +279,20 @@
           </svg>
         </button>
       </div>
+      {#if switching}
+        <div
+          class="stubber_webchat_top_container_row p-1 text-white justify-between flex items-center w-full"
+        >
+          <button
+            class="stubber_webchat_switch_button bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-md transition duration-300 flex items-center m-auto"
+            on:click={openWebchat}
+          >
+            Switch platforms
+          </button>
+        </div>
+      {/if}
 
-      <div
-        class="p-4 h-80 overflow-y-auto stubber_webchat_message_box"
-      >
+      <div class="p-4 h-80 overflow-y-auto stubber_webchat_message_box">
         {#each messages as messageObject}
           {#if messageObject.direction == "in"}
             <div class="mb-2">
