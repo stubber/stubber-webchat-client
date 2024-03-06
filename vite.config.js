@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { resolve } from 'path'
+import { resolve } from 'path';
+import cssnano from 'cssnano';
 
 export default defineConfig(({ mode }) => {
   console.log(`Building for ${mode}...`);
@@ -26,5 +27,12 @@ export default defineConfig(({ mode }) => {
       }
     },
     envDir: './',
+    css: {
+      postcss: {
+        plugins: [cssnano({
+          preset: 'default',
+        })],
+      },
+    },
   };
 })
