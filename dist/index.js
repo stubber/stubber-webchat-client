@@ -56,6 +56,10 @@ Please report this to https://github.com/markedjs/marked.`,e){const i="<p>An err
   border-radius: 20px;
   width: 40%;
   height: 80%;
+  min-width: 400px;
+  max-width: 600px;
+  min-height: 600px;
+  max-height: 900px;
   z-index: 50;
 }
 
