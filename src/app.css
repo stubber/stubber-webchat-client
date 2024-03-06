@@ -116,7 +116,7 @@
   background-color: white;
 }
 
-/* Webchat messsage bubbles outgoing */
+/* Webchat message bubbles outgoing */
 
 .stubber_webchat_message_out {
   background-color: #f0f0f0;
@@ -143,9 +143,9 @@
   color: black;
 }
 
-/* Webchat messsage bubbles outgoing */
+/* Webchat message bubbles outgoing */
 
-/* Webchat messsage bubbles incoming */
+/* Webchat message bubbles incoming */
 
 .stubber_webchat_message_in {
   background-color: #0c74f1;
@@ -158,7 +158,7 @@
   color: white;
 }
 
-/* Webchat messsage bubbles outgoing */
+/* Webchat message bubbles outgoing */
 
 /* Webchat message bubbles common */
 
@@ -242,7 +242,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom-right-radius: 20px;
+  border-bottom-right-radius: 18px;
   border: none;
 }
 

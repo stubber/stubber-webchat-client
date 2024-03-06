@@ -18,8 +18,9 @@
   export let passthrough_data;
 
   let webchatEnable = false;
+  let webchatOpened = false;
 
-  console.log("stubber webchat v1.1.0");
+  console.log("stubber webchat v1.1.2");
 
   let message = ``;
   let messages = [];
@@ -32,10 +33,10 @@
 
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
-  onMount(() => {
-    console.log("__Mounted");
-    if (connect_on_load === "true") connectSocket();
-  });
+  // onMount(() => {
+  //   console.log("__Mounted");
+  //   if (connect_on_load === "true") connectSocket();
+  // });
 
   let connectSocket = () => {
     socket = io(WEBCHAT_API_URL);
@@ -199,6 +200,15 @@
     }, 100);
   };
 
+  let openWebchat = () => {
+    webchatEnable = true;
+
+    if (connect_on_load === "true" && !webchatOpened)
+      connectSocket()
+
+    webchatOpened = true;
+  }
+
   onDestroy(() => {
     if (ws) {
       ws.close();
@@ -215,7 +225,7 @@
 {#if !webchatEnable}
   <button
     class="stubber_webchat_enable_button"
-    on:click={() => {webchatEnable = true}}
+    on:click={openWebchat}
   >
     Chat
   </button>
