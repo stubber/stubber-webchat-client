@@ -33,13 +33,10 @@
   let mode_switch = "";
   let input_placeholder = "Type message...";
 
-  let message_input;
-
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
   onMount(() => {
     console.log("__Mounted");
-    console.log(message_input);
     // if (connect_on_load === "true") connectSocket();
   });
 
@@ -207,9 +204,6 @@
 
   let openWebchat = () => {
     webchatEnable = true;
-    message_input?.focus();
-
-    console.log(message_input);
 
     if (connect_on_load === "true" && !webchatOpened) connectSocket();
 
@@ -238,16 +232,17 @@
 
 <!-- {#if !webchatEnable} -->
   <div class="fixed bottom-0 right-0 mb-4 mr-4 w-96 flex justify-end">
-    <button
-      class="stubber_webchat_switch_button py-2 px-4 rounded-md transition duration-300 flex items-center"
-      on:click={openWebchat}
-    >
-      Switch platforms
-    </button>
+    {#if webchatEnable && switching}
+      <button
+        class="stubber_webchat_switch_button py-2 px-4 rounded-md transition duration-300 flex items-center"
+        on:click={openWebchat}
+      >
+        Switch platforms
+      </button>
+    {/if} 
     <button
       class="stubber_webchat_enable_button ml-2 py-2 px-4 rounded-md transition duration-300 flex items-center"
       on:click={openWebchat}
-      hidden={switching}
     >
       Chat
     </button>
@@ -288,7 +283,6 @@
 
       <div
         class="p-4 h-80 overflow-y-auto stubber_webchat_message_box"
-        class:stubber_webchat_middle_container_switching={switching}
       >
         {#each messages as messageObject}
           {#if messageObject.direction == "in"}
@@ -328,7 +322,6 @@
           on:keydown={handleEnterPress}
           placeholder={input_placeholder}
           autocomplete="off"
-          bind:this={message_input}
         />
         <button
           class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 transition duration-300"
