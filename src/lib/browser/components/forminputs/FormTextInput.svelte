@@ -1,5 +1,5 @@
 <script>
-  import Tooltip from "$lib/browser/components/Tooltip.svelte";
+  import Tooltip from "../Tooltip.svelte";
 
   export let label;
   export let placeholder = "";
