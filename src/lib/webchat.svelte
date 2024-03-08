@@ -6,6 +6,8 @@
 />
 
 <script>
+  console.log("stubber webchat v1.2");
+
   import { onDestroy, onMount } from "svelte";
   import DOMPurify from "dompurify";
   import { marked } from "marked";
@@ -17,6 +19,7 @@
   import PaperPlaneTopRegular from "./icons/paper-plane-top-regular.svelte";
   import UserSolid from "./icons/user-solid.svelte";
   import Whastsapp from "./icons/whatsapp.svelte";
+  import PlaySolid from "./icons/play-solid.svelte";
 
   import io from "socket.io-client";
 
@@ -30,19 +33,16 @@
   let webchat_opened = false;
   let switching_enable = false;
 
-  let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
-
-  console.log("stubber webchat v1.2");
-
-  let message = ``;
+  let message = `ski skjdh askdh kasjdh kah skjh d skjdha sjdh kas hkas j  askj dhkasjhdiaushdi uqwhidu qi wdwi `;
   let messages = [];
-  let previous_sender = "you";
 
   let socket;
   let allow_switching = true;
   let switching_details = false;
   let mode_switch = "";
   let input_placeholder = "Type message...";
+
+  let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
 
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
@@ -80,8 +80,15 @@
     });
 
     socket.on("webchat_message", (data) => {
+      let previous_direction = "in";
+
+      if (messages.length > 0) {
+        previous_direction = messages[messages.length - 1].direction;
+      }
+
       let messageObject = {
         direction: "in",
+        previous_direction,
         sent: false,
         received: false,
         dateTime: new Date(),
@@ -122,8 +129,15 @@
       return;
     }
 
+    let previous_direction = "in";
+
+    if (messages.length > 0) {
+      previous_direction = messages[messages.length - 1].direction;
+    }
+
     let messageObject = {
       direction: "out",
+      previous_direction,
       sent: false,
       received: false,
       dateTime: new Date(),
@@ -170,38 +184,14 @@
   };
 
   let timeFormat = (dateTime) => {
-    const hours = dateTime.getHours().toString().padStart(2, "0");
+    let hours = dateTime.getHours().toString().padStart(2, "0");
     const minutes = dateTime.getMinutes().toString().padStart(2, "0");
-    return hours + ":" + minutes;
-  };
 
-  let startSwitch = (mode) => {
-    if (mode_switch == mode) {
-      mode = "";
-    }
+    const am_pm = hours >= 12 ? "pm" : "am";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
 
-    mode_switch = mode;
-
-    if (mode_switch == "") {
-      input_placeholder = "Type message...";
-      message = "";
-      switching_details = false;
-    }
-    if (mode_switch == "Whatsapp") {
-      input_placeholder = "Enter your number";
-      message = "";
-      switching_details = true;
-    }
-    if (mode_switch == "SMS") {
-      input_placeholder = "Enter your number";
-      message = "";
-      switching_details = true;
-    }
-    if (mode_switch == "Email") {
-      input_placeholder = "Enter your email";
-      message = "";
-      switching_details = true;
-    }
+    return hours + ":" + minutes + " " + am_pm;
   };
 
   let autoScroll = () => {
@@ -224,10 +214,7 @@
   };
 
   let openSwitching = () => {
-    webchat_enable = true;
     switching_enable = true;
-
-    if (connect_on_load === "true" && !webchat_opened) connectSocket();
   };
 
   onDestroy(() => {
@@ -271,10 +258,10 @@
 
 {#if webchat_enable}
   <div
-    class="fixed bottom-0 right-0 w-96 h-3/4 flex-col justify-end bg-white mr-4 transition duration-300 rounded-t-xl"
+    class="fixed right-0 bottom-0 w-96 h-3/4 flex flex-col justify-end bg-white mr-4 transition duration-300 rounded-t-xl"
   >
     <div
-      class="pl-4 p-3 border-b text-black rounded-t-lg flex justify-between items-center bg-gray-400"
+      class="pl-4 p-3 border-b text-black rounded-t-lg flex justify-between items-center bg-gray-400 h-15"
     >
       <p class="text-lg font-semibold text-white">
         {!chat_display_name ? "" : chat_display_name}
@@ -285,44 +272,82 @@
           webchat_enable = false;
         }}
       >
-        <span class="w-5 fill-white">
+        <span class="w-5 fill-white rotate-45">
           <CircleXMarkRegular viewBox="0 0 24 24" />
         </span>
       </button>
     </div>
-    <div class="p-4 overflow-y-auto stubber_webchat_message_box">
+    <div class="p-4 overflow-y-auto flex-grow hide-scrollbar">
       {#each messages as messageObject}
         {#if messageObject.direction == "in"}
-          <div class="mb-2 mr-2">
-            <p class="m-auto mx-2 text-sm">Agent</p>
-            {#if messageObject.message.type == "markdown"}
-              <div class="bg-gray-200 rounded-lg py-2 px-4 inline-block">
+          <div class="mb-2 mr-10 flex flex-col">
+            {#if messageObject.previous_direction == "out"}
+              <p class="m-auto mx-2 text-sm">Agent</p>
+            {/if}
+            <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
+              {#if messageObject.message.type == "markdown"}
                 {@html DOMPurify.sanitize(
                   marked(messageObject.message.value.trim())
                 )}
-                <p class="ml-auto mx-2 text-sm">{timeFormat(messageObject.dateTime)}</p>
-              </div>
-            {/if}
-            {#if messageObject.message.type == "text"}
-              <div class="bg-gray-200 rounded-lg py-2 px-4 inline-block">
+              {/if}
+              {#if messageObject.message.type == "text"}
                 <p class="">{messageObject.message.value}</p>
-                <p class="ml-auto mx-2 text-sm">{timeFormat(messageObject.dateTime)}</p>
-              </div>
-            {/if}
+              {/if}
+              <p class="text-sm ml-auto">
+                {timeFormat(messageObject.dateTime)}
+              </p>
+            </div>
           </div>
         {/if}
         {#if messageObject.direction == "out"}
-          <div class="mb-2 ml-2 text-right">
-            <p class="ml-auto mx-2">You</p>
-            <div
-              class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block"
-            >
-            <p class="">{messageObject.message.value}</p>
-            <p class="ml-auto mx-2 text-sm">{timeFormat(messageObject.dateTime)}</p>
-          </div>
+          <div class="mb-2 ml-10 text-right flex flex-col">
+            <p class="m-auto mx-2 text-sm">You</p>
+            <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
+              <p class="">{messageObject.message}</p>
+              <div class="flex w-full">
+                <p class="text-sm ml-auto mr-2">
+                  {timeFormat(messageObject.dateTime)}
+                </p>
+                <span class="fill-green-400 w-3 my-auto">
+                  <CheckDoubleRegular viewBox="0 0 24 24" />
+                </span>
+              </div>
+            </div>
           </div>
         {/if}
       {/each}
+    </div>
+    <div class="p-2 flex flex-col bg-gray-300 rounded-t-xl">
+      <div class="h-10 w-full bg-white flex rounded-lg">
+        <input
+          type="text"
+          class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2"
+          bind:value={message}
+          on:keydown={handleEnterPress}
+          placeholder={input_placeholder}
+          autocomplete="off"
+        />
+        <button
+          class="w-7 transition duration-300 pr-2"
+          on:click={sendMessage}
+          disabled={message === ""}
+        >
+          <span class="fill-gray-400">
+            <PaperPlaneTopRegular viewBox="0 0 24 24" />
+          </span>
+        </button>
+      </div>
+      {#if allow_switching}
+        <div class="w-full flex">
+          <button
+            class="w-25 transition duration-300 my-2 mx-auto"
+            on:click={openSwitching}
+            disabled={message === ""}
+          >
+            Switch Chat Channels
+          </button>
+        </div>
+      {/if}
     </div>
   </div>
 {/if}
@@ -439,6 +464,6 @@
         </button>
         {/if}
       </div>
-    </div>
+    </div> 
   </div>
 {/if} -->
