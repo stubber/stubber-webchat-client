@@ -53,7 +53,7 @@
       {label}
     </label>
   {/if}
-  <div class="w-full flex space-x-4 relative mt-2 rounded-md">
+  <div class="flex flex-col w-full space-y-2 relative mt-2 rounded-md">
     <input
       on:input={checkIsValid}
       bind:this={input}
@@ -68,6 +68,6 @@
     <input type="hidden" {name} bind:value={intVal} />
   </div>
   {#if isError && validationMessage}
-    <p class="text-label text-danger-500">{validationMessage}</p>
+    <!-- <p class="text-label text-danger-500">{validationMessage}</p> -->
   {/if}
 </div>

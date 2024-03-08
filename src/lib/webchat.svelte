@@ -9,8 +9,12 @@
   console.log("stubber webchat v1.2");
 
   import { onDestroy, onMount } from "svelte";
+  import FormTelInput from "./browser/components/forminputs/FormTelInput.svelte";
+  import FormTextInput from "./browser/components/forminputs/FormTextInput.svelte";
+
   import DOMPurify from "dompurify";
   import { marked } from "marked";
+  import io from "socket.io-client";
 
   import AtRegular from "./icons/at-regular.svelte";
   import CheckDoubleRegular from "./icons/check-double-regular.svelte";
@@ -20,8 +24,10 @@
   import UserSolid from "./icons/user-solid.svelte";
   import Whastsapp from "./icons/whatsapp.svelte";
   import PlaySolid from "./icons/play-solid.svelte";
+  import ArrowLeftSolid from "./icons/arrow-left-solid.svelte";
+  import MessageSmsRegular from "./icons/message-sms-regular.svelte";
+  import Whatsapp from "./icons/whatsapp.svelte";
 
-  import io from "socket.io-client";
 
   export let orguuid;
   export let chatname;
@@ -33,13 +39,14 @@
   let webchat_opened = false;
   let switching_enable = false;
 
-  let message = `ski skjdh askdh kasjdh kah skjh d skjdha sjdh kas hkas j  askj dhkasjhdiaushdi uqwhidu qi wdwi `;
+  let message = ``;
   let messages = [];
 
   let socket;
   let allow_switching = true;
   let switching_details = false;
-  let mode_switch = "";
+  let mode_switch = "whatsapp";
+  let mode_switch_value = "";
   let input_placeholder = "Type message...";
 
   let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
@@ -183,6 +190,29 @@
     }
   };
 
+  let sendClientConfig = async () => {
+    if (!socket) {
+      connectSocket();
+      return;
+    }
+
+    if (socket.connected) {
+      await socket.emit("client_configuration", {
+        webchat_configuration: {
+          orguuid,
+          chatname,
+          passthrough_data,
+        },
+        webchat_client_configuration: {
+          platform_switch: {
+            platform_name: mode_switch,
+            value: mode_switch_value
+            },
+        },
+      });
+    }
+  };
+
   let timeFormat = (dateTime) => {
     let hours = dateTime.getHours().toString().padStart(2, "0");
     const minutes = dateTime.getMinutes().toString().padStart(2, "0");
@@ -214,7 +244,7 @@
   };
 
   let openSwitching = () => {
-    switching_enable = true;
+    switching_details = true;
   };
 
   onDestroy(() => {
@@ -250,7 +280,7 @@
     >
       <p class="m-auto mx-2">Chat</p>
       <span class="h-6 w-5 mr-2 my-auto fill-white">
-        <UserSolid viewBox="0 0 24 24" />
+        <UserSolid />
       </span>
     </button>
   {/if}
@@ -273,82 +303,161 @@
         }}
       >
         <span class="w-5 fill-white rotate-45">
-          <CircleXMarkRegular viewBox="0 0 24 24" />
+          <CircleXMarkRegular />
         </span>
       </button>
     </div>
-    <div class="p-4 overflow-y-auto flex-grow hide-scrollbar">
-      {#each messages as messageObject}
-        {#if messageObject.direction == "in"}
-          <div class="mb-2 mr-10 flex flex-col">
-            {#if messageObject.previous_direction == "out"}
-              <p class="m-auto mx-2 text-sm">Agent</p>
-            {/if}
-            <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
-              {#if messageObject.message.type == "markdown"}
-                {@html DOMPurify.sanitize(
-                  marked(messageObject.message.value.trim())
-                )}
+    {#if !switching_details}
+      <div
+        class="p-4 overflow-y-auto flex-grow hide-scrollbar"
+        id="stubber_webchat_message_box"
+      >
+        {#each messages as messageObject}
+          {#if messageObject.direction == "in"}
+            <div class="mb-2 mr-10 flex flex-col">
+              {#if messageObject.previous_direction == "out"}
+                <p class="m-auto mx-2 text-sm">Agent</p>
               {/if}
-              {#if messageObject.message.type == "text"}
-                <p class="">{messageObject.message.value}</p>
-              {/if}
-              <p class="text-sm ml-auto">
-                {timeFormat(messageObject.dateTime)}
-              </p>
-            </div>
-          </div>
-        {/if}
-        {#if messageObject.direction == "out"}
-          <div class="mb-2 ml-10 text-right flex flex-col">
-            <p class="m-auto mx-2 text-sm">You</p>
-            <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
-              <p class="">{messageObject.message}</p>
-              <div class="flex w-full">
-                <p class="text-sm ml-auto mr-2">
+              <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
+                {#if messageObject.message.type == "markdown"}
+                  {@html DOMPurify.sanitize(
+                    marked(messageObject.message.value.trim())
+                  )}
+                {/if}
+                {#if messageObject.message.type == "text"}
+                  <p class="">{messageObject.message.value}</p>
+                {/if}
+                <p class="text-sm ml-auto">
                   {timeFormat(messageObject.dateTime)}
                 </p>
-                <span class="fill-green-400 w-3 my-auto">
-                  <CheckDoubleRegular viewBox="0 0 24 24" />
-                </span>
               </div>
             </div>
-          </div>
-        {/if}
-      {/each}
-    </div>
-    <div class="p-2 flex flex-col bg-gray-300 rounded-t-xl">
-      <div class="h-10 w-full bg-white flex rounded-lg">
-        <input
-          type="text"
-          class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2"
-          bind:value={message}
-          on:keydown={handleEnterPress}
-          placeholder={input_placeholder}
-          autocomplete="off"
-        />
-        <button
-          class="w-7 transition duration-300 pr-2"
-          on:click={sendMessage}
-          disabled={message === ""}
-        >
-          <span class="fill-gray-400">
-            <PaperPlaneTopRegular viewBox="0 0 24 24" />
-          </span>
-        </button>
+          {/if}
+          {#if messageObject.direction == "out"}
+            <div class="mb-2 ml-10 text-right flex flex-col">
+              <p class="m-auto mx-2 text-sm">You</p>
+              <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
+                <p class="">{messageObject.message}</p>
+                <div class="flex w-full">
+                  <p class="text-sm ml-auto mr-2">
+                    {timeFormat(messageObject.dateTime)}
+                  </p>
+                  <span class="fill-green-400 w-3 my-auto">
+                    <CheckDoubleRegular />
+                  </span>
+                </div>
+              </div>
+            </div>
+          {/if}
+        {/each}
       </div>
-      {#if allow_switching}
-        <div class="w-full flex">
+      <div class="p-2 flex flex-col bg-gray-300 rounded-t-xl">
+        <div class="h-10 w-full bg-white flex rounded-lg">
+          <input
+            type="text"
+            class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2"
+            bind:value={message}
+            on:keydown={handleEnterPress}
+            placeholder={input_placeholder}
+            autocomplete="off"
+          />
           <button
-            class="w-25 transition duration-300 my-2 mx-auto"
-            on:click={openSwitching}
+            class="w-7 transition duration-300 pr-2"
+            on:click={sendMessage}
             disabled={message === ""}
           >
-            Switch Chat Channels
+            <span class="fill-gray-400">
+              <PaperPlaneTopRegular />
+            </span>
           </button>
         </div>
-      {/if}
-    </div>
+        {#if allow_switching}
+          <div class="w-full flex">
+            <button
+              class="w-25 transition duration-300 my-2 mx-auto"
+              on:click={openSwitching}
+            >
+              Switch Chat Channels
+            </button>
+          </div>
+        {/if}
+      </div>
+    {/if}
+    {#if switching_details}
+      <div class="p-2 flex flex-col bg-white rounded-t-xl h-full pt-4">
+        <div class="flex w-full pl-2">
+          <button
+            class="w-6 h-25 my-auto transition duration-300 rounded-md mx-1"
+            on:click={() => {
+              switching_details = false;
+            }}
+          >
+            <span class="fill-gray-400">
+              <ArrowLeftSolid />
+            </span>
+          </button>
+          <p class="h-25 mx-2 my-auto text-gray-400">Back to chat</p>
+        </div>
+        <div class="flex flex-row mt-5">
+          <button
+            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border"
+            on:click={() => {
+              mode_switch = "whatsapp";
+            }}
+          >
+            <span class="fill-gray-400 w-10 mx-auto my-auto">
+              <Whatsapp />
+            </span>
+            <p class="text-gray-400 mx-auto mb-1">Whatsapp</p>
+          </button>
+          <button
+            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border"
+            on:click={() => {
+              mode_switch = "sms";
+            }}
+          >
+            <span class="fill-gray-400 w-10 mx-auto my-auto">
+              <MessageSmsRegular />
+            </span>
+            <p class="text-gray-400 mx-auto mb-1">SMS</p>
+          </button>
+          <button
+            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border"
+            on:click={() => {
+              mode_switch = "email";
+            }}
+          >
+            <span class="fill-gray-400 w-10 mx-auto my-auto">
+              <AtRegular />
+            </span>
+            <p class="text-gray-400 mx-auto mb-1">Email</p>
+          </button>
+        </div>
+        <div class="flex flex-col mt-5 mx-2 ">
+          {#if mode_switch == "whatsapp"}
+            <FormTelInput name="contact" label="Cellphone Number" bind:value={mode_switch_value}/>
+          {/if}
+          {#if mode_switch == "sms"}
+            <FormTelInput name="contact" label="Cellphone Number" bind:value={mode_switch_value}/>
+          {/if}
+          {#if mode_switch == "email"}
+            <FormTextInput
+              name="contact"
+              label="Email Address"
+              regex={emailRegex}
+              validationMessage="Invalid Email"
+              bind:value={mode_switch_value}
+            />
+          {/if}
+        </div>
+        <button
+              class="w-32 h-10 transition duration-300 my-2 mx-auto bg-gray-300 rounded-xl"
+              on:click={sendClientConfig}
+            >
+              Submit
+        </button>
+      </div>
+    {/if}
   </div>
 {/if}
 <!-- <div class="fixed bottom-0 right-0 mb-4 mr-4 w-96 flex justify-end">
