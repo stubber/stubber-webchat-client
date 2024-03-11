@@ -20,66 +20,50 @@
 /* Theme */
 .stubber_webchat_theme {
   --primary-color: rgb(34, 0, 255);
-  --secondary-color: #00ffdd;
-  --neutral-color: #ffffff;
+  --background-color: white;
+  --neutral-color: #909090;
 }
 
-.stubber_webchat_input_box {
+.stubber_webchat_input_box,
+.stubber_webchat_top_box,
+.stubber_webchat_outer_box,
+.stubber_webchat_chat_button {
   background-color: var(--primary-color);
-  color: var(--neutral-color);
+  color: var(--background-color);
 }
 
-.stubber_webchat_top_box {
-  background-color: var(--primary-color);
-  color: var(--neutral-color);
-}
-
-.stubber_webchat_outer_box {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
-  border-width: 1px;
-}
-
-.stubber_webchat_message_box {
-  background-color: var(--neutral-color);
+.stubber_webchat_message_box,
+.stubber_webchat_outer_box,
+.stubber_webchat_switch_box {
+  background-color: var(--background-color);
   border: 1px solid var(--primary-color);
 }
 
 .stubber_webchat_switch_box {
-  background-color: var(--neutral-color);
-}
-
-.stubber_webchat_chat_button {
-  background-color: var(--primary-color);
-  color: var(--neutral-color);
-}
-
-.stubber_webchat_chat_button_selected {
-  background-color: var(--secondary-color);
-  color: var(--neutral-color);
+  border: none
 }
 
 .stubber_webchat_chat_button_border_fill {
-  background-color: var(--neutral-color);
-  fill: var(--primary-color);
+  background-color: var(--background-color);
+  border: var(--neutral-color);
+  fill: var(--neutral-color);
 }
 
 .stubber_webchat_chat_button_border_fill_selected {
-  fill: var(--secondary-color);
-  border-color: var(--secondary-color);
+  border-color: var(--primary-color);
+  fill: var(--primary-color);
 }
 
 .stubber_webchat_chat_button:hover {
-  background-color: var(--secondary-color);
-  color: var(--neutral-color);
+  opacity: 0.5
 }
 
-.stubber_webchat_text_neutral {
+.stubber_webchat_breadcrumb_fill {
   color: var(--primary-color);
   fill: var(--primary-color);
 }
 
-.stubber_webchat_fill {
+.stubber_webchat_message_tick {
   fill: var(--primary-color);
 }
 

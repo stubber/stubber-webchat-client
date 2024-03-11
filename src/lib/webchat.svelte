@@ -38,7 +38,7 @@
   export let open_on_load;
   export let passthrough_data;
 
-  let webchat_enable = false;
+  let webchat_enable = true;
   let webchat_opened = false;
   let switching_enable = false;
 
@@ -48,7 +48,7 @@
   let socket;
   let allow_switching = true;
   let switching_details = true;
-  let mode_switch = "whatsapp";
+  let mode_switch = "";
   let mode_switch_value = "";
   let contactPointType = "";
   let input_placeholder = "Type message...";
@@ -354,7 +354,7 @@
                   <p class="text-sm ml-auto mr-2">
                     {timeFormat(messageObject.dateTime)}
                   </p>
-                  <span class="fill-green-400 w-3 my-auto bg-red">
+                  <span class="stubber_webchat_message_tick w-3 my-auto bg-red">
                     <CheckDoubleRegular />
                   </span>
                 </div>
@@ -396,7 +396,7 @@
       </div>
     {/if}
     {#if switching_details}
-      <div class="p-2 flex flex-col bg-white rounded-t-xl h-full pt-4 stubber_webchat_switch_box">
+      <div class="p-2 flex flex-col bg-white h-full stubber_webchat_switch_box">
         <div class="flex w-full pl-2">
           <button
             class="w-6 h-25 my-auto transition duration-300 rounded-md mx-1"
@@ -404,11 +404,11 @@
               switching_details = false;
             }}
           >
-            <span class="stubber_webchat_text_neutral">
+            <span class="stubber_webchat_breadcrumb_fill">
               <ArrowLeftSolid />
             </span>
           </button>
-          <p class="h-25 mx-2 my-auto stubber_webchat_text_neutral">Back to chat</p>
+          <p class="h-25 mx-2 my-auto stubber_webchat_breadcrumb_fill">Back to chat</p>
         </div>
         <div class="flex flex-row mt-5">
           <button
