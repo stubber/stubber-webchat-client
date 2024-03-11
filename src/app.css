@@ -58,6 +58,11 @@
   opacity: 0.5
 }
 
+.stubber_webchat_chat_button:disabled {
+  background-color: var(--neutral-color);
+  color: var(--background-color);
+}
+
 .stubber_webchat_breadcrumb_fill {
   color: var(--primary-color);
   fill: var(--primary-color);
@@ -67,3 +72,10 @@
   fill: var(--primary-color);
 }
 
+.stubber_webchat_general_input {
+  border:1px solid var(--primary-color);
+}
+
+.stubber_webchat_general_input_error {
+  border:1px solid red
+}

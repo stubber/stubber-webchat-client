@@ -10,6 +10,7 @@
   export let readonly = false;
   export let disabled = false;
   export let tooltipText = "";
+  export let isError = false;
 
   $: regexObj = new RegExp(regex);
   //validate
@@ -47,9 +48,9 @@
       type="text"
       id="input_${name}"
       placeholder={placeholder || label}
-      class="block w-full text-field rounded-md border-0 py-2 pl-3 text-surface-900 ring-1 ring-inset {isError
-        ? 'ring-red-500'
-        : 'ring-surface-300 focus:ring-primary-400'} focus:outline-none placeholder:text-surface-400 focus:ring-2 focus:ring-inset"
+      class="block w-full text-field rounded-md py-2 pl-3 text-surface-900 focus:outline-none placeholder:text-surface-400"
+      class:stubber_webchat_general_input={!isError}
+      class:stubber_webchat_general_input_error={isError}
       {name}
       bind:value
     />
