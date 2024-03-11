@@ -16,6 +16,12 @@
       if (iti.isValidNumber()) {
         isError = false;
         intVal = iti.getNumber();
+        console.log({
+          intVal,
+          isError,
+          isValid: iti.isValidNumber(),
+          dialCode: iti.getSelectedCountryData().dialCode,
+        })
       } else {
         isError = true;
       }
@@ -61,7 +67,7 @@
       type="tel"
       id="input_${name}"
       class="block w-full text-field rounded-md border-0 py-2 pl-3 text-surface-900 ring-1 ring-inset {isError
-        ? 'ring-danger-500'
+        ? 'ring-red-500'
         : 'ring-surface-300 focus:ring-primary-400'} focus:outline-none placeholder:text-surface-400 focus:ring-2 focus:ring-inset"
       bind:value
     />

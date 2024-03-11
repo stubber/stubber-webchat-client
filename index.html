@@ -8,8 +8,13 @@
   </head>
   <script type="module" src="/src/main.js"></script>
   <body style="background-color: grey">
-    <stubber-webchat orguuid="d36df47c-a1d4-55e5-9d7c-0f3f20aec7cf" chatname="devtest" connect_on_load="true" passthrough_data="{'some':'data'}" chat_display_name="Dev Test"></stubber-webchat>
+    <stubber-webchat orguuid="d36df47c-a1d4-55e5-9d7c-0f3f20aec7cf" chatname="devtest" connect_on_open="true" open_on_load="true" passthrough_data="{'some':'data'}" chat_display_name="Dev Test"></stubber-webchat>
   </body>
   <style>
+    .stubber_webchat_theme{
+      /* --primary-color: rgb(0, 8, 255);
+      --secondary-color: #00fbff;
+      --neutral-color: #ffffff; */
+    }
   </style>
 </html>

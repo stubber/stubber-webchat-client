@@ -9,8 +9,10 @@
   console.log("stubber webchat v1.2");
 
   import { onDestroy, onMount } from "svelte";
+  import Form from "./browser/components/Form.svelte";
   import FormTelInput from "./browser/components/forminputs/FormTelInput.svelte";
   import FormTextInput from "./browser/components/forminputs/FormTextInput.svelte";
+  import GeneralInput from "./browser/components/forms/generalInput.svelte";
 
   import DOMPurify from "dompurify";
   import { marked } from "marked";
@@ -32,10 +34,11 @@
   export let orguuid;
   export let chatname;
   export let chat_display_name;
-  export let connect_on_load;
+  export let connect_on_open;
+  export let open_on_load;
   export let passthrough_data;
 
-  let webchat_enable = true;
+  let webchat_enable = false;
   let webchat_opened = false;
   let switching_enable = false;
 
@@ -44,18 +47,23 @@
 
   let socket;
   let allow_switching = true;
-  let switching_details = false;
+  let switching_details = true;
   let mode_switch = "whatsapp";
   let mode_switch_value = "";
+  let contactPointType = "";
   let input_placeholder = "Type message...";
 
-  let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
+  let isValueValid;
 
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
   onMount(() => {
     console.log("__Mounted");
-    if (connect_on_load && webchat_enable) {
+    if (open_on_load === "true") {
+      openWebchat();
+      return
+    }
+    if (connect_on_open && webchat_enable) {
       connectSocket();
     }
   });
@@ -87,7 +95,7 @@
     });
 
     socket.on("webchat_message", (data) => {
-      let previous_direction = "in";
+      let previous_direction = null;
 
       if (messages.length > 0) {
         previous_direction = messages[messages.length - 1].direction;
@@ -190,11 +198,12 @@
     }
   };
 
-  let sendClientConfig = async () => {
+  let sendClientConfig = async (contactPoint) => {
     if (!socket) {
       connectSocket();
-      return;
     }
+
+    console.log("sent config")
 
     if (socket.connected) {
       await socket.emit("client_configuration", {
@@ -206,7 +215,7 @@
         webchat_client_configuration: {
           platform_switch: {
             platform_name: mode_switch,
-            value: mode_switch_value
+            value: contactPoint
             },
         },
       });
@@ -238,7 +247,7 @@
     webchat_enable = true;
     switching_enable = false;
 
-    if (connect_on_load === "true" && !webchat_opened) connectSocket();
+    if (connect_on_open === "true" && !webchat_opened) connectSocket();
 
     webchat_opened = true;
   };
@@ -272,10 +281,10 @@
   </style>
 </svelte:head>
 
-<div class="fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end">
+<div class="stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end">
   {#if !webchat_enable}
     <button
-      class="py-2 px-2 rounded-md transition duration-300 flex bg-gray-400 hover:bg-gray-500 text-white"
+      class="py-2 px-2 rounded-md transition duration-300 flex stubber_webchat_chat_button"
       on:click={openWebchat}
     >
       <p class="m-auto mx-2">Chat</p>
@@ -287,13 +296,16 @@
 </div>
 
 {#if webchat_enable}
-  <div
-    class="fixed right-0 bottom-0 w-96 h-3/4 flex flex-col justify-end bg-white mr-4 transition duration-300 rounded-t-xl"
+  <div 
+    class="stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-full pt-4"
+  >
+  <div 
+    class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
   >
     <div
-      class="pl-4 p-3 border-b text-black rounded-t-lg flex justify-between items-center bg-gray-400 h-15"
+      class="pl-4 p-3 border-b text-black rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"
     >
-      <p class="text-lg font-semibold text-white">
+      <p class="text-lg font-semibold">
         {!chat_display_name ? "" : chat_display_name}
       </p>
       <button
@@ -315,7 +327,7 @@
         {#each messages as messageObject}
           {#if messageObject.direction == "in"}
             <div class="mb-2 mr-10 flex flex-col">
-              {#if messageObject.previous_direction == "out"}
+              {#if messageObject.previous_direction == "out" || !messageObject.previous_direction}
                 <p class="m-auto mx-2 text-sm">Agent</p>
               {/if}
               <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
@@ -342,7 +354,7 @@
                   <p class="text-sm ml-auto mr-2">
                     {timeFormat(messageObject.dateTime)}
                   </p>
-                  <span class="fill-green-400 w-3 my-auto">
+                  <span class="fill-green-400 w-3 my-auto bg-red">
                     <CheckDoubleRegular />
                   </span>
                 </div>
@@ -351,8 +363,8 @@
           {/if}
         {/each}
       </div>
-      <div class="p-2 flex flex-col bg-gray-300 rounded-t-xl">
-        <div class="h-10 w-full bg-white flex rounded-lg">
+      <div class="p-2 flex flex-col bg-gray-300 rounded-t-xl stubber_webchat_input_box">
+        <div class="h-10 w-full bg-white flex rounded-lg text-black">
           <input
             type="text"
             class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2"
@@ -384,7 +396,7 @@
       </div>
     {/if}
     {#if switching_details}
-      <div class="p-2 flex flex-col bg-white rounded-t-xl h-full pt-4">
+      <div class="p-2 flex flex-col bg-white rounded-t-xl h-full pt-4 stubber_webchat_switch_box">
         <div class="flex w-full pl-2">
           <button
             class="w-6 h-25 my-auto transition duration-300 rounded-md mx-1"
@@ -392,187 +404,60 @@
               switching_details = false;
             }}
           >
-            <span class="fill-gray-400">
+            <span class="stubber_webchat_text_neutral">
               <ArrowLeftSolid />
             </span>
           </button>
-          <p class="h-25 mx-2 my-auto text-gray-400">Back to chat</p>
+          <p class="h-25 mx-2 my-auto stubber_webchat_text_neutral">Back to chat</p>
         </div>
         <div class="flex flex-row mt-5">
           <button
-            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border"
+            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border stubber_webchat_chat_button_border_fill"
+            class:stubber_webchat_chat_button_border_fill_selected={mode_switch == "whatsapp"}
             on:click={() => {
               mode_switch = "whatsapp";
+              contactPointType = "mobile";
             }}
           >
-            <span class="fill-gray-400 w-10 mx-auto my-auto">
+            <span class="w-10 mx-auto my-auto">
               <Whatsapp />
             </span>
-            <p class="text-gray-400 mx-auto mb-1">Whatsapp</p>
+            <p class="mx-auto mb-1">Whatsapp</p>
           </button>
           <button
-            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border"
+            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border stubber_webchat_chat_button_border_fill"
+            class:stubber_webchat_chat_button_border_fill_selected={mode_switch == "sms"}
             on:click={() => {
               mode_switch = "sms";
+              contactPointType = "mobile";
             }}
           >
-            <span class="fill-gray-400 w-10 mx-auto my-auto">
+            <span class="w-10 mx-auto my-auto">
               <MessageSmsRegular />
             </span>
-            <p class="text-gray-400 mx-auto mb-1">SMS</p>
+            <p class="mx-auto mb-1">SMS</p>
           </button>
           <button
-            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border"
+            class="h-24 w-28 mx-auto rounded-xl flex flex-col border stubber_webchat_chat_button_border_fill"
+            class:stubber_webchat_chat_button_border_fill_selected={mode_switch == "email"}
             on:click={() => {
               mode_switch = "email";
+              contactPointType = "email";
             }}
           >
-            <span class="fill-gray-400 w-10 mx-auto my-auto">
+            <span class=" w-10 mx-auto my-auto">
               <AtRegular />
             </span>
-            <p class="text-gray-400 mx-auto mb-1">Email</p>
+            <p class=" mx-auto mb-1">Email</p>
           </button>
         </div>
-        <div class="flex flex-col mt-5 mx-2 ">
-          {#if mode_switch == "whatsapp"}
-            <FormTelInput name="contact" label="Cellphone Number" bind:value={mode_switch_value}/>
-          {/if}
-          {#if mode_switch == "sms"}
-            <FormTelInput name="contact" label="Cellphone Number" bind:value={mode_switch_value}/>
-          {/if}
-          {#if mode_switch == "email"}
-            <FormTextInput
-              name="contact"
-              label="Email Address"
-              regex={emailRegex}
-              validationMessage="Invalid Email"
-              bind:value={mode_switch_value}
-            />
-          {/if}
-        </div>
-        <button
-              class="w-32 h-10 transition duration-300 my-2 mx-auto bg-gray-300 rounded-xl"
-              on:click={sendClientConfig}
-            >
-              Submit
-        </button>
+          <div class="flex flex-col">
+            <div class="flex flex-col mt-5 mx-2">
+              <GeneralInput contactPointType={contactPointType} submit={sendClientConfig}/>
+            </div>
+          </div>
       </div>
     {/if}
+  </div>
   </div>
 {/if}
-<!-- <div class="fixed bottom-0 right-0 mb-4 mr-4 w-96 flex justify-end">
-  {#if allow_switching && webchat_enable}
-
-        <button
-          class="stubber_webchat_switch_button py-2 px-4 rounded-md transition duration-300 flex items-center"
-          on:click={openSwitching}
-          class:stubber_webchat_switch_button_selected={webchat_enable && switching_enable}
-        >
-          Switch platforms
-        </button>
-    {/if}
-  <button
-    class="stubber_webchat_enable_button ml-2 py-2 px-4 rounded-md transition duration-300 items-center"
-    on:click={openWebchat}
-    class:stubber_webchat_enable_button_selected={webchat_enable && !switching_details && !switching_enable}
-  >
-    Chat
-  </button>
-</div>
-{#if webchat_enable}
-  <div
-    class="stubber_webchat_container fixed bottom-16 right-4 w-96 rounded-lg"
-  >
-    <div class="bg-white shadow-md rounded-lg max-w-lg w-full">
-      <div
-        class="stubber_webchat_top_container p-4 border-b text-white rounded-t-lg flex justify-between items-center"
-      >
-        <p class="text-lg font-semibold">
-          {!chat_display_name ? "" : chat_display_name}
-        </p>
-        <button
-          id="close-chat"
-          class="stubber_webchat_minimize_button focus:outline-none"
-          on:click={() => {
-            webchat_enable = false;
-          }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="stubber_webchat_minimize_button_svg w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-      </div>
-
-      <div class="p-4 h-96 overflow-y-auto stubber_webchat_message_box">
-        {#if !switching_enable}
-          {#each messages as messageObject}
-            {#if messageObject.direction == "in"}
-              <div class="mb-2">
-                {#if messageObject.message.type == "markdown"}
-                  <div class="bg-gray-200 rounded-lg py-2 px-4 inline-block">
-                    {@html DOMPurify.sanitize(
-                      marked(messageObject.message.value.trim())
-                    )}
-                  </div>
-                {/if}
-                {#if messageObject.message.type == "text"}
-                  <p class="bg-gray-200 rounded-lg py-2 px-4 inline-block">
-                    {messageObject.message.value}
-                  </p>
-                {/if}
-              </div>
-            {/if}
-            {#if messageObject.direction == "out"}
-              <div class="mb-2 text-right">
-                <p
-                  class="bg-gray-200 text-gray-700 rounded-lg py-2 px-4 inline-block"
-                >
-                  {messageObject.message}
-                </p>
-              </div>
-            {/if}
-          {/each}
-        {/if}
-        {#if switching_enable}
-          <FormTelInput name="contact" label="Cellphone Number" />
-          <FormTextInput
-          name="contact"
-            label="Email Address"
-            regex={emailRegex}
-            validationMessage="Invalid Email"
-          />
-        {/if}
-      </div>
-      <div class="p-4 border-t flex h-20">
-        {#if !switching_enable}
-        <input
-          type="text"
-          class="w-full px-3 py-2 border rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          bind:value={message}
-          on:keydown={handleEnterPress}
-          placeholder={input_placeholder}
-          autocomplete="off"
-        />
-        <button
-          class="stubber_webchat_message_send_button px-4 py-2 rounded-r-md transition duration-300"
-          on:click={sendMessage}
-          disabled={message === ""}
-        >
-          Send
-        </button>
-        {/if}
-      </div>
-    </div> 
-  </div>
-{/if} -->

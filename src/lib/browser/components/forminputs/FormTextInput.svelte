@@ -48,13 +48,13 @@
       id="input_${name}"
       placeholder={placeholder || label}
       class="block w-full text-field rounded-md border-0 py-2 pl-3 text-surface-900 ring-1 ring-inset {isError
-        ? 'ring-danger-500'
+        ? 'ring-red-500'
         : 'ring-surface-300 focus:ring-primary-400'} focus:outline-none placeholder:text-surface-400 focus:ring-2 focus:ring-inset"
       {name}
       bind:value
     />
   </div>
   {#if isError && validationMessage}
-    <p class="text-label text-danger-500">{validationMessage}</p>
+    <!-- <p class="text-label text-danger-500">{validationMessage}</p> -->
   {/if}
 </div>
