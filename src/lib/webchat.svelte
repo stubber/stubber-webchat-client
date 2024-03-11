@@ -403,7 +403,7 @@
         </div>
         <div class="flex flex-row mt-5">
           <button
-            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border stubber_webchat_chat_button_border_fill"
+            class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
             class:stubber_webchat_chat_button_border_fill_selected={mode_switch == "whatsapp"}
             on:click={() => {
               mode_switch = "whatsapp";
@@ -416,7 +416,7 @@
             <p class="mx-auto mb-1">Whatsapp</p>
           </button>
           <button
-            class="h-24 w-28 mx-auto rounded-xl fill-gray-400 flex flex-col border stubber_webchat_chat_button_border_fill"
+            class="w-15 mx-auto rounded-xl  flex flex-col stubber_webchat_chat_button_border_fill"
             class:stubber_webchat_chat_button_border_fill_selected={mode_switch == "sms"}
             on:click={() => {
               mode_switch = "sms";
@@ -429,7 +429,7 @@
             <p class="mx-auto mb-1">SMS</p>
           </button>
           <button
-            class="h-24 w-28 mx-auto rounded-xl flex flex-col border stubber_webchat_chat_button_border_fill"
+            class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
             class:stubber_webchat_chat_button_border_fill_selected={mode_switch == "email"}
             on:click={() => {
               mode_switch = "email";
