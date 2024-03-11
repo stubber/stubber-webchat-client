@@ -9,9 +9,6 @@
   console.log("stubber webchat v1.2");
 
   import { onDestroy, onMount } from "svelte";
-  import Form from "./browser/components/Form.svelte";
-  import FormTelInput from "./browser/components/forminputs/FormTelInput.svelte";
-  import FormTextInput from "./browser/components/forminputs/FormTextInput.svelte";
   import GeneralInput from "./browser/components/forms/generalInput.svelte";
 
   import DOMPurify from "dompurify";
@@ -21,11 +18,8 @@
   import AtRegular from "./icons/at-regular.svelte";
   import CheckDoubleRegular from "./icons/check-double-regular.svelte";
   import CircleXMarkRegular from "./icons/circle-xmark-regular.svelte";
-  import MessageSMSRegular from "./icons/message-sms-regular.svelte";
   import PaperPlaneTopRegular from "./icons/paper-plane-top-regular.svelte";
   import UserSolid from "./icons/user-solid.svelte";
-  import Whastsapp from "./icons/whatsapp.svelte";
-  import PlaySolid from "./icons/play-solid.svelte";
   import ArrowLeftSolid from "./icons/arrow-left-solid.svelte";
   import MessageSmsRegular from "./icons/message-sms-regular.svelte";
   import Whatsapp from "./icons/whatsapp.svelte";
@@ -49,11 +43,8 @@
   let allow_switching = true;
   let switching_details = true;
   let mode_switch = "";
-  let mode_switch_value = "";
   let contactPointType = "";
   let input_placeholder = "Type message...";
-
-  let isValueValid;
 
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 
