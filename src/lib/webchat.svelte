@@ -32,7 +32,7 @@
   export let open_on_load;
   export let passthrough_data;
 
-  let webchat_enable = true;
+  let webchat_enable = false;
   let webchat_opened = false;
   let switching_enable = false;
 
@@ -41,7 +41,7 @@
 
   let socket;
   let allow_switching = true;
-  let switching_details = true;
+  let switching_details = false;
   let mode_switch = "";
   let contactPointType = "";
   let input_placeholder = "Type message...";
