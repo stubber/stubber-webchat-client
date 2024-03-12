@@ -68,8 +68,12 @@
   fill: var(--primary-color);
 }
 
-.stubber_webchat_message_tick {
+.stubber_webchat_message_tick_received {
   fill: var(--primary-color);
+}
+
+.stubber_webchat_message_tick_pending {
+  fill: var(--neutral-color);
 }
 
 .stubber_webchat_general_input {

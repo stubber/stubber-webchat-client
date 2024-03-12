@@ -69,7 +69,7 @@
         await socket.emit("initialize", {
           webchat_configuration: {
             orguuid,
-            chatName,
+            chatname: chatName,
             initialize: true,
             passthroughData,
           },
@@ -118,6 +118,10 @@
           switchWhatsapp = data[key]?.value?.whatsapp;
           switchSMS = data[key]?.value?.sms;
           switchEmail = data[key]?.value?.email;
+
+          if (switchingOpened && !switchWhatsapp && !switchSMS && !switchEmail) {
+            switchingOpened = false;
+          }
         }
       });
     });
@@ -161,6 +165,7 @@
     autoScroll();
 
     if (socket.connected) {
+      console.log("sent message")
       await socket.emit("message", {
         webchat_configuration: {
           orguuid,
@@ -336,7 +341,9 @@
                       {timeFormat(messageObject.dateTime)}
                     </p>
                     <span
-                      class="stubber_webchat_message_tick w-3 my-auto bg-red"
+                      class="w-3 my-auto bg-red"
+                      class:stubber_webchat_message_tick_received={messageObject.received}
+                      class:stubber_webchat_message_tick_pending={!messageObject.received}
                     >
                       <CheckDoubleRegular />
                     </span>
