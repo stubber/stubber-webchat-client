@@ -32,6 +32,7 @@
   let input_placeholder = "Type message...";
 
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
+  let WEBCHAT_API_SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
   // onMount(() => {
   //   console.log("__Mounted");
@@ -39,7 +40,10 @@
   // });
 
   let connectSocket = () => {
-    socket = io(WEBCHAT_API_URL);
+    socket = io(WEBCHAT_API_URL, {
+      path: WEBCHAT_API_SOCKET_PATH
+    });
+
     console.log(WEBCHAT_API_URL);
 
     socket.on("connect", async () => {
