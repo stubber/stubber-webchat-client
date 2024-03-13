@@ -33,6 +33,7 @@
 
   let socket;
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
+  let WEBCHAT_API_SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
   let message = ``;
   let messages = [];
@@ -60,7 +61,9 @@
   });
 
   let connectSocket = () => {
-    socket = io(WEBCHAT_API_URL);
+    socket = io(WEBCHAT_API_URL, {
+      path: WEBCHAT_API_SOCKET_PATH
+    });
 
     socket.on("connect", async () => {
       console.log("___Connected to server");
