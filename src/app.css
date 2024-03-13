@@ -24,6 +24,10 @@
   --neutral-color: #909090;
 }
 
+.stubber_webchat_outer_box {
+  z-index: 50;
+}
+
 .stubber_webchat_input_box,
 .stubber_webchat_top_box,
 .stubber_webchat_outer_box,

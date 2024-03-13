@@ -262,14 +262,14 @@
   });
 </script>
 
-<svelte:head>
+<!-- <svelte:head> -->
   <style>
     @import "../app.css";
   </style>
-</svelte:head>
+<!-- </svelte:head> -->
 
 <div
-  class="stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
+  class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
 >
   {#if !webchatEnable}
     <button
@@ -286,7 +286,7 @@
 
 {#if webchatEnable}
   <div
-    class="stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-full pt-4"
+    class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-full pt-4"
   >
     <div
       class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
