@@ -1,28 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Tailwind CSS with @apply */
-.hide-scrollbar::-webkit-scrollbar {
-  @apply hidden;
-}
-
-.hide-scrollbar {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
-}
-
 .stubber_webchat_message_box {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-/* Theme */
-.stubber_webchat_theme {
-  --primary-color: rgb(34, 0, 255);
+/* .stubber_webchat_theme {
+  --primary-color: rgb(69, 69, 69);
   --background-color: white;
   --neutral-color: #909090;
-}
+} */
 
 .stubber_webchat_outer_box {
   z-index: 50;

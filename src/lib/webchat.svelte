@@ -262,14 +262,24 @@
   });
 </script>
 
-<!-- <svelte:head> -->
+<svelte:head>
   <style>
-    @import "../app.css";
+    .stubber_webchat_theme {
+      --primary-color: rgb(150, 150, 150);
+      --background-color: white;
+      --neutral-color: #909090;
+    }
   </style>
-<!-- </svelte:head> -->
+</svelte:head>
+
+<style>
+  @import "./styles/tailwind.css";
+  @import "../app.css";
+</style>
+
 
 <div
-  class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
+  class="stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
 >
   {#if !webchatEnable}
     <button
