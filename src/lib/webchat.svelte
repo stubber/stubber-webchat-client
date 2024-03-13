@@ -62,7 +62,7 @@
 
   let connectSocket = () => {
     socket = io(WEBCHAT_API_URL, {
-      path: WEBCHAT_API_SOCKET_PATH
+      path: WEBCHAT_API_SOCKET_PATH,
     });
 
     socket.on("connect", async () => {
@@ -114,7 +114,7 @@
     socket.on("webchat_client_configuration", (data) => {
       let settings = Object.keys(data);
 
-      console.log(data)
+      console.log(data);
 
       settings.forEach((key) => {
         if (data[key].type == "switching") {
@@ -122,7 +122,12 @@
           switchSMS = data[key]?.value?.sms;
           switchEmail = data[key]?.value?.email;
 
-          if (switchingOpened && !switchWhatsapp && !switchSMS && !switchEmail) {
+          if (
+            switchingOpened &&
+            !switchWhatsapp &&
+            !switchSMS &&
+            !switchEmail
+          ) {
             switchingOpened = false;
           }
         }
@@ -168,7 +173,7 @@
     autoScroll();
 
     if (socket.connected) {
-      console.log("sent message")
+      console.log("sent message");
       await socket.emit("message", {
         webchat_configuration: {
           orguuid,
@@ -261,12 +266,6 @@
     }
   });
 </script>
-
-<svelte:head>
-  <style>
-    @import "../app.css";
-  </style>
-</svelte:head>
 
 <div
   class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
@@ -411,52 +410,52 @@
           </div>
           <div class="flex flex-row mt-5">
             {#if switchWhatsapp}
-            <button
-              class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
-              class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
-                "whatsapp"}
-              on:click={() => {
-                switchPlatform = "whatsapp";
-                contactPointType = "mobile";
-              }}
-            >
-              <span class="w-10 mx-auto my-auto">
-                <Whatsapp />
-              </span>
-              <p class="mx-auto mb-1">Whatsapp</p>
-            </button>
+              <button
+                class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
+                class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
+                  "whatsapp"}
+                on:click={() => {
+                  switchPlatform = "whatsapp";
+                  contactPointType = "mobile";
+                }}
+              >
+                <span class="w-10 mx-auto my-auto">
+                  <Whatsapp />
+                </span>
+                <p class="mx-auto mb-1">Whatsapp</p>
+              </button>
             {/if}
             {#if switchSMS}
-            <button
-              class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
-              class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
-                "sms"}
-              on:click={() => {
-                switchPlatform = "sms";
-                contactPointType = "mobile";
-              }}
-            >
-              <span class="w-10 mx-auto my-auto">
-                <MessageSmsRegular />
-              </span>
-              <p class="mx-auto mb-1">SMS</p>
-            </button>
+              <button
+                class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
+                class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
+                  "sms"}
+                on:click={() => {
+                  switchPlatform = "sms";
+                  contactPointType = "mobile";
+                }}
+              >
+                <span class="w-10 mx-auto my-auto">
+                  <MessageSmsRegular />
+                </span>
+                <p class="mx-auto mb-1">SMS</p>
+              </button>
             {/if}
             {#if switchEmail}
-            <button
-              class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
-              class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
-                "email"}
-              on:click={() => {
-                switchPlatform = "email";
-                contactPointType = "email";
-              }}
-            >
-              <span class=" w-10 mx-auto my-auto">
-                <AtRegular />
-              </span>
-              <p class=" mx-auto mb-1">Email</p>
-            </button>
+              <button
+                class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
+                class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
+                  "email"}
+                on:click={() => {
+                  switchPlatform = "email";
+                  contactPointType = "email";
+                }}
+              >
+                <span class=" w-10 mx-auto my-auto">
+                  <AtRegular />
+                </span>
+                <p class=" mx-auto mb-1">Email</p>
+              </button>
             {/if}
           </div>
           <div class="flex flex-col">
@@ -469,3 +468,7 @@
     </div>
   </div>
 {/if}
+
+<style>
+  @import "../app.css";
+</style>

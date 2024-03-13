@@ -12,13 +12,23 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+/* Tailwind CSS with @apply */
+.hide-scrollbar::-webkit-scrollbar {
+  @apply hidden;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .stubber_webchat_message_box {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
 .stubber_webchat_theme {
-  --primary-color: rgb(150, 150, 150);
+  /* --primary-color: rgb(216, 148, 0); */
   --background-color: white;
   --neutral-color: #909090;
 }
