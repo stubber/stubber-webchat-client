@@ -59,3 +59,7 @@
     <!-- <p class="text-label text-danger-500">{validationMessage}</p> -->
   {/if}
 </div>
+
+<style>
+  @import "../../../../app.css"
+</style>

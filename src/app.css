@@ -34,7 +34,7 @@
 }
 
 .stubber_webchat_outer_box {
-  z-index: 50;
+  z-index: 500;
 }
 
 .stubber_webchat_input_box,
@@ -90,9 +90,9 @@
 }
 
 .stubber_webchat_general_input {
-  border:1px solid var(--primary-color);
+  border:2px solid var(--primary-color);
 }
 
 .stubber_webchat_general_input_error {
-  border:1px solid red
+  border:2px solid red
 }

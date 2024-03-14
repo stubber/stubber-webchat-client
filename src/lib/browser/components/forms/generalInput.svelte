@@ -1,7 +1,7 @@
 <script>
-  import Form from "../Form.svelte";
-  import FormTelInput from "../forminputs/FormTelInput.svelte";
-  import FormTextInput from "../forminputs/FormTextInput.svelte";
+  import Form from "$/lib/browser/components/Form.svelte";
+  import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
+  import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
 
   export let submit; // function
   export let contactPointType;
@@ -52,3 +52,9 @@
     {/if}
   </div>
 </Form>
+
+<style>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+</style>

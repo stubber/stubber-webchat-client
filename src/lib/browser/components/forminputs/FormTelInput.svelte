@@ -1,57 +1,39 @@
 <script>
+  import { onMount } from "svelte";
+  import { isValidPhoneNumber, parsePhoneNumber  } from 'libphonenumber-js'
+
   export let label;
   export let name;
-  export let value;
-  export let validationMessage = "Invalid Number";
+  export let value = "";
   export let readonly = false;
   export let isError;
 
-  let input;
-  let iti;
+  onMount(() => {
+  });
 
-  let intVal;
+  $: isError = !validate(value);
 
-  const checkIsValid = () => {
-    if (input.value.trim()) {
-      if (iti.isValidNumber()) {
-        isError = false;
-        intVal = iti.getNumber();
-        console.log({
-          intVal,
-          isError,
-          isValid: iti.isValidNumber(),
-          dialCode: iti.getSelectedCountryData().dialCode,
-        })
-      } else {
-        isError = true;
-      }
+  const validate = (value) => {
+    if (value == ""){
+      return false;
     }
+
+    let parsedPhoneNumber;
+
+    try { 
+      parsedPhoneNumber = parsePhoneNumber(value);
+    } catch (e) {
+      return false;
+    }
+    
+    if (!isValidPhoneNumber(value)) {
+      return false;
+    }
+
+    return true;
   };
 
-  function renderTelInput() {
-    iti = window.intlTelInput(input, {
-      initialCountry: "auto",
-      geoIpLookup: (callback) => {
-        fetch("https://ipapi.co/json")
-          .then((res) => res.json())
-          .then((data) => callback(data.country_code))
-          .catch(() => callback("us"));
-      },
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/utils.js",
-    });
-  }
 </script>
-
-<svelte:head>
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/css/intlTelInput.css"
-  />
-  <script
-    on:load={renderTelInput}
-    src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.1.1/build/js/intlTelInput.min.js"
-  ></script>
-</svelte:head>
 
 <div class="flex flex-col w-full space-y-2 text-surface-900">
   {#if label}
@@ -59,21 +41,21 @@
       {label}
     </label>
   {/if}
-  <div class="flex flex-col w-full space-y-2 relative mt-2 rounded-md">
+  <div class="relative rounded-md">
     <input
-      on:input={checkIsValid}
-      bind:this={input}
       {readonly}
       type="tel"
       id="input_${name}"
-      class="block w-full text-field rounded-md py-2 pl-3 text-surface-900 focus:outline-none placeholder:text-surface-400"
+      placeholder={'+27 260 280 290'}
+      class="block w-full text-field rounded-md py-2 pl-3 text-surface-900  focus:outline-none placeholder:text-surface-400"
       class:stubber_webchat_general_input={!isError}
       class:stubber_webchat_general_input_error={isError}
+      {name}
       bind:value
     />
-    <input type="hidden" {name} bind:value={intVal} />
   </div>
-  {#if isError && validationMessage}
-    <!-- <p class="text-label text-danger-500">{validationMessage}</p> -->
-  {/if}
 </div>
+
+<style>
+  @import "../../../../app.css"
+</style>

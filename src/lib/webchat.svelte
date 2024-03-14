@@ -6,23 +6,23 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2");
+  console.log("stubber webchat v1.2.8");
 
   import { onDestroy, onMount } from "svelte";
-  import GeneralInput from "./browser/components/forms/generalInput.svelte";
+  import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";
 
   import DOMPurify from "dompurify";
   import { marked } from "marked";
   import io from "socket.io-client";
 
-  import AtRegular from "./icons/at-regular.svelte";
-  import CheckDoubleRegular from "./icons/check-double-regular.svelte";
-  import CircleXMarkRegular from "./icons/circle-xmark-regular.svelte";
-  import PaperPlaneTopRegular from "./icons/paper-plane-top-regular.svelte";
-  import UserSolid from "./icons/user-solid.svelte";
-  import ArrowLeftSolid from "./icons/arrow-left-solid.svelte";
-  import MessageSmsRegular from "./icons/message-sms-regular.svelte";
-  import Whatsapp from "./icons/whatsapp.svelte";
+  import AtRegular from "$/lib/icons/at-regular.svelte";
+  import CheckDoubleRegular from "$/lib/icons/check-double-regular.svelte";
+  import CircleXMarkRegular from "$/lib/icons/circle-xmark-regular.svelte";
+  import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
+  import UserSolid from "$/lib/icons/user-solid.svelte";
+  import ArrowLeftSolid from "$/lib/icons/arrow-left-solid.svelte";
+  import MessageSmsRegular from "$/lib/icons/message-sms-regular.svelte";
+  import Whatsapp from "$/lib/icons/whatsapp.svelte";
 
   export let orguuid;
   export let chatName;
@@ -46,8 +46,8 @@
   let switchSMS = false;
   let switchEmail = false;
 
-  let switchPlatform = "";
-  let contactPointType = "";
+  let switchPlatform = "whatsapp";
+  let contactPointType = "mobile";
 
   onMount(() => {
     console.log("__Mounted");
@@ -231,7 +231,8 @@
     // however the latest message wont be received if the scroll is moved after a message is sent
     // i have to auto scroll when an element is created
     setTimeout(() => {
-      let message_box = document.getElementById("stubber_webchat_message_box");
+      let host = document.querySelector("stubber-webchat");
+      let message_box = host.shadowRoot.getElementById("stubber_webchat_message_box");
       message_box.scrollTop = message_box.scrollHeight;
     }, 100);
   };
@@ -266,7 +267,7 @@
     }
   });
 </script>
-<div part=host>
+<div part=host class="stubber_webchat_outer_box">
   <div
     class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
   >
