@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2.8");
+  console.log("stubber webchat v1.2.9");
 
   import { onDestroy, onMount } from "svelte";
   import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";
@@ -286,7 +286,7 @@
   
   {#if webchatEnable}
     <div
-      class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-dvh pt-4"
+      class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4"
     >
       <div
         class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
