@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2.10");
+  console.log("stubber webchat v1.2.11");
 
   import { onDestroy, onMount } from "svelte";
   import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";

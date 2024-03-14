@@ -33,9 +33,12 @@
   --neutral-color: #909090;
 }
 
+html {
+  font-size: 14px;
+}
+
 .stubber_webchat_outer_box {
   z-index: 500;
-  font-size: 14px;
 }
 
 .stubber_webchat_input_box,
