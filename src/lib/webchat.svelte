@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2.9");
+  console.log("stubber webchat v1.2.10");
 
   import { onDestroy, onMount } from "svelte";
   import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";
@@ -232,7 +232,9 @@
     // i have to auto scroll when an element is created
     setTimeout(() => {
       let host = document.querySelector("stubber-webchat");
-      let message_box = host.shadowRoot.getElementById("stubber_webchat_message_box");
+      let message_box = host.shadowRoot.getElementById(
+        "stubber_webchat_message_box"
+      );
       message_box.scrollTop = message_box.scrollHeight;
     }, 100);
   };
@@ -267,7 +269,8 @@
     }
   });
 </script>
-<div part=host class="stubber_webchat_outer_box">
+
+<div part="host" class="stubber_webchat_outer_box">
   <div
     class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
   >
@@ -283,7 +286,7 @@
       </button>
     {/if}
   </div>
-  
+
   {#if webchatEnable}
     <div
       class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4"
