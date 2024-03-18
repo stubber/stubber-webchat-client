@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2.13");
+  console.log("stubber webchat v1.2.14");
 
   import { onDestroy, onMount } from "svelte";
   import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";
@@ -272,7 +272,7 @@
 
 <div part="host" class="stubber_webchat_outer_box">
   <div
-    class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end text-sm"
+    class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
   >
     {#if !webchatEnable}
       <button
@@ -289,7 +289,7 @@
 
   {#if webchatEnable}
     <div
-      class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4 text-sm"
+      class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4"
     >
       <div
         class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
@@ -297,7 +297,7 @@
         <div
           class="pl-4 p-3 border-b text-black rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"
         >
-          <p class="text-lg font-semibold">
+          <p class="text-2xl font-semibold">
             {!chatDisplayName ? "" : chatDisplayName}
           </p>
           <button
@@ -399,7 +399,7 @@
           >
             <div class="flex w-full pl-2">
               <button
-                class="w-6 h-25 my-auto transition duration-300 rounded-md mx-1"
+                class="w-6 h-24 my-auto transition duration-300 rounded-md mx-1"
                 on:click={() => {
                   switchingOpened = false;
                 }}
@@ -408,14 +408,14 @@
                   <ArrowLeftSolid />
                 </span>
               </button>
-              <p class="h-25 mx-2 my-auto stubber_webchat_breadcrumb_fill">
+              <p class="h-24 mx-2 my-auto stubber_webchat_breadcrumb_fill">
                 Back to chat
               </p>
             </div>
             <div class="flex flex-row mt-5">
               {#if switchWhatsapp}
                 <button
-                  class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
+                  class="w-14 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
                   class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
                     "whatsapp"}
                   on:click={() => {
@@ -431,7 +431,7 @@
               {/if}
               {#if switchSMS}
                 <button
-                  class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
+                  class="w-14 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
                   class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
                     "sms"}
                   on:click={() => {
@@ -447,7 +447,7 @@
               {/if}
               {#if switchEmail}
                 <button
-                  class="w-15 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
+                  class="w-14 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
                   class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
                     "email"}
                   on:click={() => {
@@ -455,7 +455,7 @@
                     contactPointType = "email";
                   }}
                 >
-                  <span class=" w-10 mx-auto my-auto">
+                  <span class="w-10 mx-auto my-auto">
                     <AtRegular />
                   </span>
                   <p class=" mx-auto mb-1">Email</p>

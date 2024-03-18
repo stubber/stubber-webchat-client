@@ -28,17 +28,13 @@
 }
 
 .stubber_webchat_theme {
-  /* --primary-color: rgb(216, 148, 0); */
   --background-color: white;
   --neutral-color: #909090;
 }
 
-html {
-  font-size: 14px !important;
-}
-
 .stubber_webchat_outer_box {
   z-index: 500;
+  font-size: 16px !important;
 }
 
 .stubber_webchat_input_box,
