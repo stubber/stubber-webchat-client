@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
           manualChunks: undefined,
         },
         input: {
-          main: resolve(__dirname, "index.html"),
+          main: resolve(__dirname, "./src/lib/webchat.svelte"),
         },
       },
     },

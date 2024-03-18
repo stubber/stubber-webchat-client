@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2.14");
+  console.log("stubber webchat v1.2.15");
 
   import { onDestroy, onMount } from "svelte";
   import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";
@@ -240,9 +240,17 @@
   };
 
   let openWebchat = () => {
+    console.log("running");
     webchatEnable = true;
 
-    if (connectOnOpen === "true" && !webchatOpened) connectSocket();
+    // if (connectOnOpen === "true" && !webchatOpened) {
+    //   connectSocket();
+    // };
+    if (connectOnOpen === "true") {
+      if (!webchatOpened){
+      };
+      connectSocket();
+    };
 
     webchatOpened = true;
   };
@@ -306,7 +314,7 @@
               webchatEnable = false;
             }}
           >
-            <span class="w-5 fill-white rotate-45">
+            <span class="w-5 fill-white rotate-45 my-auto">
               <CircleXMarkRegular />
             </span>
           </button>
