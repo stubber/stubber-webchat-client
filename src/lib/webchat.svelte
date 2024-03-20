@@ -304,9 +304,9 @@
         class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
       >
         <div
-          class="pl-4 p-3 border-b text-black rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"
+          class="pl-4 p-3 border-b rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"
         >
-          <p class="text-2xl font-semibold">
+          <p class="text-2xl font-semibold stubber_webchat_text">
             {!chatDisplayName ? "" : chatDisplayName}
           </p>
           <button
@@ -393,7 +393,7 @@
             {#if switchWhatsapp || switchEmail || switchSMS}
               <div class="w-full flex">
                 <button
-                  class="w-25 transition duration-300 my-2 mx-auto"
+                  class="w-25 transition duration-300 my-2 mx-auto stubber_webchat_text"
                   on:click={openSwitching}
                 >
                   Switch Chat Channels

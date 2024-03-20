@@ -41,13 +41,14 @@
 .stubber_webchat_top_box,
 .stubber_webchat_chat_button {
   background-color: var(--primary-color);
+  background: var(--background, var(--primary-color));
   color: var(--background-color);
 }
 
 .stubber_webchat_message_box,
 .stubber_webchat_switch_box {
   background-color: var(--background-color);
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--border-color, var(--primary-color));
 }
 
 .stubber_webchat_switch_box {
@@ -93,4 +94,8 @@
 
 .stubber_webchat_general_input_error {
   border:2px solid red
+}
+
+.stubber_webchat_text {
+  color: var(--text-color, white);
 }
