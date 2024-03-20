@@ -57,5 +57,16 @@
 </div>
 
 <style>
-  @import "../../../../app.css"
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  .stubber_webchat_general_input {
+    border:2px solid var(--primary-color);
+  }
+
+  .stubber_webchat_general_input_error {
+    border:2px solid var(--neutral-color)
+  }
 </style>
+

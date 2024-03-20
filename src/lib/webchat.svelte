@@ -212,6 +212,7 @@
           },
         },
       });
+      switchingOpened = false;
     }
   };
 
@@ -243,14 +244,14 @@
     console.log("running");
     webchatEnable = true;
 
-    // if (connectOnOpen === "true" && !webchatOpened) {
-    //   connectSocket();
-    // };
-    if (connectOnOpen === "true") {
-      if (!webchatOpened){
-      };
+    if (connectOnOpen === "true" && !webchatOpened) {
       connectSocket();
     };
+    // if (connectOnOpen === "true") {
+    //   if (!webchatOpened){
+    //   };
+    //   connectSocket();
+    // };
 
     webchatOpened = true;
   };
