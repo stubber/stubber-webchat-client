@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Webchat</title>
-  </head>
-  <script type="module" src="/src/main.js"></script>
-  <body style="background-color: grey">
-    <stubber-webchat orguuid="d36df47c-a1d4-55e5-9d7c-0f3f20aec7cf" chatName="devaitest" connectOnOpen="true" openOnMount="false" passthroughData="{'some':'data'}" chatDisplayName="Smartie"></stubber-webchat>
-  </body>
-  <style>
-    stubber-webchat::part(host) {
-    --primary-color: rgb(70, 70, 70);
+<html>
+<head>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<script type="module" src="/dist/index.js"></script>
+<style>
+  stubber-webchat::part(host) {
+    /* --primary-color: rgb(70, 70, 70); */
+    --primary-color: rgb(0, 137, 146);
   }
-  </style>
+  html {
+    font-size: 116px;
+  }
+</style>
+<body>
+  
+<stubber-webchat orguuid="d36df47c-a1d4-55e5-9d7c-0f3f20aec7cf" chatName="devtest" connectOnOpen="true" openOnMount="false" passthroughData="{'some':'data'}" chatDisplayName="Smartie"></stubber-webchat>
+<!-- Navbar (sit on top) -->
+
+</body>
 </html>
