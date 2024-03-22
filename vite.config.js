@@ -5,7 +5,7 @@ import { resolve } from "path";
 export default defineConfig(({ mode }) => {
   console.log(`Building for ${mode}...`);
 
-  return {
+  let config = {
     plugins: [
       svelte({
         compilerOptions: {
@@ -21,7 +21,6 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          dir: "./dist",
           entryFileNames: "index.js",
           manualChunks: undefined,
         },
@@ -31,5 +30,15 @@ export default defineConfig(({ mode }) => {
       },
     },
     envDir: "./",
-  };
+  }
+
+  if (mode == "development") {
+    config.build.rollupOptions.output.dir = "./dist_dev"
+  }
+
+  if (mode == "production") {
+    config.build.rollupOptions.output.dir = "./dist"
+  }
+
+  return config
 });
