@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("stubber webchat v1.2.15");
+  console.log("stubber webchat v2.0");
 
   import { onDestroy, onMount } from "svelte";
   import GeneralInput from "$/lib/browser/components/forms/generalInput.svelte";
@@ -25,11 +25,11 @@
   import Whatsapp from "$/lib/icons/whatsapp.svelte";
 
   export let orguuid;
-  export let chatName;
-  export let chatDisplayName;
-  export let connectOnOpen;
-  export let openOnMount;
-  export let passthroughData;
+  export let chat_name;
+  export let chat_display_name;
+  export let connect_on_open;
+  export let open_on_mount;
+  export let pass_through_data;
 
   let socket;
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
@@ -38,24 +38,24 @@
   let message = ``;
   let messages = [];
 
-  let webchatEnable = false;
-  let webchatOpened = false;
+  let webchat_enable = false;
+  let webchat_opened = false;
 
-  let switchingOpened = false;
-  let switchWhatsapp = false;
-  let switchSMS = false;
-  let switchEmail = false;
+  let switching_opened = false;
+  let switch_whatsapp = false;
+  let switch_sms = false;
+  let switch_email = false;
 
-  let switchPlatform = "whatsapp";
-  let contactPointType = "mobile";
+  let platform_name = "whatsapp";
+  let contact_point_type = "mobile";
 
   onMount(() => {
     console.log("__Mounted");
-    if (openOnMount === "true") {
+    if (open_on_mount === "true") {
       openWebchat();
       return;
     }
-    if (connectOnOpen && webchatEnable) {
+    if (connect_on_open && webchat_enable) {
       connectSocket();
     }
   });
@@ -72,9 +72,9 @@
         await socket.emit("initialize", {
           webchat_configuration: {
             orguuid,
-            chatname: chatName,
+            chat_name: chat_name,
             initialize: true,
-            passthroughData,
+            pass_through_data,
           },
         });
       }
@@ -118,17 +118,17 @@
 
       settings.forEach((key) => {
         if (data[key].type == "switching") {
-          switchWhatsapp = data[key]?.value?.whatsapp;
-          switchSMS = data[key]?.value?.sms;
-          switchEmail = data[key]?.value?.email;
+          switch_whatsapp = data[key]?.value?.whatsapp;
+          switch_sms = data[key]?.value?.sms;
+          switch_email = data[key]?.value?.email;
 
           if (
-            switchingOpened &&
-            !switchWhatsapp &&
-            !switchSMS &&
-            !switchEmail
+            switching_opened &&
+            !switch_whatsapp &&
+            !switch_sms &&
+            !switch_email
           ) {
-            switchingOpened = false;
+            switching_opened = false;
           }
         }
       });
@@ -177,8 +177,8 @@
       await socket.emit("message", {
         webchat_configuration: {
           orguuid,
-          chatName,
-          passthroughData,
+          chat_name,
+          pass_through_data,
         },
         webchat_message: {
           type: "text",
@@ -202,17 +202,17 @@
       await socket.emit("client_configuration", {
         webchat_configuration: {
           orguuid,
-          chatName,
-          passthroughData,
+          chat_name,
+          pass_through_data,
         },
         webchat_client_configuration: {
           platform_switch: {
-            platform_name: switchPlatform,
+            platform_name: platform_name,
             value: contactPoint,
           },
         },
       });
-      switchingOpened = false;
+      switching_opened = false;
     }
   };
 
@@ -242,22 +242,22 @@
 
   let openWebchat = () => {
     console.log("running");
-    webchatEnable = true;
+    webchat_enable = true;
 
-    if (connectOnOpen === "true" && !webchatOpened) {
+    if (connect_on_open === "true" && !webchat_opened) {
       connectSocket();
     };
-    // if (connectOnOpen === "true") {
-    //   if (!webchatOpened){
+    // if (connect_on_open === "true") {
+    //   if (!webchat_opened){
     //   };
     //   connectSocket();
     // };
 
-    webchatOpened = true;
+    webchat_opened = true;
   };
 
   let openSwitching = () => {
-    switchingOpened = true;
+    switching_opened = true;
   };
 
   onDestroy(() => {
@@ -283,7 +283,7 @@
   <div
     class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
   >
-    {#if !webchatEnable}
+    {#if !webchat_enable}
       <button
         class="py-2 px-2 rounded-md transition duration-300 flex stubber_webchat_chat_button"
         on:click={openWebchat}
@@ -296,7 +296,7 @@
     {/if}
   </div>
 
-  {#if webchatEnable}
+  {#if webchat_enable}
     <div
       class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4"
     >
@@ -307,12 +307,12 @@
           class="pl-4 p-3 border-b rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"
         >
           <p class="text-2xl font-semibold stubber_webchat_text">
-            {!chatDisplayName ? "" : chatDisplayName}
+            {!chat_display_name ? "" : chat_display_name}
           </p>
           <button
             class="rounded-md w-5 mx-1"
             on:click={() => {
-              webchatEnable = false;
+              webchat_enable = false;
             }}
           >
             <span class="w-5 fill-white rotate-45 my-auto">
@@ -320,7 +320,7 @@
             </span>
           </button>
         </div>
-        {#if !switchingOpened}
+        {#if !switching_opened}
           <div
             class="p-4 overflow-y-auto flex-grow hide-scrollbar"
             id="stubber_webchat_message_box"
@@ -390,7 +390,7 @@
                 </span>
               </button>
             </div>
-            {#if switchWhatsapp || switchEmail || switchSMS}
+            {#if switch_whatsapp || switch_email || switch_sms}
               <div class="w-full flex">
                 <button
                   class="w-25 transition duration-300 my-2 mx-auto stubber_webchat_text"
@@ -402,7 +402,7 @@
             {/if}
           </div>
         {/if}
-        {#if switchingOpened}
+        {#if switching_opened}
           <div
             class="p-2 flex flex-col bg-white h-full stubber_webchat_switch_box"
           >
@@ -410,7 +410,7 @@
               <button
                 class="w-6 h-24 my-auto transition duration-300 rounded-md mx-1"
                 on:click={() => {
-                  switchingOpened = false;
+                  switching_opened = false;
                 }}
               >
                 <span class="stubber_webchat_breadcrumb_fill">
@@ -422,14 +422,14 @@
               </p>
             </div>
             <div class="flex flex-row mt-5">
-              {#if switchWhatsapp}
+              {#if switch_whatsapp}
                 <button
                   class="w-14 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
-                  class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
+                  class:stubber_webchat_chat_button_border_fill_selected={platform_name ==
                     "whatsapp"}
                   on:click={() => {
-                    switchPlatform = "whatsapp";
-                    contactPointType = "mobile";
+                    platform_name = "whatsapp";
+                    contact_point_type = "mobile";
                   }}
                 >
                   <span class="w-10 mx-auto my-auto">
@@ -438,14 +438,14 @@
                   <p class="mx-auto mb-1">Whatsapp</p>
                 </button>
               {/if}
-              {#if switchSMS}
+              {#if switch_sms}
                 <button
                   class="w-14 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
-                  class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
+                  class:stubber_webchat_chat_button_border_fill_selected={platform_name ==
                     "sms"}
                   on:click={() => {
-                    switchPlatform = "sms";
-                    contactPointType = "mobile";
+                    platform_name = "sms";
+                    contact_point_type = "mobile";
                   }}
                 >
                   <span class="w-10 mx-auto my-auto">
@@ -454,14 +454,14 @@
                   <p class="mx-auto mb-1">SMS</p>
                 </button>
               {/if}
-              {#if switchEmail}
+              {#if switch_email}
                 <button
                   class="w-14 mx-auto rounded-xl flex flex-col stubber_webchat_chat_button_border_fill"
-                  class:stubber_webchat_chat_button_border_fill_selected={switchPlatform ==
+                  class:stubber_webchat_chat_button_border_fill_selected={platform_name ==
                     "email"}
                   on:click={() => {
-                    switchPlatform = "email";
-                    contactPointType = "email";
+                    platform_name = "email";
+                    contact_point_type = "email";
                   }}
                 >
                   <span class="w-10 mx-auto my-auto">
@@ -473,7 +473,7 @@
             </div>
             <div class="flex flex-col">
               <div class="flex flex-col mt-5 mx-2">
-                <GeneralInput {contactPointType} submit={sendClientConfig} />
+                <GeneralInput {contact_point_type} submit={sendClientConfig} />
               </div>
             </div>
           </div>
