@@ -32,6 +32,7 @@
   export let pass_through_data;
 
   let socket;
+  let sessionuuid = "";
   let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
   let WEBCHAT_API_SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
@@ -72,8 +73,8 @@
         await socket.emit("initialize", {
           webchat_configuration: {
             orguuid,
+            sessionuuid,
             chat_name: chat_name,
-            initialize: true,
             pass_through_data,
           },
         });
@@ -81,6 +82,12 @@
 
       if (message.length > 0) {
         sendMessage();
+      }
+    });
+
+    socket.on("webchat_session", (data) => {
+      if (sessionuuid == ''){
+        sessionuuid = data.sessionuuid
       }
     });
 
@@ -134,6 +141,8 @@
       });
     });
 
+    socket.on("session")
+
     socket.on("error", (data) => {
       console.log("__Stubber Webchat : " + data?.error);
     });
@@ -177,6 +186,7 @@
       await socket.emit("message", {
         webchat_configuration: {
           orguuid,
+          sessionuuid,
           chat_name,
           pass_through_data,
         },
@@ -202,6 +212,7 @@
       await socket.emit("client_configuration", {
         webchat_configuration: {
           orguuid,
+          sessionuuid,
           chat_name,
           pass_through_data,
         },
