@@ -4,7 +4,7 @@
   import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
 
   export let submit; // function
-  export let contactPointType;
+  export let contact_point_type;
 
   //components
   let isError;
@@ -18,7 +18,7 @@
     let contactPoint = {
       contact: formData.get("contact").trim(),
       // type: formData.get("type").trim(),
-      type: contactPointType,
+      type: contact_point_type,
     };
     await submit(contactPoint);
     isSaving = false;
@@ -27,7 +27,7 @@
 
 <Form on:submit={handleSubmit}>
   <div class="w-full md:w-110 space-y-5">
-    {#if contactPointType == "email"}
+    {#if contact_point_type == "email"}
       <FormTextInput
         name="contact"
         label="Email Address"
@@ -36,7 +36,7 @@
         bind:isError
         bind:value={formValue}
       />
-    {:else if contactPointType == "mobile"}
+    {:else if contact_point_type == "mobile"}
       <FormTelInput
         name="contact"
         label="Cellphone Number"
@@ -44,7 +44,7 @@
         bind:value={formValue}
       />
     {/if}
-    {#if contactPointType}
+    {#if contact_point_type}
       <div class="flex flex-row space-x-2 items-center">
         <button
           type="submit"
