@@ -17,19 +17,17 @@
     let isSaving = true;
 
     if (contact_point_type == "email") {
-      let contactPoint = {
+      await submit({
         contact: formattedEmail,
         type: contact_point_type,
-      };
-      await submit(contactPoint);
+      });
     }
 
     if (contact_point_type == "mobile") {
-      let contactPoint = {
+      await submit({
         contact: formattedNumber,
         type: contact_point_type,
-      };
-      await submit(contactPoint);
+      });
     }
 
     isSaving = false;
@@ -52,7 +50,7 @@
         name="contact"
         label="Cellphone Number"
         bind:isError
-        bind:value={formattedNumber}
+        bind:formattedNumber={formattedNumber}
       />
     {/if}
     {#if contact_point_type}
@@ -75,7 +73,7 @@
   @tailwind base;
   @tailwind components;
   @tailwind utilities;
-
+  
   .stubber_webchat_general_input {
     background-color: var(--primary-color);
     color: white;
