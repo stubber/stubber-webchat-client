@@ -3,8 +3,6 @@
   import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
   import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
 
-  import CheckDoubleRegular from "$/lib/icons/check-double-regular.svelte";
-
   export let submit; // function
   export let contactPointType;
 
