@@ -9,7 +9,7 @@
   export let readonly = false;
   export let isError;
 
-  let countrySelected = 'ZA';
+  let countrySelected = 'US';
   let countrySelectionIsOpen = false;
   let countryCodes = getCountries();
   
