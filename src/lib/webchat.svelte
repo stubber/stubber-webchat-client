@@ -69,6 +69,17 @@
     socket.on("connect", async () => {
       console.log("___Connected to server");
 
+      if (sessionuuid != ''){
+        await socket.emit("webchat_session", {
+          webchat_configuration: {
+            orguuid,
+            sessionuuid,
+            chat_name: chat_name,
+            pass_through_data,
+          },
+        });
+      }
+
       if (messages.length == 0) {
         await socket.emit("initialize", {
           webchat_configuration: {
@@ -121,8 +132,6 @@
     socket.on("webchat_client_configuration", (data) => {
       let settings = Object.keys(data);
 
-      console.log(data);
-
       settings.forEach((key) => {
         if (data[key].type == "switching") {
           switch_whatsapp = data[key]?.value?.whatsapp;
@@ -140,8 +149,6 @@
         }
       });
     });
-
-    socket.on("session")
 
     socket.on("error", (data) => {
       console.log("__Stubber Webchat : " + data?.error);
@@ -182,7 +189,6 @@
     autoScroll();
 
     if (socket.connected) {
-      console.log("sent message");
       await socket.emit("message", {
         webchat_configuration: {
           orguuid,
@@ -205,8 +211,6 @@
     if (!socket) {
       connectSocket();
     }
-
-    console.log("sent config");
 
     if (socket.connected) {
       await socket.emit("client_configuration", {
@@ -252,7 +256,6 @@
   };
 
   let openWebchat = () => {
-    console.log("running");
     webchat_enable = true;
 
     if (connect_on_open === "true" && !webchat_opened) {

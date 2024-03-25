@@ -16,6 +16,7 @@ export default {
       '7': '28px',
       '10':'40px',
       '32': '128px',
+      '64': '256px',
       sm: '8px',
       md: '12px',
       lg: '16px',

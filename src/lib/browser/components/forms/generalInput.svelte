@@ -14,10 +14,8 @@
 
   async function handleSubmit() {
     let isSaving = true;
-    const formData = new FormData(this);
     let contactPoint = {
-      contact: formData.get("contact").trim(),
-      // type: formData.get("type").trim(),
+      contact: formValue,
       type: contact_point_type,
     };
     await submit(contactPoint);
@@ -41,7 +39,7 @@
         name="contact"
         label="Cellphone Number"
         bind:isError
-        bind:value={formValue}
+        bind:formattedNumber={formValue}
       />
     {/if}
     {#if contact_point_type}
