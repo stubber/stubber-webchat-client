@@ -8,17 +8,30 @@
 
   //components
   let isError;
-  let formValue;
+  let formattedNumber;
+  let formattedEmail;
 
   let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
 
   async function handleSubmit() {
     let isSaving = true;
-    let contactPoint = {
-      contact: formValue,
-      type: contact_point_type,
-    };
-    await submit(contactPoint);
+
+    if (contact_point_type == "email") {
+      let contactPoint = {
+        contact: formattedEmail,
+        type: contact_point_type,
+      };
+      await submit(contactPoint);
+    }
+
+    if (contact_point_type == "mobile") {
+      let contactPoint = {
+        contact: formattedNumber,
+        type: contact_point_type,
+      };
+      await submit(contactPoint);
+    }
+
     isSaving = false;
   }
 </script>
@@ -32,14 +45,14 @@
         regex={emailRegex}
         validationMessage="Invalid Email"
         bind:isError
-        bind:value={formValue}
+        bind:value={formattedEmail}
       />
     {:else if contact_point_type == "mobile"}
       <FormTelInput
         name="contact"
         label="Cellphone Number"
         bind:isError
-        bind:formattedNumber={formValue}
+        bind:value={formattedNumber}
       />
     {/if}
     {#if contact_point_type}
@@ -47,7 +60,7 @@
         <button
           type="submit"
           class="w-32 h-10 transition duration-300 my-2 mx-auto bg-gray-300 rounded-xl stubber_webchat_chat_button border"
-          disabled={isError || !formValue}
+          disabled={isError}
           class:stubber_webchat_general_input={!isError}
           class:stubber_webchat_general_input_error={isError}
         >
@@ -62,7 +75,7 @@
   @tailwind base;
   @tailwind components;
   @tailwind utilities;
-  
+
   .stubber_webchat_general_input {
     background-color: var(--primary-color);
     color: white;

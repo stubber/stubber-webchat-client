@@ -17,7 +17,7 @@
   $: isError = validate(regexObj, value);
   const validate = (regexObj, value) => {
     if (!value) {
-      return false;
+      return true;
     }
     return !regexObj.test(value);
   };
