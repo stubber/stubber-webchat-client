@@ -7,8 +7,8 @@
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 </head>
 <!-- <script type="module" src="/dist_dev/index.js"></script> -->
-<!-- <script type="module" src="https://webchat.notifications.stubber.com/v2/client/index.js"></script> -->
-<script type="module" src="http://localhost:6025/dist/index.js"></script>
+<script type="module" src="https://webchat.notifications.stubber.com/v2/client/index.js"></script>
+<!-- <script type="module" src="http://localhost:6025/dist/index.js"></script> -->
 <style>
   stubber-webchat::part(host) {
     /* --background: linear-gradient(to right, white , grey); */
@@ -19,18 +19,41 @@
   html {
     font-size: 116px;
   }
-</style>
+  </style>
 <body>
+  
+  <!-- <script src="https://cdn.jsdelivr.net/gh/stubber/stubber-webchat@1.2.18/dist/index.js"></script> -->
+  <!-- <stubber-webchat orguuid="96305d53-2fb0-512d-9d59-3f2b03aa679a" chatName="livewebsitechat" connectOnOpen="true" openOnMount="false" passthroughData="{'some':'data'}" chatDisplayName="Stubber"></stubber-webchat> -->
+  <style>
+    stubber-webchat::part(host) {
+      --primary-color: rgb(9, 103, 210);
+    }
+    </style>
 
-<!-- <script src="https://cdn.jsdelivr.net/gh/stubber/stubber-webchat@1.2.18/dist/index.js"></script> -->
-<!-- <stubber-webchat orguuid="96305d53-2fb0-512d-9d59-3f2b03aa679a" chatName="livewebsitechat" connectOnOpen="true" openOnMount="false" passthroughData="{'some':'data'}" chatDisplayName="Stubber"></stubber-webchat> -->
+
+<script type="module" src="https://webchat.notifications.stubber.com/v2/client/index.js"></script>
+<stubber-webchat 
+  orguuid="9a41d67f9-2830-5bab-af18-8ab59d889862"
+  chat_name="draftwebchat" 
+  connect_on_open="true"
+  open_on_mount="false" 
+  pass_through_data="{'country':'BW','country_label':'Botswana'}" 
+  chat_display_name="Jenny Internet">
+</stubber-webchat>
 <style>
   stubber-webchat::part(host) {
-    --primary-color: rgb(9, 103, 210);
+    --primary-color: rgb(234, 31, 42);
   }
 </style>
 
-<stubber-webchat 
+<!-- <stubber-webchat 
+	orguuid="96305d53-2fb0-512d-9d59-3f2b03aa679a"
+  chat_name="draftwebsitechat" 
+  connect_on_open="true"
+  open_on_mount="false" 
+  pass_through_data="{'some':'data'}" 
+  chat_display_name="Stubber"></stubber-webchat> -->
+<!-- <stubber-webchat 
   orguuid="1b699e29-62ff-5c09-8286-e8db39d419f6"
   chat_name="livetest"
   connect_on_open="true" 
@@ -38,7 +61,7 @@
   pass_through_data="{'some':'data'}" 
   chat_display_name="Demo"
   >
-</stubber-webchat>
+</stubber-webchat> -->
 
 <!-- Navbar (sit on top) -->
 <div class="w3-top">
