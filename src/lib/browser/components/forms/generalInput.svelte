@@ -3,34 +3,74 @@
   import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
   import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
   import { sendClientConfig } from "$/lib/shared/socketService.js";
-  import { contact_point_type } from "$/lib/stores/configStore.js";
-
-  // export let submit;
-  export let isSaving;
-  // export let contact_point_type;
+  import { contact_point_type, switching_opened } from "$/lib/stores/configStore.js";
+  import { onDestroy } from "svelte";
+  
+  export let isSaving = false;
+  export let complete = false;
 
   //components
   let isError;
   let formattedNumber;
   let formattedEmail;
+  let submitDots = ".";
 
   let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
 
+  let contact_point_type_subscription = contact_point_type.subscribe(contact_point_type => {
+    complete = false;
+  });
+
   async function handleSubmit() {
+    isSaving = true;
+    complete = false;
+    animateSending();
+
+    console.log(isSaving)
+
     if ($contact_point_type == "email") {
       await sendClientConfig({
         contact: formattedEmail,
         type: $contact_point_type,
       });
-    }
+    };
 
     if ($contact_point_type == "mobile") {
       await sendClientConfig({
         contact: formattedNumber,
         type: $contact_point_type,
       });
+    };
+
+    setTimeout(() => {
+      isSaving = false;
+      complete = true;
+
+      setTimeout(() => {
+        switching_opened.set(false);
+      }, 900);
+    }, 900);
+  }
+
+  let animateSending = () => {
+    submitDots += ".";
+
+    if (submitDots.length > 5){
+      submitDots = ".";
+    }
+
+    if (isSaving){
+      setTimeout(() => {
+        animateSending();
+      }, 150);
     }
   }
+
+  onDestroy(() => {
+    if (contact_point_type_subscription) {
+      contact_point_type_subscription();
+    }
+  });
 </script>
 
 <Form on:submit={handleSubmit}>
@@ -57,15 +97,18 @@
         <button
           type="submit"
           class="w-32 h-10 transition duration-300 my-2 mx-auto bg-gray-300 rounded-xl stubber_webchat_chat_button border"
-          disabled={isError}
+          disabled={isError || isSaving}
           class:stubber_webchat_general_input={!isError}
           class:stubber_webchat_general_input_error={isError}
         >
           {#if isSaving}
-            Sending...
+            {submitDots}
           {/if}
-          {#if !isSaving}
+          {#if !isSaving && !complete}
             Submit
+          {/if}
+          {#if complete}
+            Sent
           {/if}
         </button>
       </div>

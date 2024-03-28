@@ -16,7 +16,6 @@
         sendMessage(message);
         message = ``;
     };
-
 </script>
 
 <div

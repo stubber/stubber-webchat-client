@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import { addMessage, messages } from "../stores/messageStore";
 import { switch_whatsapp, switch_email, switch_sms } from "$/lib/stores/configStore.js";
-import { platform_name } from "../stores/configStore";
+import { platform_name, webchat_incoming_animation } from "../stores/configStore";
 
 let socket;
 let WEBCHAT_CONFIGURATION = {};
@@ -64,7 +64,7 @@ export const connectSocket = () => {
         message: data.webchat_message,
       };
 
-      console.log(messageObject);
+      webchat_incoming_animation.set(false);
       addMessage(messageObject);
     });
 
@@ -119,7 +119,9 @@ export const sendMessage = async (message) => {
     messageuuid: crypto.randomUUID(),
     message,
   };
+
   addMessage(messageObject);
+  webchat_incoming_animation.set(true);
 
   if (socket.connected) {
     await socket.emit("message", {
