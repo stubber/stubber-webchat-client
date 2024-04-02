@@ -3,7 +3,7 @@
   import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
   import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
   import { sendClientConfig } from "$/lib/shared/socketService.js";
-  import { contact_point_type, switching_opened } from "$/lib/stores/configStore.js";
+  import { contact_point_type, switching_opened, webchat_incoming_animation } from "$/lib/stores/configStore.js";
   import { onDestroy } from "svelte";
   
   export let isSaving = false;
@@ -25,6 +25,8 @@
     isSaving = true;
     complete = false;
     animateSending();
+
+    webchat_incoming_animation.set(true);
 
     if ($contact_point_type == "email") {
       await sendClientConfig({
