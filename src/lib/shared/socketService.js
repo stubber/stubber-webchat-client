@@ -20,7 +20,7 @@ export const connectSocket = () => {
     });
 
     socket.on("connect", async () => {
-      console.log("___Connected to server");
+      console.log("___Stubber Webchat connected to server");
 
       if (WEBCHAT_CONFIGURATION.sessionuuid != '') {
         await socket.emit("webchat_session", {
@@ -81,11 +81,11 @@ export const connectSocket = () => {
     });
 
     socket.on("disconnect", () => {
-      console.log("___Disconnected from server");
+      console.log("___Stubber Webchat disconnected from server");
     });
 
     socket.on("error", (data) => {
-      console.log("__Stubber Webchat : " + data?.error);
+      console.log("__Stubber Webchat error : " + data?.error);
     });
 
     socket.on("webchat_session", (data) => {
@@ -140,8 +140,6 @@ export const sendClientConfig = async (contact_point) => {
   if (!socket) {
     connectSocket();
   }
-
-  console.log("___Sending Config", contact_point);
 
   if (socket.connected) {
     let PLATFORM_NAME = "";

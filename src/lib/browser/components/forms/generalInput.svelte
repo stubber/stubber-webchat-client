@@ -26,8 +26,6 @@
     complete = false;
     animateSending();
 
-    console.log(isSaving)
-
     if ($contact_point_type == "email") {
       await sendClientConfig({
         contact: formattedEmail,
