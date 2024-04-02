@@ -12,11 +12,11 @@
   let demo_name = "Dev Test";
   let demo_description = "Dev Test";
 
-  let webchat_orguuid = "d36df47c-a1d4-55e5-9d7c-0f3f20aec7cf";
-  let webchat_chat_name = "devtest";
-  let webchat_connect_on_open = false;
+  let webchat_orguuid = "96305d53-2fb0-512d-9d59-3f2b03aa679a";
+  let webchat_chat_name = "documentationexample";
+  let webchat_connect_on_open = true;
   let webchat_open_on_mount = false;
-  let webchat_pass_through_data = "something";
+  let webchat_pass_through_data = "{'some':'data'}";
   let webchat_chat_display_name = "Demo Test";
 
   let webchat_css_primary_color_r = 0;
