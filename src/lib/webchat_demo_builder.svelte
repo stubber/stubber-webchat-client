@@ -9,15 +9,15 @@
   import { onMount } from "svelte";
   import page from "page";
 
-  let demo_name = "Dev Test";
-  let demo_description = "Dev Test";
+  let demo_name = "Demo";
+  let demo_description = "Demo description";
 
-  let webchat_orguuid = "96305d53-2fb0-512d-9d59-3f2b03aa679a";
-  let webchat_chat_name = "documentationexample";
-  let webchat_connect_on_open = true;
-  let webchat_open_on_mount = false;
-  let webchat_pass_through_data = "{'some':'data'}";
-  let webchat_chat_display_name = "Demo Test";
+  let webchat_orguuid = import.meta.env.VITE_WEBCHAT_ORGUUID;
+  let webchat_chat_name = import.meta.env.VITE_WEBCHAT_CHAT_NAME;
+  let webchat_connect_on_open = import.meta.env.VITE_WEBCHAT_CONNECT_ON_OPEN;
+  let webchat_open_on_mount = import.meta.env.VITE_WEBCHAT_OPEN_ON_MOUNT;
+  let webchat_pass_through_data = import.meta.env.VITE_WEBCHAT_PASS_THROUGH_DATA;
+  let webchat_chat_display_name = import.meta.env.VITE_WEBCHAT_CHAT_DISPLAY_NAME;
 
   let webchat_css_primary_color_r = 0;
   let webchat_css_primary_color_g = 0;
