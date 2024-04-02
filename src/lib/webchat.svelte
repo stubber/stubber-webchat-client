@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("___Stubber Webchat v2.0.22");
+  console.log("___Stubber Webchat v2.0.25");
 
   import { onDestroy, onMount } from "svelte";
 
@@ -18,6 +18,7 @@
     switching_opened,
     webchat_enable,
     openWebchat,
+    webchat_incoming_animation
   } from "$/lib/stores/configStore.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -40,15 +41,15 @@
   });
 
   onMount(() => {
+    if (connect_on_open === "false") {
+      connectSocket();
+    }
     if (open_on_mount === "true") {
       openWebchat();
-      if (connect_on_open) {
+      if (connect_on_open === "true") {
         connectSocket();
       }
       return;
-    }
-    if (connect_on_open && webchat_enable) {
-      connectSocket();
     }
   });
 
@@ -60,7 +61,7 @@
 </script>
 
 <div part="host" class="stubber_webchat_outer_box">
-  <WebchatEnableButton />
+  <WebchatEnableButton connect_on_open={connect_on_open} />
   {#if $webchat_enable}
     <div
       class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4"

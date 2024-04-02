@@ -37,10 +37,6 @@ export const connectSocket = () => {
       });
 
       message_subscription();
-
-      // if (message.length > 0) {
-      //   sendMessage();
-      // }
     });
 
     socket.on("webchat_message", (data) => {
@@ -101,7 +97,6 @@ export const connectSocket = () => {
 export const sendMessage = async (message) => {
   if (!socket) {
     connectSocket();
-    return;
   }
 
   let previous_direction = "in";
@@ -122,6 +117,13 @@ export const sendMessage = async (message) => {
 
   addMessage(messageObject);
   webchat_incoming_animation.set(true);
+
+  if (!socket) {
+    messages_pending = true;
+    connectSocket();
+    return;
+  }
+
 
   if (socket.connected) {
     await socket.emit("message", {

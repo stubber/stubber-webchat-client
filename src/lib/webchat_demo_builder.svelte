@@ -197,9 +197,10 @@
     <div class="mb-2">
       <p class="text-black text-1xl px-auto">connect_on_open</p>
       <input
-        class="w-full border-grey-200 px-2 border h-10"
+        class="w-4 border-grey-200 px-2 border h-10"
         autocomplete="off"
-        bind:value={webchat_connect_on_open}
+        type="checkbox"
+        bind:checked={webchat_connect_on_open}
         on:change={() => {
           save_params();
         }}
@@ -209,9 +210,10 @@
     <div class="mb-2">
       <p class="text-black text-1xl px-auto">open_on_mount</p>
       <input
-        class="w-full border-grey-200 px-2 border h-10"
+        class="w-4 border-grey-200 px-2 border h-10"
         autocomplete="off"
-        bind:value={webchat_open_on_mount}
+        type="checkbox"
+        bind:checked={webchat_open_on_mount}
         on:change={() => {
           save_params();
         }}
@@ -247,7 +249,7 @@
     <p class="text-black text-2xl px-auto mb-2">Webchat CSS</p>
 
     <div class="mb-2">
-      <p class="text-black text-1xl px-auto">Primary --text-color</p>
+      <p class="text-black text-1xl px-auto">Primary colour</p>
       <input
         class="w-full border-grey-200 px-2 border h-10"
         autocomplete="off"
@@ -307,6 +309,7 @@
         </p>
       </button>
     </div>
+    
 
     <div class="mb-2 mx-2">
       <button
