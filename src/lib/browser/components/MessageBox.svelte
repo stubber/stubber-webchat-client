@@ -101,6 +101,11 @@
           {#if messageObject.message.type == "text"}
             <p class="">{messageObject.message.value}</p>
           {/if}
+          {#if messageObject.message.type == "html"}
+            <div class="font-mono">
+              {@html messageObject.message.value}
+            </div>
+          {/if}
           <p class="text-sm ml-auto">
             {timeFormat(messageObject.dateTime)}
           </p>

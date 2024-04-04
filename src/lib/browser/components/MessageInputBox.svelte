@@ -1,6 +1,11 @@
 <script>
     import { sendMessage } from "$/lib/shared/socketService.js";
-    import { switch_whatsapp, switch_email, switch_sms, openSwitching } from "$/lib/stores/configStore.js";
+    import {
+        switch_whatsapp,
+        switch_email,
+        switch_sms,
+        openSwitching,
+    } from "$/lib/stores/configStore.js";
     import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
 
     let message = ``;
@@ -61,5 +66,9 @@
         background-color: var(--primary-color);
         background: var(--background, var(--primary-color));
         color: var(--background-color);
+    }
+
+    .stubber_webchat_text {
+        color: var(--text-color, white);
     }
 </style>

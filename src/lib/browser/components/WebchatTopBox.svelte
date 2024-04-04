@@ -33,4 +33,8 @@
         background: var(--background, var(--primary-color));
         color: var(--background-color);
     }
+
+    .stubber_webchat_text {
+        color: var(--text-color, white);
+    }
 </style>
