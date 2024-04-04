@@ -39,42 +39,48 @@ export const connectSocket = () => {
       message_subscription();
     });
 
-    socket.on("webchat_message", (data) => {
-      let previous_direction = null;
+    socket.on("webchat_payload", (data, callback) => {
+      let webchat_message = data?.webchat_message
+      let webchat_client_configuration = data?.webchat_client_configuration
 
-      const message_subscription = messages.subscribe(async currentMessages => {
-        if (currentMessages.length > 0) {
-          previous_direction = currentMessages[currentMessages.length - 1].direction;
-        }
-      });
+      if (webchat_message) {
+        let previous_direction = null;
 
-      message_subscription();
+        const message_subscription = messages.subscribe(async currentMessages => {
+          if (currentMessages.length > 0) {
+            previous_direction = currentMessages[currentMessages.length - 1].direction;
+          }
+        });
 
-      let messageObject = {
-        direction: "in",
-        previous_direction,
-        sent: false,
-        received: false,
-        dateTime: new Date(),
-        messageuuid: crypto.randomUUID(),
-        message: data.webchat_message,
-      };
+        message_subscription();
 
-      webchat_incoming_animation.set(false);
-      addMessage(messageObject);
-    });
+        let messageObject = {
+          direction: "in",
+          previous_direction,
+          sent: false,
+          received: false,
+          dateTime: new Date(),
+          messageuuid: crypto.randomUUID(),
+          message: webchat_message,
+        };
 
-    socket.on("webchat_client_configuration", (data) => {
-      let settings = Object.keys(data);
+        webchat_incoming_animation.set(false);
+        addMessage(messageObject);
+      }
 
-      settings.forEach((key) => {
-        if (data[key].type == "switching") {
-          switch_whatsapp.set(data[key]?.value?.whatsapp);
-          switch_sms.set(data[key]?.value?.sms);
-          switch_email.set(data[key]?.value?.email);
-        }
-      });
-    });
+      if (webchat_client_configuration) {
+        let settings = Object.keys(webchat_client_configuration);
+
+        settings.forEach((key) => {
+          if (webchat_client_configuration[key].type == "switching") {
+            switch_whatsapp.set(webchat_client_configuration[key]?.value?.whatsapp);
+            switch_sms.set(webchat_client_configuration[key]?.value?.sms);
+            switch_email.set(webchat_client_configuration[key]?.value?.email);
+          }
+        });
+      }
+      callback();
+    })
 
     socket.on("disconnect", () => {
       console.log("___Stubber Webchat disconnected from server");
