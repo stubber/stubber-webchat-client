@@ -56,7 +56,13 @@
             </button>
         </div>
     {/if}
-    <div class="text-fs w-full text-center mt-1 stubber_webchat_text">Powered by Stubber</div>
+    <a
+        class="text-fs w-full text-center mt-1 stubber_webchat_text"
+        href="https://www.stubber.com/"
+        target="_blank"
+    >
+        Powered by Stubber
+    </a>
 </div>
 
 <style>
