@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import { addMessage, messages } from "../stores/messageStore";
 import { switch_whatsapp, switch_email, switch_sms } from "$/lib/stores/configStore.js";
-import { platform_name, webchat_incoming_animation } from "../stores/configStore";
+import { platform_name, webchat_incoming_animation, default_country_code } from "../stores/configStore";
 
 let socket;
 let WEBCHAT_CONFIGURATION = {};
@@ -76,6 +76,10 @@ export const connectSocket = () => {
             switch_whatsapp.set(webchat_client_configuration[key]?.value?.whatsapp);
             switch_sms.set(webchat_client_configuration[key]?.value?.sms);
             switch_email.set(webchat_client_configuration[key]?.value?.email);
+          }
+
+          if (webchat_client_configuration[key].type == "default_country_code") {
+            default_country_code.set(webchat_client_configuration[key].value)
           }
         });
       }

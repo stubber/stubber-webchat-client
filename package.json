@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build --mode production; vite build --mode development",
+    "build-prod": "vite build --mode production",
+    "build-dev": "vite build --mode development",
     "build-serve": "vite build --mode production; vite build --mode development; serve ./ -p 6025",
     "preview": "vite preview --port 6025",
     "check": "svelte-check --tsconfig ./tsconfig.json"

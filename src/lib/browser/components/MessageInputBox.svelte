@@ -34,6 +34,7 @@
             on:keydown={handleEnterPress}
             placeholder={"Type message..."}
             autocomplete="off"
+            autofocus
         />
         <button
             class="w-7 transition duration-300 pr-2"
@@ -55,6 +56,7 @@
             </button>
         </div>
     {/if}
+    <div class="text-fs w-full text-center mt-1 stubber_webchat_text">Powered by Stubber</div>
 </div>
 
 <style>

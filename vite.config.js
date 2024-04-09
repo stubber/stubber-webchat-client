@@ -25,19 +25,11 @@ export default defineConfig(({ mode }) => {
             if (bundle_info.name == "main"){
               return "index.js"
             }
-            if (bundle_info.name == 'demo'){
-              return "demo.js"
-            }
-            if (bundle_info.name == 'demo_builder'){
-              return "demo_builder.js"
-            }
           },
           manualChunks: undefined,
         },
         input: {
-          main: resolve(__dirname, "./src/lib/webchat.svelte"),
-          demo: resolve(__dirname, "./src/lib/webchat_demo.svelte"),
-          demo_builder: resolve(__dirname, "./src/lib/webchat_demo_builder.svelte")
+          main: resolve(__dirname, "./src/lib/webchat.svelte")
         },
       },
     },

@@ -1,4 +1,5 @@
 // messageStore.js
+import { write } from 'fs';
 import { writable } from 'svelte/store';
 
 export const switching_opened = writable(false);
@@ -13,6 +14,8 @@ export const webchat_incoming_animation = writable(true);
 
 export const platform_name = writable("whatsapp");
 export const contact_point_type = writable("mobile");
+
+export const default_country_code = writable("US");
 
 export const openWebchat = () => {
     webchat_enable.set(true);
