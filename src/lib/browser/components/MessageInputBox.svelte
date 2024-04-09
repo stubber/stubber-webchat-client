@@ -34,6 +34,7 @@
             on:keydown={handleEnterPress}
             placeholder={"Type message..."}
             autocomplete="off"
+            maxlength="1024"
             autofocus
         />
         <button

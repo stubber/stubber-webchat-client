@@ -5,7 +5,7 @@
   import PeriodSolid from "$/lib/icons/period-solid.svelte";
   import { marked } from "marked";
   import { messages } from "$/lib/stores/messageStore.js";
-  import { webchat_incoming_animation } from "$/lib/stores/configStore.js";
+  import { webchat_incoming_animation, webchat_agent_name } from "$/lib/stores/configStore.js";
 
   let timeFormat = (dateTime) => {
     let hours = dateTime.getHours().toString().padStart(2, "0");
@@ -48,38 +48,39 @@
   let animateTyping = () => {
     typingAnimationIndex = typingAnimationIndex + 1;
 
-    if (typingAnimationIndex > 3){
+    if (typingAnimationIndex > 3) {
       typingAnimationIndex = 0;
     }
 
-    if ($webchat_incoming_animation){
+    if ($webchat_incoming_animation) {
       setTimeout(() => {
         animateTyping();
       }, 250);
     }
-  }
+  };
 
   let auto_scroll_subcribe;
   let webchat_incoming_animation_subscribe;
 
   onMount(() => {
     auto_scroll_subcribe = messages.subscribe(autoScroll);
-    webchat_incoming_animation_subscribe = webchat_incoming_animation.subscribe(webchat_incoming_animation => {
-      if (webchat_incoming_animation){
-        animateTyping()
-      }
-    })
+    webchat_incoming_animation_subscribe = webchat_incoming_animation.subscribe(
+      (webchat_incoming_animation) => {
+        if (webchat_incoming_animation) {
+          animateTyping();
+        }
+      },
+    );
   });
 
   onDestroy(() => {
-    if (auto_scroll_subcribe){
+    if (auto_scroll_subcribe) {
       auto_scroll_subcribe();
     }
-    if (webchat_incoming_animation_subscribe){
+    if (webchat_incoming_animation_subscribe) {
       webchat_incoming_animation_subscribe();
     }
   });
-
 </script>
 
 <div
@@ -90,9 +91,9 @@
     {#if messageObject.direction == "in"}
       <div class="mb-2 mr-10 flex flex-col">
         {#if messageObject.previous_direction == "out" || !messageObject.previous_direction}
-          <p class="m-auto mx-2 text-sm">Agent</p>
+          <p class="m-auto mx-2 text-sm">{messageObject?.webchat_agent ? messageObject?.webchat_agent?.name : "Agent"}</p>
         {/if}
-        <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
+        <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
           {#if messageObject.message.type == "markdown"}
             {@html DOMPurify.sanitize(
               marked(messageObject.message.value.trim()),
@@ -115,7 +116,7 @@
     {#if messageObject.direction == "out"}
       <div class="mb-2 ml-10 text-right flex flex-col">
         <p class="m-auto mx-2 text-sm">You</p>
-        <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col">
+        <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
           <p class="">{messageObject.message}</p>
           <div class="flex w-full">
             <p class="text-sm ml-auto mr-2">
@@ -135,22 +136,22 @@
   {/each}
   {#if $webchat_incoming_animation}
     <div class="mb-2 mr-10 flex flex-col">
-      <p class="m-auto mx-2 text-sm">Agent</p>
+      <p class="m-auto mx-2 text-sm">{$webchat_agent_name}</p>
       <div class="bg-gray-200 rounded-lg py-2 px-4 flex h-10">
         {#if typingAnimationIndex >= 0}
-        <span class="h-2 w-2">
-          <PeriodSolid />
-        </span>
+          <span class="h-2 w-2">
+            <PeriodSolid />
+          </span>
         {/if}
         {#if typingAnimationIndex >= 1}
-        <span class="h-2 w-2">
-          <PeriodSolid />
-        </span>
+          <span class="h-2 w-2">
+            <PeriodSolid />
+          </span>
         {/if}
         {#if typingAnimationIndex >= 2}
-        <span class="h-2 w-2">
-          <PeriodSolid />
-        </span>
+          <span class="h-2 w-2">
+            <PeriodSolid />
+          </span>
         {/if}
       </div>
     </div>
@@ -180,5 +181,17 @@
   .hide-scrollbar {
     -ms-overflow-style: none; /* Internet Explorer 10+ */
     scrollbar-width: none; /* Firefox */
+  }
+
+  .stubber_message_bubble {
+    /* Ensures the box itself does not grow beyond the specified width */
+    box-sizing: border-box;
+
+    /* Allows words to break and wrap onto the next line */
+    word-wrap: break-word; /* Older browsers */
+    overflow-wrap: break-word; /* Standardized property */
+
+    /* Optional: Breaks the word at arbitrary points if needed */
+    word-break: break-all;
   }
 </style>

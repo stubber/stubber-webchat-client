@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("___Stubber Webchat v2.0.36");
+  console.log("___Stubber Webchat v2.0.37");
 
   import { onDestroy, onMount } from "svelte";
 
@@ -17,8 +17,7 @@
   import {
     switching_opened,
     webchat_enable,
-    openWebchat,
-    webchat_incoming_animation
+    openWebchat
   } from "$/lib/stores/configStore.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -64,7 +63,7 @@
   <WebchatEnableButton connect_on_open={connect_on_open} />
   {#if $webchat_enable}
     <div
-      class="z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] h-5/6 pt-4"
+      class="stubber_webchat_box z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] pt-4"
     >
       <div
         class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
@@ -81,7 +80,7 @@
     </div>
   {/if}
 </div>
-
+<!-- h-5/6 -->
 <style>
   @tailwind base;
   @tailwind components;
@@ -102,5 +101,9 @@
     -ms-overflow-style: none;
     background-color: var(--background-color);
     border: 1px solid var(--border-color, var(--primary-color));
+  }
+
+  .stubber_webchat_box {
+    height: 85vh;
   }
 </style>

@@ -14,8 +14,9 @@ export const webchat_incoming_animation = writable(true);
 
 export const platform_name = writable("whatsapp");
 export const contact_point_type = writable("mobile");
-
 export const default_country_code = writable("US");
+
+export const webchat_agent_name = writable("Agent");
 
 export const openWebchat = () => {
     webchat_enable.set(true);

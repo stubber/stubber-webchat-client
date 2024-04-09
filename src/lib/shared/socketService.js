@@ -1,12 +1,22 @@
 import io from "socket.io-client";
 import { addMessage, messages } from "../stores/messageStore";
 import { switch_whatsapp, switch_email, switch_sms } from "$/lib/stores/configStore.js";
-import { platform_name, webchat_incoming_animation, default_country_code } from "../stores/configStore";
+import { platform_name, webchat_incoming_animation, default_country_code, webchat_agent_name } from "../stores/configStore";
 
 let socket;
 let WEBCHAT_CONFIGURATION = {};
 let WEBCHAT_API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
 let WEBCHAT_API_SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
+
+const uuidv4 = () => {
+  return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, c =>
+    (+c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> +c / 4).toString(16)
+  );
+}
+
+if (!crypto?.randomUUID) {
+  crypto.randomUUID = uuidv4;
+}
 
 export const setSocketConfig = (webchat_configuration) => {
   WEBCHAT_CONFIGURATION = webchat_configuration;
@@ -40,6 +50,7 @@ export const connectSocket = () => {
     });
 
     socket.on("webchat_payload", (data, callback) => {
+      let webchat_agent = data?.webchat_agent
       let webchat_message = data?.webchat_message
       let webchat_client_configuration = data?.webchat_client_configuration
 
@@ -63,6 +74,18 @@ export const connectSocket = () => {
           messageuuid: crypto.randomUUID(),
           message: webchat_message,
         };
+
+
+        if (webchat_agent) {
+          messageObject.webchat_agent = webchat_agent;
+          if (webchat_agent?.name) {
+            webchat_agent_name.set(webchat_agent?.name);
+          } else {
+            webchat_agent_name.set("Agent");
+          }
+        } else {
+          webchat_agent_name.set("Agent");
+        }
 
         webchat_incoming_animation.set(false);
         addMessage(messageObject);
