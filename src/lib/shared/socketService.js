@@ -151,52 +151,37 @@ export const sendMessage = async (message) => {
   addMessage(messageObject);
   webchat_incoming_animation.set(true);
 
-  if (!socket) {
-    messages_pending = true;
-    connectSocket();
-    return;
-  }
-
-
-  if (socket.connected) {
-    await socket.emit("message", {
-      webchat_configuration: WEBCHAT_CONFIGURATION,
-      webchat_message: {
-        type: "text",
-        value: messageObject.message,
-        messageuuid: messageObject.messageuuid,
-      },
-    });
-    messageObject.received = true;
-  }
+  await socket.emit("message", {
+    webchat_configuration: WEBCHAT_CONFIGURATION,
+    webchat_message: {
+      type: "text",
+      value: messageObject.message,
+      messageuuid: messageObject.messageuuid,
+    },
+  });
+  messageObject.received = true;
 };
 
 export const sendClientConfig = async (contact_point) => {
-  if (!socket) {
-    connectSocket();
-  }
+  let PLATFORM_NAME = "";
 
-  if (socket.connected) {
-    let PLATFORM_NAME = "";
+  let platform_name_subscription = platform_name.subscribe(async platform_name => {
+    PLATFORM_NAME = platform_name
+  });
 
-    let platform_name_subscription = platform_name.subscribe(async platform_name => {
-      PLATFORM_NAME = platform_name
-    });
+  platform_name_subscription();
 
-    platform_name_subscription();
-
-    await socket.emit("client_configuration", {
-      webchat_configuration: WEBCHAT_CONFIGURATION,
-      webchat_client_configuration: {
-        platform_switch: {
-          platform_name: PLATFORM_NAME,
-          type: contact_point.type,
-          value: contact_point.contact
-        }
+  await socket.emit("client_configuration", {
+    webchat_configuration: WEBCHAT_CONFIGURATION,
+    webchat_client_configuration: {
+      platform_switch: {
+        platform_name: PLATFORM_NAME,
+        type: contact_point.type,
+        value: contact_point.contact
       }
-    });
-  }
-};
+    }
+  });
+}
 
 export const disconnectSocket = () => {
   if (socket) {

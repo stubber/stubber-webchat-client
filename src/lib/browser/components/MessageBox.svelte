@@ -117,7 +117,7 @@
       <div class="mb-2 ml-10 text-right flex flex-col">
         <p class="m-auto mx-2 text-sm">You</p>
         <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
-          <p class="">{messageObject.message}</p>
+          <div class="">{messageObject.message}</div>
           <div class="flex w-full">
             <p class="text-sm ml-auto mr-2">
               {timeFormat(messageObject.dateTime)}
@@ -184,14 +184,7 @@
   }
 
   .stubber_message_bubble {
-    /* Ensures the box itself does not grow beyond the specified width */
-    box-sizing: border-box;
-
-    /* Allows words to break and wrap onto the next line */
-    word-wrap: break-word; /* Older browsers */
-    overflow-wrap: break-word; /* Standardized property */
-
-    /* Optional: Breaks the word at arbitrary points if needed */
-    word-break: break-all;
+    word-break: break-word;
+    text-align: left;
   }
 </style>
