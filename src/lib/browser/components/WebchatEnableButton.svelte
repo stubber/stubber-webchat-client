@@ -14,10 +14,7 @@
             class="py-2 px-2 rounded-md transition duration-300 flex stubber_webchat_chat_button"
             on:click={() => {
                 openWebchat();
-
-                if (connect_on_open === "true"){
-                    connectSocket();
-                }
+                connectSocket();
             }}
         >
             <p class="m-auto mx-2">Chat</p>

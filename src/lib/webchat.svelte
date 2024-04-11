@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("___Stubber Webchat v2.0.39");
+  console.log("___Stubber Webchat v2.0.40");
 
   import { onDestroy, onMount } from "svelte";
 
@@ -40,15 +40,9 @@
   });
 
   onMount(() => {
-    if (connect_on_open === "false") {
-      connectSocket();
-    }
     if (open_on_mount === "true") {
       openWebchat();
-      if (connect_on_open === "true") {
-        connectSocket();
-      }
-      return;
+      connectSocket();
     }
   });
 
