@@ -21,15 +21,6 @@ export const webchat_agent_name = writable("Agent");
 export const openWebchat = () => {
     webchat_enable.set(true);
     webchat_opened.set(true);
-
-    // if (connect_on_open === "true" && !webchat_opened) {
-    //   connectSocket();
-    // };
-    // if (connect_on_open === "true") {
-    //   if (!webchat_opened){
-    //   };
-    //   connectSocket();
-    // };
 };
 
 export const openSwitching = () => {

@@ -17,9 +17,11 @@
             webchat_enable.set(false);
         }}
     >
-        <span class="w-5 fill-white rotate-45 my-auto">
-            <CircleXMarkRegular />
-        </span>
+        <div class="w-5 h-5 fill-white my-auto">
+            <span class="rotate-45">
+                <CircleXMarkRegular />
+            </span>
+        </div>
     </button>
 </div>
 
