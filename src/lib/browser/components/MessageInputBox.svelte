@@ -4,7 +4,7 @@
         switch_whatsapp,
         switch_email,
         switch_sms,
-        openSwitching,
+        openSwitching
     } from "$/lib/stores/configStore.js";
     import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
     import MicrophoneRegular from "$/lib/icons/microphone-regular.svelte";
@@ -13,133 +13,153 @@
     import PlayRegular from "$/lib/icons/play-regular.svelte";
     import PauseRegular from "$/lib/icons/pause-regular.svelte";
 
-    let message = ``;
+    import {
+        payloads,
+        payload_buffer_message,
+        payload_buffer_voice,
+        payload_buffer_attachments,
+        payload_buffer_upload
+    } from "$/lib/shared/service_upload.js";
+
     let recording = false;
     let recording_paused = false;
     let recording_time_minutes = false;
     let recording_time_seconds = false;
     let recording_time_display = "00:00";
-    let files = [];
 
-    let media = [];
-    let mediaRecorder = null;
+    let voice_media_stream = null;
+    let voice_media_recorder = null;
 
     let handleEnterPress = (event) => {
-        if (event.key === "Enter" && message != "") {
+        if (
+            event.key === "Enter" &&
+            ($payload_buffer_message != "" ||
+                recording == true ||
+                $payload_buffer_attachments.length != 0)
+        ) {
             if (recording) {
-                recording_stop()
+                recording_stop();
             }
 
-            if (!recording) {
-                sendMessage(message);
-                message = ``;
-            }
+            payload_buffer_upload();
         }
     };
 
-    let normalSend = () => {
-        sendMessage(message);
-        message = ``;
+    let payload_upload = () => {
+        if (recording) {
+            recording_stop();
+        }
+
+        payload_buffer_upload();
     };
 
     let click_upload = () => {
         var input = document.createElement("input");
         input.type = "file";
 
+        
         input.onchange = (e) => {
-            var file = e.target.files[0];
+            var blob = e.target.files[0];
 
-            files.push(file);
+            const attachment = {
+                attachment_uuid: crypto.randomUUID(),
+                blob
+            }
 
-            files = files;
+            payload_buffer_attachments.update((payload_buffer_attachments) => [
+                ...payload_buffer_attachments,
+                attachment,
+            ]);
         };
+
         input.click();
     };
 
     let click_remove_file = (file) => {
-        files.pop(file);
-        files = files;
+        payload_buffer_attachments.update((payload_buffer_attachments) => {
+            return payload_buffer_attachments.filter(
+                (attachment) =>
+                    attachment.attachment_uuid != file.attachment_uuid,
+            );
+        });
     };
 
     let recording_start = async () => {
         recording = true;
 
-        const stream = await navigator.mediaDevices.getUserMedia({
+        voice_media_stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
         });
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = (e) => media.push(e.data);
 
-        // mediaRecorder.onstop = function(){
-        //     const blob = new Blob(media, {'type' : 'audio/ogg; codecs=opus' });
-        // }
+        voice_media_recorder = new MediaRecorder(voice_media_stream);
+        voice_media_recorder.ondataavailable = (e) => {
+            payload_buffer_voice.set(e.data);
+            // new Blob([e.data], {'type' : 'audio/ogg; codecs=opus' });
+        };
 
-        mediaRecorder.start();
+        voice_media_recorder.start();
         recording_time_minutes = 0;
         recording_time_seconds = 0;
         recording_time_display = "00:00";
-        recording_timer()
+        recording_timer();
     };
 
     let recording_stop = async () => {
         recording = false;
-        mediaRecorder.stop();
-
-        console.log(media.length);
+        voice_media_recorder.stop();
+        voice_media_stream.getTracks().forEach((track) => track.stop());
     };
 
     let recording_pause = async () => {
         recording_paused = true;
-        mediaRecorder.pause();
+        voice_media_recorder.pause();
     };
 
     let recording_resume = async () => {
         recording_paused = false;
-        mediaRecorder.resume();
+        voice_media_recorder.resume();
     };
 
     let recording_timer = async () => {
-        if (recording){
+        if (recording) {
             setTimeout(() => {
-                if (recording && !recording_paused){
-
-                    if (recording_time_seconds == 59){
-                        if (recording_time_minutes == 59){
-                            recording_time_minutes = 0
+                if (recording && !recording_paused) {
+                    if (recording_time_seconds == 59) {
+                        if (recording_time_minutes == 59) {
+                            recording_time_minutes = 0;
                         } else {
-                            recording_time_minutes = recording_time_minutes + 1
+                            recording_time_minutes = recording_time_minutes + 1;
                         }
 
-                        recording_time_seconds = 0
+                        recording_time_seconds = 0;
                     } else {
-                        recording_time_seconds = recording_time_seconds + 1
+                        recording_time_seconds = recording_time_seconds + 1;
                     }
 
-                    if (recording_time_minutes < 10){
+                    if (recording_time_minutes < 10) {
                         recording_time_display = `0${recording_time_minutes}`;
                     } else {
                         recording_time_display = `${recording_time_minutes}`;
                     }
 
-                    recording_time_display += `:`
+                    recording_time_display += `:`;
 
-                    if (recording_time_seconds < 10){
+                    if (recording_time_seconds < 10) {
                         recording_time_display += `0${recording_time_seconds}`;
                     } else {
                         recording_time_display += `${recording_time_seconds}`;
                     }
                 }
-                recording_timer()
-            },
-            1000)
+                recording_timer();
+            }, 1000);
         }
-    }
+    };
 </script>
 
 <div>
-    {#if files.length > 0}
+    {#if $payload_buffer_attachments.length > 0}
         <div class="overflow-x-scroll h-[100px] hide-scrollbar">
-            {#each files as fileObject}
+            {#each $payload_buffer_attachments as fileObject}
                 <div
                     class="w-[80px] h-[80px] stubber_webchat_input_box rounded-xl m-2 inline-block"
                 >
@@ -175,7 +195,7 @@
                 <input
                     type="text"
                     class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2"
-                    bind:value={message}
+                    bind:value={$payload_buffer_message}
                     on:keydown={handleEnterPress}
                     placeholder={"Type message..."}
                     autocomplete="off"
@@ -224,8 +244,10 @@
             </button>
             <button
                 class="w-10 h-10 transition duration-300 mx-2"
-                on:click={recording ? recording_stop : normalSend}
-                disabled={message === "" && recording == false}
+                on:click={payload_upload}
+                disabled={$payload_buffer_message === "" &&
+                    recording == false &&
+                    $payload_buffer_attachments.length != 0}
             >
                 <div class="w-4 h-5 fill-gray-400 mx-auto my-auto">
                     <PaperPlaneTopRegular />

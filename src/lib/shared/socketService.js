@@ -23,6 +23,10 @@ export const setSocketConfig = (webchat_configuration) => {
   WEBCHAT_CONFIGURATION.sessionuuid = '';
 }
 
+export const socket_connection = () => {
+  return socket
+}
+
 export const connectSocket = () => {
   if (!socket) {
     socket = io(WEBCHAT_API_URL, {
