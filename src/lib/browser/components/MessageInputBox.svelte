@@ -16,10 +16,9 @@
     let message = ``;
     let recording = false;
     let recording_paused = false;
-    let recording_time = {
-        minutes: 0,
-        seconds: 0,
-    };
+    let recording_time_minutes = false;
+    let recording_time_seconds = false;
+    let recording_time_display = "00:00";
     let files = [];
 
     let media = [];
@@ -76,6 +75,10 @@
         // }
 
         mediaRecorder.start();
+        recording_time_minutes = 0;
+        recording_time_seconds = 0;
+        recording_time_display = "00:00";
+        recording_timer()
     };
 
     let recording_stop = async () => {
@@ -94,6 +97,43 @@
         recording_paused = false;
         mediaRecorder.resume();
     };
+
+    let recording_timer = async () => {
+        if (recording){
+            setTimeout(() => {
+                if (recording && !recording_paused){
+
+                    if (recording_time_seconds == 59){
+                        if (recording_time_minutes == 59){
+                            recording_time_minutes = 0
+                        } else {
+                            recording_time_minutes = recording_time_minutes + 1
+                        }
+
+                        recording_time_seconds = 0
+                    } else {
+                        recording_time_seconds = recording_time_seconds + 1
+                    }
+
+                    if (recording_time_minutes < 10){
+                        recording_time_display = `0${recording_time_minutes}`;
+                    } else {
+                        recording_time_display = `${recording_time_minutes}`;
+                    }
+
+                    recording_time_display += `:`
+
+                    if (recording_time_seconds < 10){
+                        recording_time_display += `0${recording_time_seconds}`;
+                    } else {
+                        recording_time_display += `${recording_time_seconds}`;
+                    }
+                }
+                recording_timer()
+            },
+            1000)
+        }
+    }
 </script>
 
 <div>
@@ -162,7 +202,7 @@
                         </button>
                     {/if}
                     <div class="p-auto my-auto ml-auto text-end mr-3">
-                        00:00
+                        {recording_time_display}
                     </div>
                     <div class="p-auto my-auto mr-auto">
                         {#if recording_paused}
