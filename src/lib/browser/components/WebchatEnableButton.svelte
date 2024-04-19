@@ -1,9 +1,7 @@
 <script>
     import UserSolid from "$/lib/icons/user-solid.svelte";
     import { webchat_enable, openWebchat } from "$/lib/stores/configStore.js";
-    import { connectSocket } from "$/lib/shared/socketService.js";
-
-    export let connect_on_open;
+    import { socket_connect } from "$/lib/shared/service_upload.js";
 </script>
 
 <div
@@ -14,7 +12,7 @@
             class="py-2 px-2 rounded-md transition duration-300 flex stubber_webchat_chat_button"
             on:click={() => {
                 openWebchat();
-                connectSocket();
+                socket_connect();
             }}
         >
             <p class="m-auto mx-2">Chat</p>

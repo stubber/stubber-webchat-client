@@ -4,8 +4,10 @@
         switch_whatsapp,
         switch_email,
         switch_sms,
-        openSwitching
+        openSwitching,
+        webchat_incoming_animation
     } from "$/lib/stores/configStore.js";
+
     import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
     import MicrophoneRegular from "$/lib/icons/microphone-regular.svelte";
     import PaperclipVerticalRegular from "$/lib/icons/paperclip-vertical-regular.svelte";
@@ -42,6 +44,7 @@
             }
 
             payload_buffer_upload();
+            webchat_incoming_animation.set(true);
         }
     };
 
@@ -51,6 +54,7 @@
         }
 
         payload_buffer_upload();
+        webchat_incoming_animation.set(true);
     };
 
     let click_upload = () => {

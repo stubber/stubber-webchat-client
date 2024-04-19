@@ -2,7 +2,7 @@
   import Form from "$/lib/browser/components/Form.svelte";
   import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
   import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
-  import { sendClientConfig } from "$/lib/shared/socketService.js";
+  import { upload_client_config } from "$/lib/shared/service_upload.js";
   import { contact_point_type, switching_opened, webchat_incoming_animation } from "$/lib/stores/configStore.js";
   import { onDestroy } from "svelte";
   
@@ -29,14 +29,14 @@
     webchat_incoming_animation.set(true);
 
     if ($contact_point_type == "email") {
-      await sendClientConfig({
+      await upload_client_config({
         contact: formattedEmail,
         type: $contact_point_type,
       });
     };
 
     if ($contact_point_type == "mobile") {
-      await sendClientConfig({
+      await upload_client_config({
         contact: formattedNumber,
         type: $contact_point_type,
       });

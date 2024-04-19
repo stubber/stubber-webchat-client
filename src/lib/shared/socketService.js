@@ -28,6 +28,7 @@ export const socket_connection = () => {
 }
 
 export const connectSocket = () => {
+  return 
   if (!socket) {
     socket = io(WEBCHAT_API_URL, {
       path: WEBCHAT_API_SOCKET_PATH,

@@ -11,9 +11,9 @@
   import { onDestroy, onMount } from "svelte";
 
   import {
-    setSocketConfig,
-    connectSocket,
-  } from "$/lib/shared/socketService.js";
+    socket_initialize,
+    socket_connect
+  } from "$/lib/shared/service_upload.js";
   import {
     switching_opened,
     webchat_enable,
@@ -33,7 +33,7 @@
   export let open_on_mount;
   export let pass_through_data;
 
-  setSocketConfig({
+  socket_initialize({
     orguuid,
     chat_name: chat_name,
     pass_through_data,
@@ -42,7 +42,7 @@
   onMount(() => {
     if (open_on_mount === "true") {
       openWebchat();
-      connectSocket();
+      socket_connect();
     }
   });
 

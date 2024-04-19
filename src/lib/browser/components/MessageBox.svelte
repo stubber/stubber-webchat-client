@@ -4,8 +4,10 @@
   import CheckDoubleRegular from "$/lib/icons/check-double-regular.svelte";
   import PeriodSolid from "$/lib/icons/period-solid.svelte";
   import { marked } from "marked";
-  import { messages } from "$/lib/stores/messageStore.js";
+  import { payloads } from "$/lib/shared/service_upload.js";
   import { webchat_incoming_animation, webchat_agent_name } from "$/lib/stores/configStore.js";
+
+  let messages = []
 
   let timeFormat = (dateTime) => {
     let hours = dateTime.getHours().toString().padStart(2, "0");
@@ -59,26 +61,41 @@
     }
   };
 
-  let auto_scroll_subcribe;
-  let webchat_incoming_animation_subscribe;
+  let payload_subscription;
+  let webchat_incoming_animation_subscription;
 
   onMount(() => {
-    auto_scroll_subcribe = messages.subscribe(autoScroll);
-    webchat_incoming_animation_subscribe = webchat_incoming_animation.subscribe(
-      (webchat_incoming_animation) => {
-        if (webchat_incoming_animation) {
-          animateTyping();
-        }
-      },
-    );
+    payload_subscription = payloads.subscribe(PAYLOADS => {
+
+      messages = [];
+      console.log(PAYLOADS);
+
+      for (let payload of PAYLOADS){
+        messages.push({
+          direction: payload.payload_direction,
+          message: payload.webchat_message,
+          dateTime: new Date(),
+          delivered: false,
+        })
+      }
+      messages = messages;
+      autoScroll()
+    });
+
+
+    webchat_incoming_animation_subscription = payloads.subscribe(webchat_incoming_animation => {
+      if (webchat_incoming_animation){
+        animateTyping()
+      }
+    })
   });
 
   onDestroy(() => {
-    if (auto_scroll_subcribe) {
-      auto_scroll_subcribe();
+    if (payload_subscription) {
+      payload_subscription();
     }
-    if (webchat_incoming_animation_subscribe) {
-      webchat_incoming_animation_subscribe();
+    if (webchat_incoming_animation_subscription)  {
+      webchat_incoming_animation_subscription();
     }
   });
 </script>
@@ -87,24 +104,24 @@
   class="p-4 overflow-y-auto flex-grow hide-scrollbar"
   id="stubber_webchat_message_box"
 >
-  {#each $messages as messageObject}
-    {#if messageObject.direction == "in"}
+  {#each messages as messageObject}
+    {#if messageObject.direction == "IN"}
       <div class="mb-2 mr-10 flex flex-col">
-        {#if messageObject.previous_direction == "out" || !messageObject.previous_direction}
-          <p class="m-auto mx-2 text-sm">{messageObject?.webchat_agent ? messageObject?.webchat_agent?.name : "Agent"}</p>
+        {#if messageObject?.agent}
+          <p class="m-auto mx-2 text-sm">{messageObject?.webchat_agent?.name}</p>
         {/if}
         <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
           {#if messageObject.message.type == "markdown"}
             {@html DOMPurify.sanitize(
-              marked(messageObject.message.value.trim()),
+              marked(messageObject.message.data.trim()),
             )}
           {/if}
           {#if messageObject.message.type == "text"}
-            <p class="">{messageObject.message.value}</p>
+            <p class="">{messageObject.message.data}</p>
           {/if}
           {#if messageObject.message.type == "html"}
             <div class="font-mono">
-              {@html messageObject.message.value}
+              {@html messageObject.message.data}
             </div>
           {/if}
           <p class="text-sm ml-auto">
@@ -113,19 +130,19 @@
         </div>
       </div>
     {/if}
-    {#if messageObject.direction == "out"}
+    {#if messageObject.direction == "OUT"}
       <div class="mb-2 ml-10 text-right flex flex-col">
         <p class="m-auto mx-2 text-sm">You</p>
         <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
-          <div class="">{messageObject.message}</div>
+          <div class="">{messageObject.message.data}</div>
           <div class="flex w-full">
             <p class="text-sm ml-auto mr-2">
               {timeFormat(messageObject.dateTime)}
             </p>
             <span
               class="w-3 my-auto bg-red"
-              class:stubber_webchat_message_tick_received={messageObject.received}
-              class:stubber_webchat_message_tick_pending={!messageObject.received}
+              class:stubber_webchat_message_tick_received={messageObject.delivered}
+              class:stubber_webchat_message_tick_pending={!messageObject.delivered}
             >
               <CheckDoubleRegular />
             </span>
