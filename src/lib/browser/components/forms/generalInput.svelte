@@ -2,10 +2,18 @@
   import Form from "$/lib/browser/components/Form.svelte";
   import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
   import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
-  import { upload_client_config } from "$/lib/shared/service_upload.js";
-  import { contact_point_type, switching_opened, webchat_incoming_animation } from "$/lib/stores/configStore.js";
+  import {
+    contact_point_type,
+    switching_opened,
+    webchat_incoming_animation,
+  } from "$/lib/stores/configStore.js";
   import { onDestroy } from "svelte";
-  
+
+  import { platform_name } from "$/lib/stores/configStore.js";
+  import {
+    payload_buffer_upload_fields,
+  } from "$/lib/shared/service_upload.js";
+
   export let isSaving = false;
   export let complete = false;
 
@@ -17,9 +25,11 @@
 
   let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,250})+$/;
 
-  let contact_point_type_subscription = contact_point_type.subscribe(contact_point_type => {
-    complete = false;
-  });
+  let contact_point_type_subscription = contact_point_type.subscribe(
+    (contact_point_type) => {
+      complete = false;
+    },
+  );
 
   async function handleSubmit() {
     isSaving = true;
@@ -29,18 +39,26 @@
     webchat_incoming_animation.set(true);
 
     if ($contact_point_type == "email") {
-      await upload_client_config({
-        contact: formattedEmail,
-        type: $contact_point_type,
+      payload_buffer_upload_fields({
+        platform_switch: {
+          platform: $platform_name,
+          value: formattedEmail,
+          type: $contact_point_type,
+        },
       });
-    };
+    }
 
     if ($contact_point_type == "mobile") {
-      await upload_client_config({
-        contact: formattedNumber,
-        type: $contact_point_type,
+      payload_buffer_upload_fields({
+        platform_switch: {
+          platform: $platform_name,
+          value: formattedNumber,
+          type: $contact_point_type,
+        },
       });
-    };
+    }
+
+    payload_buffer_upload_fields();
 
     setTimeout(() => {
       isSaving = false;
@@ -55,16 +73,16 @@
   let animateSending = () => {
     submitDots += ".";
 
-    if (submitDots.length > 5){
+    if (submitDots.length > 5) {
       submitDots = ".";
     }
 
-    if (isSaving){
+    if (isSaving) {
       setTimeout(() => {
         animateSending();
       }, 150);
     }
-  }
+  };
 
   onDestroy(() => {
     if (contact_point_type_subscription) {
@@ -89,7 +107,7 @@
         name="contact"
         label="Cellphone Number"
         bind:isError
-        bind:formattedNumber={formattedNumber}
+        bind:formattedNumber
       />
     {/if}
     {#if $contact_point_type}
@@ -120,7 +138,7 @@
   @tailwind base;
   @tailwind components;
   @tailwind utilities;
-  
+
   .stubber_webchat_general_input {
     background-color: var(--primary-color);
     color: white;

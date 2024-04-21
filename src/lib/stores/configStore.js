@@ -1,5 +1,4 @@
 // messageStore.js
-import { write } from 'fs';
 import { writable } from 'svelte/store';
 
 export const switching_opened = writable(false);

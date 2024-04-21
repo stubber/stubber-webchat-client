@@ -7,7 +7,7 @@
   import { payloads } from "$/lib/shared/service_upload.js";
   import { webchat_incoming_animation, webchat_agent_name } from "$/lib/stores/configStore.js";
 
-  let messages = []
+  let messages = [];
 
   let timeFormat = (dateTime) => {
     let hours = dateTime.getHours().toString().padStart(2, "0");
@@ -68,18 +68,41 @@
     payload_subscription = payloads.subscribe(PAYLOADS => {
 
       messages = [];
-      console.log(PAYLOADS);
+      let previous_agent = null;
+      let previous_direction = "IN";
 
       for (let payload of PAYLOADS){
-        messages.push({
+        let messageObject = {
           direction: payload.payload_direction,
-          message: payload.webchat_message,
+          message: payload?.webchat_message ? payload?.webchat_message : payload.message,
           dateTime: new Date(),
-          delivered: false,
-        })
+          delivered: false
+        };
+
+        if (!payload?.webchat_agent) {
+          messageObject.agent = {
+            name: "Agent"
+          }
+        };
+
+        if (payload?.webchat_agent) {
+          messageObject.agent = payload?.webchat_agent
+        }
+
+        if (previous_agent != payload?.webchat_agent?.name){
+          messageObject.agent.display = true
+        }
+
+        if (previous_direction != payload.direction){
+          messageObject.agent.display = true
+        }
+
+        messages.push(messageObject);
+        previous_agent = messageObject.agent.name
+        previous_direction = payload.direction
       }
       messages = messages;
-      autoScroll()
+      autoScroll();
     });
 
 
@@ -107,8 +130,8 @@
   {#each messages as messageObject}
     {#if messageObject.direction == "IN"}
       <div class="mb-2 mr-10 flex flex-col">
-        {#if messageObject?.agent}
-          <p class="m-auto mx-2 text-sm">{messageObject?.webchat_agent?.name}</p>
+        {#if messageObject?.agent?.display}
+          <p class="m-auto mx-2 text-sm">{messageObject?.agent.name}</p>
         {/if}
         <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
           {#if messageObject.message.type == "markdown"}

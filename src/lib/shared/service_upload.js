@@ -28,31 +28,16 @@ export const socket_connect = () => {
     SOCKET_CONNECTION.on("connect", async () => {
         console.log("___Stubber Webchat connected to server");
 
-        if (API_SESSION_UUID == ``) {
-            SOCKET_CONNECTION.emit("initialize", {
-                webchat_configuration: {
-                    sessionuuid: API_SESSION_UUID,
-                    orguuid: API_CONFIG_ORG_UUID,
-                    chat_name: API_CONFIG_CHAT_NAME,
-                    pass_through_data: API_CONFIG_PASS_THROUGH_DATA
-                }
-            }, (response) => {
-                console.log(response);
-                if (response?.sessionuuid) {
-                    API_SESSION_UUID = response.sessionuuid
-                }
-            });
-        }
-
-        if (API_SESSION_UUID != ``) {
-            await SOCKET_CONNECTION.emit("webchat_session", {
-                webchat_configuration: {
-                    sessionuuid: API_SESSION_UUID
-                }
-            }, (response) => {
-                console.log(response);
-            });
-        }
+        SOCKET_CONNECTION.emit("handshake", {
+            sessionuuid: API_SESSION_UUID,
+            orguuid: API_CONFIG_ORG_UUID,
+            chat_name: API_CONFIG_CHAT_NAME,
+            pass_through_data: API_CONFIG_PASS_THROUGH_DATA
+        }, (response) => {
+            if (response?.sessionuuid) {
+                API_SESSION_UUID = response.sessionuuid
+            }
+        });
     });
 
     SOCKET_CONNECTION.on("webchat_payload", async (data) => {
@@ -99,7 +84,7 @@ export const payloads = writable([]);
 export const payload_buffer_voice = writable([]);
 export const payload_buffer_message = writable(``);
 export const payload_buffer_attachments = writable([]);
-export const payload_buffer_client_configs = writable([]);
+export const payload_buffer_fields = writable({});
 
 export const payload_buffer_upload = () => {
     const payload = {
@@ -107,12 +92,10 @@ export const payload_buffer_upload = () => {
         payload_direction: "OUT"
     };
 
-    console.log(`Uploading Payload ${payload.payload_uuid}`);
-
     let buffer_voice;
     let buffer_message;
     let buffer_attachments;
-    let buffer_client_configs;
+    let buffer_fields;
 
     payload_buffer_voice.subscribe(payload_buffer_voice => {
         buffer_voice = payload_buffer_voice;
@@ -126,16 +109,16 @@ export const payload_buffer_upload = () => {
         buffer_attachments = payload_buffer_attachments;
     })();
 
-    payload_buffer_client_configs.subscribe(payload_buffer_client_configs => {
-        buffer_client_configs = payload_buffer_client_configs;
+    payload_buffer_fields.subscribe(payload_buffer_fields => {
+        buffer_fields = payload_buffer_fields;
     })();
 
     payload_buffer_voice.set([]);
     payload_buffer_message.set(``);
     payload_buffer_attachments.set([]);
-    payload_buffer_client_configs.set([]);
+    payload_buffer_fields.set({});
 
-    payload.webchat_message = {
+    payload.message = {
         type: 'text',
         data: buffer_message
     };
@@ -145,11 +128,11 @@ export const payload_buffer_upload = () => {
         const voice_attachment_blob = new Blob([buffer_voice], { 'type': 'audio/ogg; codecs=opus' });
 
         upload_attachment({
-            attachment_uuid: voice_attachment_uuid,
+            payload_uuid: payload.payload_uuid,
             blob: voice_attachment_blob
         })
 
-        payload.webchat_voice = {
+        payload.message = {
             type: 'voice',
             data: voice_attachment_uuid
         };
@@ -157,56 +140,43 @@ export const payload_buffer_upload = () => {
 
     if (buffer_attachments.length > 0) {
         for (let attachment of buffer_attachments) {
-            upload_attachment(attachment);
+            upload_attachment({
+                payload_uuid: payload.payload_uuid,
+                blob: attachment
+            });
         };
     };
 
-    if (payload_buffer_client_configs.length > 0) {
-
+    if (Object.keys(buffer_fields) > 0) {
+        payload.fields = buffer_fields
     };
 
-    SOCKET_CONNECTION.emit("message", {
-        webchat_configuration: {
-            sessionuuid: API_SESSION_UUID,
-            orguuid: API_CONFIG_ORG_UUID,
-            chat_name: API_CONFIG_CHAT_NAME,
-            pass_through_data: API_CONFIG_PASS_THROUGH_DATA
-        },
-        webchat_message: payload.webchat_message
+    SOCKET_CONNECTION.emit("payload", {
+        payload
+    }, () => {
+        console.log(`Received Payload ${payload.payload_uuid}`)
     })
 
     payloads.update(payloads => [...payloads, payload]);
+}
+
+export const payload_buffer_upload_fields = (fields) => {
+    const payload = {
+        payload_uuid: crypto.randomUUID(),
+        payload_direction: "OUT",
+        fields
+    };
+
+    SOCKET_CONNECTION.emit("payload", {
+        payload
+    }, () => {
+        console.log(`Received Payload ${payload.payload_uuid}`)
+    })
 }
 
 const upload_attachment = (attachment) => {
     const req = new XMLHttpRequest();
 
     req.open("POST", `${API_URL}/v2/attachments?sessionuuid=${API_SESSION_UUID}`);
-    req.send(attachment.blob);
-}
-
-export const upload_client_config = async (contact_point) => {
-    let PLATFORM_NAME = "";
-
-    let platform_name_subscription = platform_name.subscribe(async platform_name => {
-        PLATFORM_NAME = platform_name
-    });
-
-    platform_name_subscription();
-
-    await SOCKET_CONNECTION.emit("client_configuration", {
-        webchat_configuration: {
-            sessionuuid: API_SESSION_UUID,
-            orguuid: API_CONFIG_ORG_UUID,
-            chat_name: API_CONFIG_CHAT_NAME,
-            pass_through_data: API_CONFIG_PASS_THROUGH_DATA
-        },
-        webchat_client_configuration: {
-            platform_switch: {
-                platform_name: PLATFORM_NAME,
-                type: contact_point.type,
-                value: contact_point.contact
-            }
-        }
-    });
+    req.send(attachment.blob.blob);
 }
