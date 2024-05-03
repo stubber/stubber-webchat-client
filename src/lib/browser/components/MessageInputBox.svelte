@@ -1,11 +1,12 @@
 <script>
-    import { sendMessage } from "$/lib/shared/socketService.js";
     import {
         switch_whatsapp,
         switch_email,
         switch_sms,
         openSwitching,
-        webchat_incoming_animation
+        webchat_incoming_animation,
+        voicenote_enable,
+        files_enable,
     } from "$/lib/stores/configStore.js";
 
     import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
@@ -14,13 +15,13 @@
     import XMarkRegular from "$/lib/icons/xmark-regular.svelte";
     import PlayRegular from "$/lib/icons/play-regular.svelte";
     import PauseRegular from "$/lib/icons/pause-regular.svelte";
-
+    import ImageRegular from "$/lib/icons/image-regular.svelte";
+    
     import {
-        payloads,
         payload_buffer_message,
         payload_buffer_voice,
         payload_buffer_attachments,
-        payload_buffer_upload
+        payload_buffer_append,
     } from "$/lib/shared/service_upload.js";
 
     let recording = false;
@@ -43,7 +44,7 @@
                 recording_stop();
             }
 
-            payload_buffer_upload();
+            payload_buffer_append();
             webchat_incoming_animation.set(true);
         }
     };
@@ -53,7 +54,7 @@
             recording_stop();
         }
 
-        payload_buffer_upload();
+        payload_buffer_append();
         webchat_incoming_animation.set(true);
     };
 
@@ -61,18 +62,16 @@
         var input = document.createElement("input");
         input.type = "file";
 
-        
         input.onchange = (e) => {
             var blob = e.target.files[0];
 
-            const attachment = {
-                attachment_uuid: crypto.randomUUID(),
-                blob
+            if (blob.size > 5 * 1024 * 1024){
+                return
             }
 
             payload_buffer_attachments.update((payload_buffer_attachments) => [
                 ...payload_buffer_attachments,
-                attachment,
+                blob,
             ]);
         };
 
@@ -97,8 +96,7 @@
 
         voice_media_recorder = new MediaRecorder(voice_media_stream);
         voice_media_recorder.ondataavailable = (e) => {
-            payload_buffer_voice.set(e.data);
-            // new Blob([e.data], {'type' : 'audio/ogg; codecs=opus' });
+            payload_buffer_voice.set([e.data]);
         };
 
         voice_media_recorder.start();
@@ -165,7 +163,7 @@
         <div class="overflow-x-scroll h-[100px] hide-scrollbar">
             {#each $payload_buffer_attachments as fileObject}
                 <div
-                    class="w-[80px] h-[80px] stubber_webchat_input_box rounded-xl m-2 inline-block"
+                    class="w-[80px] h-[80px] bg-gray-300 rounded-xl m-2 inline-block"
                 >
                     <div class="w-4 h-4 ml-auto mb-auto mt-1 mr-1">
                         <button
@@ -179,6 +177,12 @@
                             </div>
                         </button>
                     </div>
+                    <!-- <img 
+                        class="w-5 h-5 mx-auto relative"
+                        id={`image/` + fileObject.name}
+                        alt=""
+                    > -->
+                        <!-- <ImageRegular /> -->
                 </div>
             {/each}
         </div>
@@ -187,6 +191,7 @@
         class="p-2 flex flex-col bg-gray-300 rounded-t-xl stubber_webchat_input_box"
     >
         <div class="h-10 w-full bg-white flex rounded-lg text-black">
+            {#if $files_enable}
             <button
                 on:click={click_upload}
                 class="w-10 h-10 transition duration-300 mx-2"
@@ -195,6 +200,7 @@
                     <PaperclipVerticalRegular />
                 </div>
             </button>
+            {/if}
             {#if !recording}
                 <input
                     type="text"
@@ -238,6 +244,7 @@
                     </div>
                 </div>
             {/if}
+            {#if $voicenote_enable}
             <button
                 on:click={recording ? recording_stop : recording_start}
                 class="w-10 h-10 transition duration-300"
@@ -246,6 +253,7 @@
                     <MicrophoneRegular />
                 </div>
             </button>
+            {/if}
             <button
                 class="w-10 h-10 transition duration-300 mx-2"
                 on:click={payload_upload}

@@ -6,6 +6,7 @@
   import { marked } from "marked";
   import { payloads } from "$/lib/shared/service_upload.js";
   import { webchat_incoming_animation, webchat_agent_name } from "$/lib/stores/configStore.js";
+  import ImageRegular from "$/lib/icons/image-regular.svelte";
 
   let messages = [];
 
@@ -66,7 +67,6 @@
 
   onMount(() => {
     payload_subscription = payloads.subscribe(PAYLOADS => {
-
       messages = [];
       let previous_agent = null;
       let previous_direction = "IN";
@@ -76,8 +76,13 @@
           direction: payload.payload_direction,
           message: payload?.webchat_message ? payload?.webchat_message : payload.message,
           dateTime: new Date(),
-          delivered: false
+          delivered: false,
+          attachments: payload.attachments
         };
+
+        if (payload.payload_direction == "OUT"){
+          // console.log(`Payload subscription`, payload)
+        }
 
         if (!payload?.webchat_agent) {
           messageObject.agent = {
@@ -102,6 +107,7 @@
         previous_direction = payload.direction
       }
       messages = messages;
+      console.log(`built messages`, messages)
       autoScroll();
     });
 
@@ -133,7 +139,7 @@
         {#if messageObject?.agent?.display}
           <p class="m-auto mx-2 text-sm">{messageObject?.agent.name}</p>
         {/if}
-        <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
+        <div class="bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble">
           {#if messageObject.message.type == "markdown"}
             {@html DOMPurify.sanitize(
               marked(messageObject.message.data.trim()),
@@ -156,9 +162,26 @@
     {#if messageObject.direction == "OUT"}
       <div class="mb-2 ml-10 text-right flex flex-col">
         <p class="m-auto mx-2 text-sm">You</p>
-        <div class="bg-gray-200 rounded-lg py-2 px-4 flex flex-col stubber_message_bubble">
-          <div class="">{messageObject.message.data}</div>
-          <div class="flex w-full">
+        <div class="bg-gray-100 rounded-lg py-1 px-1 flex flex-col stubber_message_bubble">
+          {#each messageObject.attachments as attachment}
+          <div class="w-full flex mb-1">
+            <div class="w-[52px] h-[52px] fill-gray-900 bg-gray-300 p-auto mr-2 rounded-lg">
+              <div class="w-5 h-5">
+                <!-- <ImageRegular /> -->
+              </div>
+            </div>
+            <div class="flex-col my-2">
+              <div class="text-sm">
+                {attachment.blob.name}
+              </div>
+              <div class="text-xs text-gray-400">
+                {attachment.blob.type}
+              </div>
+            </div>
+          </div>
+          {/each}
+          <div class="px-2">{messageObject.message.data}</div>
+          <div class="flex w-full px-2">
             <p class="text-sm ml-auto mr-2">
               {timeFormat(messageObject.dateTime)}
             </p>

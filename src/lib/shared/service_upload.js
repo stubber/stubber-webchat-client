@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { webchat_incoming_animation } from "$/lib/stores/configStore.js";
-import { switch_whatsapp, switch_email, switch_sms, platform_name } from "$/lib/stores/configStore.js";
+import { switch_whatsapp, switch_email, switch_sms, platform_name, voicenote_enable, files_enable } from "$/lib/stores/configStore.js";
 import { default_country_code } from "../stores/configStore";
 import io from "socket.io-client";
 
@@ -71,6 +71,14 @@ export const socket_connect = () => {
                 if (webchat_client_configuration[key].type == "default_country_code") {
                     default_country_code.set(webchat_client_configuration[key].value)
                 }
+
+                if (webchat_client_configuration[key].type == "voicenote"){
+                    // voicenote_enable.set(webchat_client_configuration[key].value.enable)
+                }
+
+                if (webchat_client_configuration[key].type == "files"){
+                    files_enable.set(webchat_client_configuration[key].value.enable)
+                }
             });
         }
     })
@@ -86,10 +94,11 @@ export const payload_buffer_message = writable(``);
 export const payload_buffer_attachments = writable([]);
 export const payload_buffer_fields = writable({});
 
-export const payload_buffer_upload = () => {
+export const payload_buffer_append = () => {
     const payload = {
         payload_uuid: crypto.randomUUID(),
-        payload_direction: "OUT"
+        payload_direction: "OUT",
+        attachments: []
     };
 
     let buffer_voice;
@@ -118,46 +127,83 @@ export const payload_buffer_upload = () => {
     payload_buffer_attachments.set([]);
     payload_buffer_fields.set({});
 
-    payload.message = {
-        type: 'text',
-        data: buffer_message
-    };
-
     if (buffer_voice.length > 0) {
-        const voice_attachment_uuid = crypto.randomUUID();
-        const voice_attachment_blob = new Blob([buffer_voice], { 'type': 'audio/ogg; codecs=opus' });
+        const attachment_uuid = crypto.randomUUID();
 
-        upload_attachment({
-            payload_uuid: payload.payload_uuid,
-            blob: voice_attachment_blob
+        payload.attachments.push({
+            attachment_uuid,
+            blob: new Blob(buffer_voice, { 'type': 'audio/ogg; codecs=opus' }),
+            sent: false
         })
-
         payload.message = {
             type: 'voice',
-            data: voice_attachment_uuid
+            data: attachment_uuid,
+            sent: false
         };
-    };
+    } else {
+        payload.message = {
+            type: 'text',
+            data: buffer_message,
+            sent: false
+        };
+    }
 
     if (buffer_attachments.length > 0) {
         for (let attachment of buffer_attachments) {
-            upload_attachment({
-                payload_uuid: payload.payload_uuid,
-                blob: attachment
-            });
+            payload.attachments.push({
+                attachment_uuid: crypto.randomUUID(),
+                blob: attachment,
+                sent: false
+            })
         };
     };
 
-    if (Object.keys(buffer_fields) > 0) {
-        payload.fields = buffer_fields
-    };
-
-    SOCKET_CONNECTION.emit("payload", {
-        payload
-    }, () => {
-        console.log(`Received Payload ${payload.payload_uuid}`)
-    })
 
     payloads.update(payloads => [...payloads, payload]);
+
+    payload_buffer_worker(payload)
+}
+
+export const payload_buffer_worker = async (payload) => {
+    return new Promise(async (resolve, reject) => {
+        // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
+
+        const attachments_uploaded = [];
+
+        for (let attachment of payload.attachments) {
+            attachment.payload_uuid = payload.payload_uuid;
+            let res = await upload_attachment(attachment);
+            attachment.sent = true;
+            attachments_uploaded.push(res)
+            payload_buffer_update_payload(payload);
+        }
+
+        SOCKET_CONNECTION.emit("payload", {
+            payload: {
+                message: payload.message,
+                attachments:attachments_uploaded,
+                payload_uuid: payload.payload_uuid
+            }
+        }, () => {
+            payload.message.sent = true;
+            payload_buffer_update_payload(payload);
+            console.log(`${payload.payload_uuid} COMPLETE...`, payload);
+            resolve()
+        })
+    })
+}
+
+const payload_buffer_update_payload = (payload_new) => {
+    payloads.update(PAYLOADS => {
+        var index = 0;
+        while (index < PAYLOADS.length) {
+            if (PAYLOADS[index].payload_uuid == payload_new.payload_uuid) {
+                PAYLOADS[index] = payload_new;
+                return PAYLOADS;
+            }
+            index++
+        }
+    })
 }
 
 export const payload_buffer_upload_fields = (fields) => {
@@ -174,9 +220,31 @@ export const payload_buffer_upload_fields = (fields) => {
     })
 }
 
-const upload_attachment = (attachment) => {
-    const req = new XMLHttpRequest();
+const upload_attachment = async (attachment) => {
+    return new Promise((resolve, reject) => {
+        let reader = new window.FileReader();
+        
+        reader.addEventListener("loadend", async function () {
+            let formData = new FormData();
+            formData.append("content", reader.result);
 
-    req.open("POST", `${API_URL}/v2/attachments?sessionuuid=${API_SESSION_UUID}`);
-    req.send(attachment.blob.blob);
+            let res = await fetch(
+                `${API_URL}/v2/attachments?${new URLSearchParams({
+                    sessionuuid:API_SESSION_UUID,
+                    payloaduuid:attachment.payload_uuid,
+                    originalname:attachment.blob.name,
+                    mimetype: attachment.blob.type,
+                    size: attachment.blob.size
+                })}`,
+                {
+                    method: "POST",
+                    body: reader.result
+                }
+            );
+
+            resolve(res.json())
+        });
+
+        reader.readAsDataURL(attachment.blob);
+    });
 }

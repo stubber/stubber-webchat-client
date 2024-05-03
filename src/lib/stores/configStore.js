@@ -11,6 +11,9 @@ export const webchat_enable = writable(false);
 export const webchat_opened = writable(false);
 export const webchat_incoming_animation = writable(true);
 
+export const voicenote_enable = writable(false);
+export const files_enable = writable(false);
+
 export const platform_name = writable("whatsapp");
 export const contact_point_type = writable("mobile");
 export const default_country_code = writable("US");
