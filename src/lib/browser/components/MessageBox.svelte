@@ -5,10 +5,14 @@
   import PeriodSolid from "$/lib/icons/period-solid.svelte";
   import { marked } from "marked";
   import { payloads } from "$/lib/shared/service_upload.js";
-  import { webchat_incoming_animation, webchat_agent_name } from "$/lib/stores/configStore.js";
+  import {
+    webchat_incoming_animation,
+    webchat_agent_name,
+  } from "$/lib/stores/configStore.js";
   import ImageRegular from "$/lib/icons/image-regular.svelte";
 
   let messages = [];
+  let attachments_loaded = {};
 
   let timeFormat = (dateTime) => {
     let hours = dateTime.getHours().toString().padStart(2, "0");
@@ -66,64 +70,82 @@
   let webchat_incoming_animation_subscription;
 
   onMount(() => {
-    payload_subscription = payloads.subscribe(PAYLOADS => {
+    payload_subscription = payloads.subscribe((PAYLOADS) => {
       messages = [];
       let previous_agent = null;
       let previous_direction = "IN";
 
-      for (let payload of PAYLOADS){
+      for (let payload of PAYLOADS) {
         let messageObject = {
           direction: payload.payload_direction,
-          message: payload?.webchat_message ? payload?.webchat_message : payload.message,
+          message: payload?.webchat_message
+            ? payload?.webchat_message
+            : payload.message,
           dateTime: new Date(),
           delivered: false,
-          attachments: payload.attachments
+          attachments: payload.attachments,
         };
 
-        if (payload.payload_direction == "OUT"){
-          // console.log(`Payload subscription`, payload)
-        }
+        // if (payload.payload_direction == "OUT"){
+        //   console.log(`Payload subscription`, payload)
+        // }
 
         if (!payload?.webchat_agent) {
           messageObject.agent = {
-            name: "Agent"
-          }
-        };
+            name: "Agent",
+          };
+        }
 
         if (payload?.webchat_agent) {
-          messageObject.agent = payload?.webchat_agent
+          messageObject.agent = payload?.webchat_agent;
         }
 
-        if (previous_agent != payload?.webchat_agent?.name){
-          messageObject.agent.display = true
+        if (previous_agent != payload?.webchat_agent?.name) {
+          messageObject.agent.display = true;
         }
 
-        if (previous_direction != payload.direction){
-          messageObject.agent.display = true
+        if (previous_direction != payload.direction) {
+          messageObject.agent.display = true;
+        }
+
+        if (messageObject?.attachments) {
+          for (let attachment of messageObject?.attachments) {
+            if (attachments_loaded[attachment.attachment_uuid] == undefined) {
+              let reader = new window.FileReader();
+
+              reader.addEventListener(
+                "loadend",
+                () =>
+                  (attachments_loaded[attachment.attachment_uuid] =
+                    reader.result),
+              );
+              reader.readAsDataURL(attachment.blob);
+            }
+          }
         }
 
         messages.push(messageObject);
-        previous_agent = messageObject.agent.name
-        previous_direction = payload.direction
+        previous_agent = messageObject.agent.name;
+        previous_direction = payload.direction;
       }
       messages = messages;
-      console.log(`built messages`, messages)
       autoScroll();
     });
 
-
-    webchat_incoming_animation_subscription = payloads.subscribe(webchat_incoming_animation => {
-      if (webchat_incoming_animation){
-        animateTyping()
-      }
-    })
+    webchat_incoming_animation_subscription = payloads.subscribe(
+      (webchat_incoming_animation) => {
+        if (webchat_incoming_animation) {
+          animateTyping();
+        }
+      },
+    );
   });
 
   onDestroy(() => {
     if (payload_subscription) {
       payload_subscription();
     }
-    if (webchat_incoming_animation_subscription)  {
+    if (webchat_incoming_animation_subscription) {
       webchat_incoming_animation_subscription();
     }
   });
@@ -139,7 +161,9 @@
         {#if messageObject?.agent?.display}
           <p class="m-auto mx-2 text-sm">{messageObject?.agent.name}</p>
         {/if}
-        <div class="bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble">
+        <div
+          class="bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble"
+        >
           {#if messageObject.message.type == "markdown"}
             {@html DOMPurify.sanitize(
               marked(messageObject.message.data.trim()),
@@ -162,25 +186,55 @@
     {#if messageObject.direction == "OUT"}
       <div class="mb-2 ml-10 text-right flex flex-col">
         <p class="m-auto mx-2 text-sm">You</p>
-        <div class="bg-gray-100 rounded-lg py-1 px-1 flex flex-col stubber_message_bubble">
+        <div
+          class="bg-gray-100 rounded-lg py-1 px-1 flex flex-col stubber_message_bubble"
+        >
           {#each messageObject.attachments as attachment}
-          <div class="w-full flex mb-1">
-            <div class="w-[52px] h-[52px] fill-gray-900 bg-gray-300 p-auto mr-2 rounded-lg">
-              <div class="w-5 h-5">
-                <!-- <ImageRegular /> -->
+            {#if attachment.display}
+              <div class="w-full flex mb-1">
+                <div
+                  class="w-[52px] h-[52px] fill-gray-900 bg-gray-300 p-auto mr-2 rounded-lg"
+                >
+                  {#if attachment.blob.type.startsWith("image")}
+                    <img
+                      src={attachments_loaded[attachment.attachment_uuid]}
+                      alt=""
+                      class="w-[52px] h-[52px] object-cover rounded-lg"
+                    />
+                  {/if}
+                  {#if attachment.blob.type.startsWith("video")}
+                    <video
+                      controls={false}
+                      autoplay
+                      loop
+                      src={attachments_loaded[attachment.attachment_uuid]}
+                      class="w-[52px] h-[52px] object-cover rounded-lg"
+                    >
+                      <track kind="captions" />
+                    </video>
+                  {/if}
+                </div>
+                <div class="flex-col my-2">
+                  <div class="text-sm">
+                    {attachment.blob.name}
+                  </div>
+                  <div class="text-xs text-gray-400">
+                    {attachment.blob.type}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="flex-col my-2">
-              <div class="text-sm">
-                {attachment.blob.name}
-              </div>
-              <div class="text-xs text-gray-400">
-                {attachment.blob.type}
-              </div>
-            </div>
-          </div>
+            {/if}
           {/each}
-          <div class="px-2">{messageObject.message.data}</div>
+          {#if messageObject.message.type == "text"}
+            <div class="px-2">{messageObject.message.data}</div>
+          {/if}
+          {#if messageObject.message.type == "voice"}
+            <video
+              controls
+              src={attachments_loaded[messageObject.message.data]}
+              class="h-10"
+            />
+          {/if}
           <div class="flex w-full px-2">
             <p class="text-sm ml-auto mr-2">
               {timeFormat(messageObject.dateTime)}

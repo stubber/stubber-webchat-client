@@ -11,6 +11,8 @@ let API_CONFIG_ORG_UUID = ``;
 let API_CONFIG_CHAT_NAME = ``;
 let API_CONFIG_PASS_THROUGH_DATA = ``;
 
+let SOCKET_CONNECT = true;
+
 let SOCKET_CONNECTION = {};
 const SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
@@ -21,6 +23,12 @@ export const socket_initialize = (CONFIG) => {
 }
 
 export const socket_connect = () => {
+    if (!SOCKET_CONNECT){
+        return
+    }
+
+    SOCKET_CONNECT = false;
+
     SOCKET_CONNECTION = io(API_URL, {
         path: SOCKET_PATH,
     });
@@ -73,7 +81,7 @@ export const socket_connect = () => {
                 }
 
                 if (webchat_client_configuration[key].type == "voicenote"){
-                    // voicenote_enable.set(webchat_client_configuration[key].value.enable)
+                    voicenote_enable.set(webchat_client_configuration[key].value.enable)
                 }
 
                 if (webchat_client_configuration[key].type == "files"){
@@ -89,7 +97,7 @@ export const settings_country_code = writable(``)
 
 export const payloads = writable([]);
 
-export const payload_buffer_voice = writable([]);
+export const payload_buffer_voice = writable({});
 export const payload_buffer_message = writable(``);
 export const payload_buffer_attachments = writable([]);
 export const payload_buffer_fields = writable({});
@@ -122,23 +130,17 @@ export const payload_buffer_append = () => {
         buffer_fields = payload_buffer_fields;
     })();
 
-    payload_buffer_voice.set([]);
+    payload_buffer_voice.set({});
     payload_buffer_message.set(``);
     payload_buffer_attachments.set([]);
     payload_buffer_fields.set({});
 
-    if (buffer_voice.length > 0) {
-        const attachment_uuid = crypto.randomUUID();
-
-        payload.attachments.push({
-            attachment_uuid,
-            blob: new Blob(buffer_voice, { 'type': 'audio/ogg; codecs=opus' }),
-            sent: false
-        })
+    if (buffer_voice?.attachment_uuid) {
+        payload.attachments.push(buffer_voice)
         payload.message = {
             type: 'voice',
-            data: attachment_uuid,
-            sent: false
+            data: buffer_voice.attachment_uuid,
+            sent: false,
         };
     } else {
         payload.message = {
@@ -150,11 +152,7 @@ export const payload_buffer_append = () => {
 
     if (buffer_attachments.length > 0) {
         for (let attachment of buffer_attachments) {
-            payload.attachments.push({
-                attachment_uuid: crypto.randomUUID(),
-                blob: attachment,
-                sent: false
-            })
+            payload.attachments.push(attachment)
         };
     };
 

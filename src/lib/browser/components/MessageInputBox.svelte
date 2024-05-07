@@ -16,7 +16,7 @@
     import PlayRegular from "$/lib/icons/play-regular.svelte";
     import PauseRegular from "$/lib/icons/pause-regular.svelte";
     import ImageRegular from "$/lib/icons/image-regular.svelte";
-    
+
     import {
         payload_buffer_message,
         payload_buffer_voice,
@@ -33,6 +33,8 @@
     let voice_media_stream = null;
     let voice_media_recorder = null;
 
+    let attachments_loaded = {};
+
     let handleEnterPress = (event) => {
         if (
             event.key === "Enter" &&
@@ -42,6 +44,7 @@
         ) {
             if (recording) {
                 recording_stop();
+                return;
             }
 
             payload_buffer_append();
@@ -52,8 +55,8 @@
     let payload_upload = () => {
         if (recording) {
             recording_stop();
+            return;
         }
-
         payload_buffer_append();
         webchat_incoming_animation.set(true);
     };
@@ -63,16 +66,30 @@
         input.type = "file";
 
         input.onchange = (e) => {
-            var blob = e.target.files[0];
+            let attachment_uuid = crypto.randomUUID();
+            let blob = e.target.files[0];
 
-            if (blob.size > 5 * 1024 * 1024){
-                return
+            if (blob.size > 5 * 1024 * 1024) {
+                return;
             }
 
             payload_buffer_attachments.update((payload_buffer_attachments) => [
                 ...payload_buffer_attachments,
-                blob,
+                {
+                    attachment_uuid,
+                    blob,
+                    sent: false,
+                    display: true,
+                },
             ]);
+
+            let reader = new window.FileReader();
+
+            reader.addEventListener("loadend", () => {
+                attachments_loaded[attachment_uuid] = reader.result;
+            });
+
+            reader.readAsDataURL(blob);
         };
 
         input.click();
@@ -96,7 +113,16 @@
 
         voice_media_recorder = new MediaRecorder(voice_media_stream);
         voice_media_recorder.ondataavailable = (e) => {
-            payload_buffer_voice.set([e.data]);
+            let attachment_uuid = crypto.randomUUID();
+            payload_buffer_voice.set({
+                attachment_uuid,
+                blob: e.data,
+                sent: false,
+                display: false,
+            });
+
+            payload_buffer_append();
+            webchat_incoming_animation.set(true);
         };
 
         voice_media_recorder.start();
@@ -163,9 +189,11 @@
         <div class="overflow-x-scroll h-[100px] hide-scrollbar">
             {#each $payload_buffer_attachments as fileObject}
                 <div
-                    class="w-[80px] h-[80px] bg-gray-300 rounded-xl m-2 inline-block"
+                    class="w-[80px] h-[80px] bg-gray-300 rounded-xl m-2 inline-block relative"
                 >
-                    <div class="w-4 h-4 ml-auto mb-auto mt-1 mr-1">
+                    <div
+                        class="w-4 h-4 ml-auto mb-auto mt-1 mr-1 absolute z-50"
+                    >
                         <button
                             on:click={() => {
                                 click_remove_file(fileObject);
@@ -177,12 +205,18 @@
                             </div>
                         </button>
                     </div>
-                    <!-- <img 
-                        class="w-5 h-5 mx-auto relative"
-                        id={`image/` + fileObject.name}
-                        alt=""
-                    > -->
-                        <!-- <ImageRegular /> -->
+                    <div
+                        class="w-[80px] h-[80px] bg-gray-300 rounded-xl inline-block absolute"
+                    >
+                        {#if fileObject.blob.type.startsWith("image")}
+                            <img src={attachments_loaded[fileObject.attachment_uuid]} alt="" class="w-[80px] h-[80px] object-cover rounded-xl"/>
+                        {/if}
+                        {#if fileObject.blob.type.startsWith("video")}
+                            <video controls={false} autoplay loop src={attachments_loaded[fileObject.attachment_uuid]} class="w-[80px] h-[80px] object-cover rounded-xl">
+                                <track kind="captions">
+                            </video>
+                        {/if}
+                    </div>
                 </div>
             {/each}
         </div>
@@ -192,14 +226,14 @@
     >
         <div class="h-10 w-full bg-white flex rounded-lg text-black">
             {#if $files_enable}
-            <button
-                on:click={click_upload}
-                class="w-10 h-10 transition duration-300 mx-2"
-            >
-                <div class="w-4 h-5 fill-gray-400 m-auto">
-                    <PaperclipVerticalRegular />
-                </div>
-            </button>
+                <button
+                    on:click={click_upload}
+                    class="w-10 h-10 transition duration-300 mx-2"
+                >
+                    <div class="w-4 h-5 fill-gray-400 m-auto">
+                        <PaperclipVerticalRegular />
+                    </div>
+                </button>
             {/if}
             {#if !recording}
                 <input
@@ -245,14 +279,14 @@
                 </div>
             {/if}
             {#if $voicenote_enable}
-            <button
-                on:click={recording ? recording_stop : recording_start}
-                class="w-10 h-10 transition duration-300"
-            >
-                <div class="w-4 h-6 fill-gray-400 m-auto">
-                    <MicrophoneRegular />
-                </div>
-            </button>
+                <button
+                    on:click={recording ? recording_stop : recording_start}
+                    class="w-10 h-10 transition duration-300"
+                >
+                    <div class="w-4 h-6 fill-gray-400 m-auto">
+                        <MicrophoneRegular />
+                    </div>
+                </button>
             {/if}
             <button
                 class="w-10 h-10 transition duration-300 mx-2"
