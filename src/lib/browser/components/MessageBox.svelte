@@ -10,6 +10,8 @@
     webchat_agent_name,
   } from "$/lib/stores/configStore.js";
   import ImageRegular from "$/lib/icons/image-regular.svelte";
+  import FileRegular from "$/lib/icons/file-regular.svelte";
+  import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
 
   let messages = [];
   let attachments_loaded = {};
@@ -193,7 +195,7 @@
             {#if attachment.display}
               <div class="w-full flex mb-1">
                 <div
-                  class="w-[52px] h-[52px] fill-gray-900 bg-gray-300 p-auto mr-2 rounded-lg"
+                  class="min-w-[52px] min-h-[52px] fill-gray-900 bg-gray-300 p-auto rounded-lg flex"
                 >
                   {#if attachment.blob.type.startsWith("image")}
                     <img
@@ -201,8 +203,7 @@
                       alt=""
                       class="w-[52px] h-[52px] object-cover rounded-lg"
                     />
-                  {/if}
-                  {#if attachment.blob.type.startsWith("video")}
+                  {:else if attachment.blob.type.startsWith("video")}
                     <video
                       controls={false}
                       autoplay
@@ -212,13 +213,23 @@
                     >
                       <track kind="captions" />
                     </video>
+                  {:else if attachment.blob.type.startsWith("audio")}
+                    <div class="w-[20px] h-[20px] m-auto">
+                        <FileAudioRegular/>
+                    </div>
+                  {:else}
+                    <div class="w-[20px] h-[20px] m-auto">
+                        <FileRegular/>
+                    </div>
                   {/if}
                 </div>
                 <div class="flex-col my-2">
-                  <div class="text-sm">
-                    {attachment.blob.name}
+                  <div class="text-sm line-clamp-1 pl-2">
+                    <span>
+                      {attachment.blob.name}
+                    </span>
                   </div>
-                  <div class="text-xs text-gray-400">
+                  <div class="text-xs text-gray-400 pl-2">
                     {attachment.blob.type}
                   </div>
                 </div>
@@ -233,6 +244,7 @@
               controls
               src={attachments_loaded[messageObject.message.data]}
               class="h-10"
+              controlsList="nodownload"
             />
           {/if}
           <div class="flex w-full px-2">

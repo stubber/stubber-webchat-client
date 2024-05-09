@@ -45,6 +45,14 @@ export const socket_connect = () => {
             if (response?.sessionuuid) {
                 API_SESSION_UUID = response.sessionuuid
             }
+
+            payloads.subscribe(PAYLOADS => {
+                for (let payload of PAYLOADS){
+                    if (!payload?.message?.sent && payload.payload_direction == "OUT"){
+                        payload_buffer_worker(payload)
+                    }
+                }
+            })()
         });
     });
 
@@ -169,8 +177,14 @@ export const payload_buffer_worker = async (payload) => {
         const attachments_uploaded = [];
 
         for (let attachment of payload.attachments) {
+            if (attachment.sent){
+                continue
+            }
+
             attachment.payload_uuid = payload.payload_uuid;
+
             let res = await upload_attachment(attachment);
+
             attachment.sent = true;
             attachments_uploaded.push(res)
             payload_buffer_update_payload(payload);

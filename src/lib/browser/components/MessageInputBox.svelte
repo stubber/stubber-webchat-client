@@ -16,6 +16,9 @@
     import PlayRegular from "$/lib/icons/play-regular.svelte";
     import PauseRegular from "$/lib/icons/pause-regular.svelte";
     import ImageRegular from "$/lib/icons/image-regular.svelte";
+    import FileRegular from "$/lib/icons/file-regular.svelte";
+    import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
+
 
     import {
         payload_buffer_message,
@@ -106,6 +109,7 @@
 
     let recording_start = async () => {
         recording = true;
+        recording_paused = false;
 
         voice_media_stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -191,30 +195,43 @@
                 <div
                     class="w-[80px] h-[80px] bg-gray-300 rounded-xl m-2 inline-block relative"
                 >
-                    <div
-                        class="w-4 h-4 ml-auto mb-auto mt-1 mr-1 absolute z-50"
-                    >
-                        <button
-                            on:click={() => {
-                                click_remove_file(fileObject);
-                            }}
-                            class="w-3 h-3"
+                    <div class="w-[80px] h-[80px] rounded-xl absolute flex" >
+                        <div
+                            class="w-4 h-4 ml-auto mb-auto mt-1 mr-1 z-50"
                         >
-                            <div class="w-3 h-3 fill-white m-auto">
-                                <XMarkRegular />
-                            </div>
-                        </button>
+                            <button
+                                on:click={() => {
+                                    click_remove_file(fileObject);
+                                }}
+                                class="w-3 h-3"
+                            >
+                                <div class="w-3 h-3 fill-white m-auto">
+                                    <XMarkRegular />
+                                </div>
+                            </button>
+                        </div>
                     </div>
                     <div
-                        class="w-[80px] h-[80px] bg-gray-300 rounded-xl inline-block absolute"
+                        class="w-[80px] h-[80px] bg-gray-300 rounded-xl absolute flex"
                     >
                         {#if fileObject.blob.type.startsWith("image")}
                             <img src={attachments_loaded[fileObject.attachment_uuid]} alt="" class="w-[80px] h-[80px] object-cover rounded-xl"/>
-                        {/if}
-                        {#if fileObject.blob.type.startsWith("video")}
+                        {:else if fileObject.blob.type.startsWith("video")}
                             <video controls={false} autoplay loop src={attachments_loaded[fileObject.attachment_uuid]} class="w-[80px] h-[80px] object-cover rounded-xl">
                                 <track kind="captions">
                             </video>
+                        {:else if  fileObject.blob.type.startsWith("video")}
+                            <video controls={false} autoplay loop src={attachments_loaded[fileObject.attachment_uuid]} class="w-[80px] h-[80px] object-cover rounded-xl">
+                                <track kind="captions">
+                            </video>
+                        {:else if  fileObject.blob.type.startsWith("audio")}
+                            <div class="w-[20px] h-[20px] m-auto">
+                                <FileAudioRegular/>
+                            </div>
+                        {:else}
+                            <div class="w-[20px] h-[20px] m-auto">
+                                <FileRegular/>
+                            </div>
                         {/if}
                     </div>
                 </div>
@@ -250,6 +267,8 @@
             {#if recording}
                 <div
                     class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2 flex"
+                    on:keydown={handleEnterPress}
+                    role="button"
                 >
                     {#if recording_paused}
                         <button on:click={recording_resume} class="w-10 h-10">
@@ -279,21 +298,22 @@
                 </div>
             {/if}
             {#if $voicenote_enable}
-                <button
-                    on:click={recording ? recording_stop : recording_start}
-                    class="w-10 h-10 transition duration-300"
-                >
-                    <div class="w-4 h-6 fill-gray-400 m-auto">
-                        <MicrophoneRegular />
-                    </div>
-                </button>
+                {#if !recording}
+                    <button
+                        on:click={recording ? recording_stop : recording_start}
+                        class="w-10 h-10 transition duration-300"
+                    >
+                        <div class="w-4 h-6 fill-gray-400 m-auto">
+                            <MicrophoneRegular />
+                        </div>
+                    </button>
+                {/if}
             {/if}
             <button
                 class="w-10 h-10 transition duration-300 mx-2"
-                on:click={payload_upload}
-                disabled={$payload_buffer_message === "" &&
-                    recording == false &&
-                    $payload_buffer_attachments.length != 0}
+                on:click={() => {
+                    handleEnterPress({ key: "Enter"})
+                }}
             >
                 <div class="w-4 h-5 fill-gray-400 mx-auto my-auto">
                     <PaperPlaneTopRegular />
