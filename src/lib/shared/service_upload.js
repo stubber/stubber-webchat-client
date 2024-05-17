@@ -64,6 +64,7 @@ export const socket_connect = () => {
         if (data.webchat_message) {
             payloads.update(payloads => [...payloads, {
                 payload_direction: 'IN',
+                payload_uuid: crypto.randomUUID(),
                 webchat_agent,
                 webchat_message: {
                     type: webchat_message.type,
@@ -172,11 +173,11 @@ export const payload_buffer_append = () => {
 
 export const payload_buffer_worker = async (payload) => {
     return new Promise(async (resolve, reject) => {
-        // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
+        console.log(`${payload.payload_uuid} WORKINGS...`, payload);
 
         const attachments_uploaded = [];
 
-        for (let attachment of payload.attachments) {
+        for (let attachment of payload?.attachments) {
             if (attachment.sent){
                 continue
             }
@@ -208,6 +209,7 @@ export const payload_buffer_worker = async (payload) => {
 const payload_buffer_update_payload = (payload_new) => {
     payloads.update(PAYLOADS => {
         var index = 0;
+
         while (index < PAYLOADS.length) {
             if (PAYLOADS[index].payload_uuid == payload_new.payload_uuid) {
                 PAYLOADS[index] = payload_new;
@@ -215,6 +217,8 @@ const payload_buffer_update_payload = (payload_new) => {
             }
             index++
         }
+
+        return PAYLOADS;
     })
 }
 

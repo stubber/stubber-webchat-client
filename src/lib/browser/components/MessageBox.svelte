@@ -1,10 +1,11 @@
 <script>
   import { onDestroy, onMount } from "svelte";
+  import { writable } from 'svelte/store';
   import DOMPurify from "dompurify";
   import CheckDoubleRegular from "$/lib/icons/check-double-regular.svelte";
   import PeriodSolid from "$/lib/icons/period-solid.svelte";
   import { marked } from "marked";
-  import { payloads } from "$/lib/shared/service_upload.js";
+  import { payloads, payload_buffer_worker } from "$/lib/shared/service_upload.js";
   import {
     webchat_incoming_animation,
     webchat_agent_name,
@@ -12,7 +13,9 @@
   import ImageRegular from "$/lib/icons/image-regular.svelte";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
+  import Form from "$/lib/forms/Form.svelte";
 
+  let form_writables = {};
   let messages = [];
   let attachments_loaded = {};
 
@@ -71,6 +74,8 @@
   let payload_subscription;
   let webchat_incoming_animation_subscription;
 
+  let forms = {};
+
   onMount(() => {
     payload_subscription = payloads.subscribe((PAYLOADS) => {
       messages = [];
@@ -79,6 +84,7 @@
 
       for (let payload of PAYLOADS) {
         let messageObject = {
+          payload_uuid: payload.payload_uuid,
           direction: payload.payload_direction,
           message: payload?.webchat_message
             ? payload?.webchat_message
@@ -86,7 +92,7 @@
           dateTime: new Date(),
           delivered: false,
           attachments: payload.attachments,
-        };
+        };  
 
         // if (payload.payload_direction == "OUT"){
         //   console.log(`Payload subscription`, payload)
@@ -126,6 +132,15 @@
           }
         }
 
+        if (messageObject.message.type == "form"){
+          if (!form_writables[messageObject.payload_uuid]){
+            form_writables[messageObject.payload_uuid] = {
+              writable:writable(),
+              spec: messageObject.message.data.spec
+            } 
+          }
+        }
+
         messages.push(messageObject);
         previous_agent = messageObject.agent.name;
         previous_direction = payload.direction;
@@ -151,6 +166,7 @@
       webchat_incoming_animation_subscription();
     }
   });
+
 </script>
 
 <div
@@ -178,6 +194,27 @@
             <div class="font-mono">
               {@html messageObject.message.data}
             </div>
+          {/if}
+          {#if messageObject.message.type == "form"}
+            <Form bind:form={form_writables[messageObject.payload_uuid].writable} initial_form={messageObject?.message?.data}/>
+            <button
+              class="py-2 px-2 rounded-md transition duration-300 flex ml-auto"
+                on:click={() => {
+                  form_writables[messageObject.payload_uuid].writable.subscribe(form_data => {
+                    payload_buffer_worker({
+                      message: {
+                        type: "form",
+                        data: form_data.data,
+                        spec: form_writables[messageObject.payload_uuid].spec
+                      },
+                      attachments: [],
+                      payload_uuid: crypto.randomUUID()
+                    })
+                  })();
+                }}
+              >
+              <p class="m-auto mx-2">Submit</p>
+            </button>
           {/if}
           <p class="text-sm ml-auto">
             {timeFormat(messageObject.dateTime)}

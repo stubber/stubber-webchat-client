@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "stubber-tailwind-pkg/app.css";
+
 
 /* Tailwind CSS with @apply */
 .hide-scrollbar::-webkit-scrollbar {
