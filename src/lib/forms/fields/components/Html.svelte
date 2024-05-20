@@ -11,3 +11,11 @@
     {@html html}
   {/if}
 </div>
+
+<style>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  @import "../../../../app.css";
+</style>

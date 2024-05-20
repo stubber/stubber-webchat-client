@@ -194,7 +194,7 @@ export const payload_buffer_worker = async (payload) => {
         SOCKET_CONNECTION.emit("payload", {
             payload: {
                 message: payload.message,
-                attachments:attachments_uploaded,
+                attachments: attachments_uploaded,
                 payload_uuid: payload.payload_uuid
             }
         }, () => {

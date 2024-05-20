@@ -8,7 +8,6 @@
     
     import { switching_opened, switch_whatsapp, switch_sms, switch_email, platform_name, contact_point_type} from "$/lib/stores/configStore.js";
     import { sendClientConfig } from "$/lib/shared/socketService.js";
-
 </script>
 
 <div class="p-2 flex flex-col bg-white h-full stubber_webchat_switch_box">

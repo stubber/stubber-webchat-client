@@ -15,3 +15,11 @@
     <h2 class="text-sm text-surface-500 whitespace-pre-wrap">{subheading_text}</h2>
   {/if}
 </div>
+
+<style>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  @import "../../../../app.css";
+</style>

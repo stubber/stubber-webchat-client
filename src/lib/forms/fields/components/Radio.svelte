@@ -114,3 +114,11 @@
     {/if}
   </div>
 {/if}
+
+<style>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+
+  @import "../../../../app.css";
+</style>

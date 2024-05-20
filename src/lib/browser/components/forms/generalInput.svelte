@@ -1,7 +1,5 @@
 <script>
   import Form from "$/lib/browser/components/Form.svelte";
-  import FormTelInput from "$/lib/browser/components/forminputs/FormTelInput.svelte";
-  import FormTextInput from "$/lib/browser/components/forminputs/FormTextInput.svelte";
   import {
     contact_point_type,
     switching_opened,
@@ -13,6 +11,9 @@
   import {
     payload_buffer_upload_fields,
   } from "$/lib/shared/service_upload.js";
+
+  import Form_field from "$/lib/forms/Form.svelte";
+  import { writable } from "svelte/store";
 
   export let isSaving = false;
   export let complete = false;
@@ -89,26 +90,79 @@
       contact_point_type_subscription();
     }
   });
+
+  let spec_telephone = {
+    spec: {
+      fields:{
+        "Cellphone Number":{
+          fieldtype: 'telephone'
+        }
+      }
+    }
+  };
+
+  let form_telephone = writable();
+
+  let spec_email = {
+    spec: {
+      fields:{
+        "Email":{
+          fieldtype: 'email'
+        }
+      }
+    }
+  };
+
+  let form_email = writable();
+
+  form_telephone.subscribe(form_internal => {
+    if (form_internal == undefined){
+      return
+    }
+    
+    if (form_internal.data['Cellphone Number_details']?.is_valid_number){
+      isError = false;
+      formattedNumber = form_internal.data['Cellphone Number'];
+    } else {
+      isError = true
+    }
+  })
+
+  form_email.subscribe(form_internal => {
+    if (form_internal == undefined){
+      return
+    }
+
+    if (form_internal.data['Email_details']?.is_valid_email){
+      isError = false;
+      formattedEmail = form_internal.data['Email'];
+    } else {
+      isError = true;
+    }
+  })
+
 </script>
 
 <Form on:submit={handleSubmit}>
   <div class="w-full md:w-110 space-y-5">
     {#if $contact_point_type == "email"}
-      <FormTextInput
+      <!-- <FormTextInput
         name="contact"
         label="Email Address"
         regex={emailRegex}
         validationMessage="Invalid Email"
         bind:isError
         bind:value={formattedEmail}
-      />
+      /> -->
+      <Form_field bind:form={form_email} initial_form={spec_email}/>
     {:else if $contact_point_type == "mobile"}
-      <FormTelInput
+      <!-- <FormTelInput
         name="contact"
         label="Cellphone Number"
         bind:isError
         bind:formattedNumber
-      />
+      /> -->
+      <Form_field bind:form={form_telephone} initial_form={spec_telephone}/>
     {/if}
     {#if $contact_point_type}
       <div class="flex flex-row space-x-2 items-center">
