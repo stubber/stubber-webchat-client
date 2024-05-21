@@ -257,6 +257,7 @@
   </div>
 {/if}
 
+
 <style>
   @tailwind base;
   @tailwind components;

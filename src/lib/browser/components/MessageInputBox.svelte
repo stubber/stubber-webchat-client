@@ -15,7 +15,6 @@
     import XMarkRegular from "$/lib/icons/xmark-regular.svelte";
     import PlayRegular from "$/lib/icons/play-regular.svelte";
     import PauseRegular from "$/lib/icons/pause-regular.svelte";
-    import ImageRegular from "$/lib/icons/image-regular.svelte";
     import FileRegular from "$/lib/icons/file-regular.svelte";
     import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
 
@@ -265,6 +264,7 @@
                 />
             {/if}
             {#if recording}
+                <!-- svelte-ignore a11y-interactive-supports-focus -->
                 <div
                     class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2 flex"
                     on:keydown={handleEnterPress}

@@ -10,7 +10,6 @@
     webchat_incoming_animation,
     webchat_agent_name,
   } from "$/lib/stores/configStore.js";
-  import ImageRegular from "$/lib/icons/image-regular.svelte";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
   import Form from "$/lib/forms/Form.svelte";
@@ -158,6 +157,24 @@
     );
   });
 
+  let isSaving = {};
+  let submitDots = {};
+  let complete = {};
+
+  let animateSending = () => {
+        submitDots += ".";
+
+        if (submitDots.length > 5) {
+            submitDots = ".";
+        }
+
+        if (isSaving) {
+            setTimeout(() => {
+                animateSending();
+            }, 150);
+        }
+    };
+
   onDestroy(() => {
     if (payload_subscription) {
       payload_subscription();
@@ -198,9 +215,13 @@
           {#if messageObject.message.type == "form"}
             <Form bind:form={form_writables[messageObject.payload_uuid].writable} initial_form={messageObject?.message?.data}/>
             <button
-              class="py-2 px-2 rounded-md transition duration-300 flex ml-auto"
+              class="w-[90px] h-10 mt-2 rounded-md transition duration-300 ml-auto stubber_webchat_general_input bg-gray-300"
                 on:click={() => {
+                  console.log("START")
+                  isSaving[messageObject.payload_uuid] = true;
+                  animateSending();
                   form_writables[messageObject.payload_uuid].writable.subscribe(form_data => {
+                    console.log("SENDING")
                     payload_buffer_worker({
                       message: {
                         type: "form",
@@ -209,11 +230,27 @@
                       },
                       attachments: [],
                       payload_uuid: crypto.randomUUID()
-                    })
+                    }).then(() => {
+                      console.log("DONE")
+                      isSaving[messageObject.payload_uuid] = false;
+                      complete[messageObject.payload_uuid] = true;
+                    }).catch(e => {
+                      console.log("ERR")
+                      isSaving[messageObject.payload_uuid] = false;
+                      complete[messageObject.payload_uuid] = false;
+                    });
                   })();
                 }}
               >
-              <p class="m-auto mx-2">Submit</p>
+              {#if isSaving[messageObject.payload_uuid]}
+                  {submitDots}
+              {/if}
+              {#if !isSaving[messageObject.payload_uuid] && !complete[messageObject.payload_uuid]}
+                  Submit
+              {/if}
+              {#if complete[messageObject.payload_uuid] && !isSaving[messageObject.payload_uuid]}
+                  Sent
+              {/if}
             </button>
           {/if}
           <p class="text-sm ml-auto">
@@ -352,5 +389,14 @@
   .stubber_message_bubble {
     word-break: break-word;
     text-align: left;
+  }
+
+  .stubber_webchat_general_input {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .stubber_webchat_general_input_error {
+    background-color: var(--neutral-color);
   }
 </style>
