@@ -89,7 +89,7 @@
           message: payload?.webchat_message
             ? payload?.webchat_message
             : payload.message,
-          dateTime: new Date(),
+          dateTime: payload.payload_date,
           delivered: false,
           attachments: payload.attachments,
         };  
