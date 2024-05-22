@@ -14,6 +14,8 @@ import Section from "$/lib/forms/fields/components/Section.svelte";
 import Select from "$/lib/forms/fields/components/Select.svelte";
 import Telephone from "$/lib/forms/fields/components/Telephone.svelte";
 import Text from "$/lib/forms/fields/components/Text.svelte";
+import Signature from "$/lib/forms/fields/components/Signature.svelte";
+import ScrollAndReadDisplay from "$/lib/forms/fields/components/Scrollandreaddisplay.svelte";
 
 export const components = {
   checkbox: Checkbox,
@@ -32,4 +34,6 @@ export const components = {
   select: Select,
   telephone: Telephone,
   text: Text,
+  signature:Signature,
+  scrollandreaddisplay:ScrollAndReadDisplay
 };
