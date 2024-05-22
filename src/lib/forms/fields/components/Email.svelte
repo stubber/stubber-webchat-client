@@ -55,6 +55,10 @@
       field,
       internal,
       (a, b) => {
+        if (a == undefined){
+          return
+        }
+
         let _clone = _.cloneDeep(a.state?.internal) || {};
 
         // get parts from data

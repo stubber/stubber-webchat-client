@@ -217,11 +217,9 @@
             <button
               class="w-[90px] h-10 mt-2 rounded-md transition duration-300 ml-auto stubber_webchat_general_input bg-gray-300"
                 on:click={() => {
-                  console.log("START")
                   isSaving[messageObject.payload_uuid] = true;
                   animateSending();
                   form_writables[messageObject.payload_uuid].writable.subscribe(form_data => {
-                    console.log("SENDING")
                     payload_buffer_worker({
                       message: {
                         type: "form",
@@ -231,7 +229,6 @@
                       attachments: [],
                       payload_uuid: crypto.randomUUID()
                     }).then(() => {
-                      console.log("DONE")
                       isSaving[messageObject.payload_uuid] = false;
                       complete[messageObject.payload_uuid] = true;
                     }).catch(e => {
