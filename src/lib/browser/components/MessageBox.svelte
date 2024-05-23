@@ -133,7 +133,6 @@
 
         if (messageObject.message.type == "form"){
           if (!form_writables[messageObject.payload_uuid]){
-            console.log(messageObject.message)
             form_writables[messageObject.payload_uuid] = {
               writable:writable(),
               spec: messageObject.message.data.spec,
@@ -222,18 +221,6 @@
                   isSaving[messageObject.payload_uuid] = true;
                   animateSending();
                   form_writables[messageObject.payload_uuid].writable.subscribe(form_data => {
-                    console.log("FORM PAYLOAD", {
-                      message: {
-                        type: "form",
-                        data: {
-                          form_data: form_data.data,
-                          form_name: form_writables[messageObject.payload_uuid].form_name
-                        },
-                        spec: form_writables[messageObject.payload_uuid].spec
-                      },
-                      attachments: [],
-                      payload_uuid: crypto.randomUUID()
-                    })
                     payload_buffer_worker({
                       message: {
                         type: "form",
@@ -249,7 +236,6 @@
                       isSaving[messageObject.payload_uuid] = false;
                       complete[messageObject.payload_uuid] = true;
                     }).catch(e => {
-                      console.log("ERR")
                       isSaving[messageObject.payload_uuid] = false;
                       complete[messageObject.payload_uuid] = false;
                     });
