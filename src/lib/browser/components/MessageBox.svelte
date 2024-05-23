@@ -235,6 +235,7 @@
                     }).then(() => {
                       isSaving[messageObject.payload_uuid] = false;
                       complete[messageObject.payload_uuid] = true;
+                      webchat_incoming_animation.set(true);
                     }).catch(e => {
                       isSaving[messageObject.payload_uuid] = false;
                       complete[messageObject.payload_uuid] = false;
