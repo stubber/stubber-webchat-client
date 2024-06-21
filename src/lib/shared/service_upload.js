@@ -56,7 +56,7 @@ export const socket_connect = () => {
         });
     });
 
-    SOCKET_CONNECTION.on("webchat_payload", async (data) => {
+    SOCKET_CONNECTION.on("webchat_payload", async (data, callback) => {
         let webchat_agent = data?.webchat_agent
         let webchat_message = data?.webchat_message
         let webchat_client_configuration = data?.webchat_client_configuration
@@ -99,6 +99,8 @@ export const socket_connect = () => {
                 }
             });
         }
+
+        callback()
     })
 }
 

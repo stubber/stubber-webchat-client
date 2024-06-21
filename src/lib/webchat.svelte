@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("___Stubber Webchat v2.1.7");
+  console.log("___Stubber Webchat v2.1.8");
 
   import { onDestroy, onMount } from "svelte";
 
