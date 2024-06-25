@@ -13,9 +13,7 @@ jobs:
   build_dist:
     runs-on: ubuntu-latest
     steps:
-      - name: Print dir
-        id: why
-        run: ls -a ..
+      - uses: actions/checkout@v3
       - name: Install dependencies
         id: node_dependencies
         run: npm i
