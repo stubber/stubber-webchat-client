@@ -38,7 +38,16 @@ export default defineConfig(({ mode }) => {
   }
 
   if (mode == "production") {
-    config.build.rollupOptions.output.dir = "./dist"
+    config.build.rollupOptions.output.dir = "./dist_live"
+  }
+
+  
+  if (mode == "devmaster") {
+    config.build.rollupOptions.output.dir = "./dist_devmaster"
+  }
+
+  if (mode == "dev") {
+    config.build.rollupOptions.output.dir = "./dist_dev"
   }
 
   return config
