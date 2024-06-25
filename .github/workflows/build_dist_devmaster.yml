@@ -16,7 +16,9 @@ jobs:
       - name: Install dependencies
         id: node_dependencies
         run: npm i
+        working-directory: ./app
       - name: Run vite build
         id: vite_build
         run: npm run build
+        working-directory: ./app
 
