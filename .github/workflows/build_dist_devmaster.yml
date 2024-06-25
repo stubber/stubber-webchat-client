@@ -13,12 +13,13 @@ jobs:
   build_dist:
     runs-on: ubuntu-latest
     steps:
+      - name: Print dir
+        id: why
+        run: ls -a
       - name: Install dependencies
         id: node_dependencies
         run: npm i
-        working-directory: ./app
       - name: Run vite build
         id: vite_build
         run: npm run build
-        working-directory: ./app
 
