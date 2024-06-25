@@ -37,19 +37,9 @@ export default defineConfig(({ mode }) => {
     envDir: "./",
   }
 
-  // if (mode == "localhost") {
-  //   config.build.rollupOptions.output.dir = "./dist_localhost"
-  // }
-
-  // if (mode == "development") {
-  //   config.build.rollupOptions.output.dir = "./dist_devmaster"
-  // }
-
-  // if (mode == "") {
-  //   config.build.rollupOptions.output.dir = "./dist"
-  // }
-
-  config.build.rollupOptions.output.dir = "./dist"
+  if (mode == "production") {
+    config.build.rollupOptions.output.dir = "./dist"
+  }
 
   return config
 });
