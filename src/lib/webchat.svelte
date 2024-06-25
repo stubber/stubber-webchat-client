@@ -117,7 +117,7 @@
   }
 
   .stubber_webchat_box_fullscreen {
-    height: 100vh;
+    height: 100%;
     padding-top: 0px;
     max-width: none;
     max-height: none;
