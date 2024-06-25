@@ -23,6 +23,7 @@ export const socket_initialize = (CONFIG) => {
 }
 
 export const socket_connect = () => {
+    console.log(`___Stubber webchat connecting to ${API_URL}${SOCKET_PATH}`)
     if (!SOCKET_CONNECT){
         return
     }
