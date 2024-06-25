@@ -10,7 +10,7 @@
     "build-devmaster": "vite build --mode devmaster",
     "build-prod": "vite build --mode production",
     "build-all":"vite build --mode dev; vite build --mode devmaster; vite build --mode production",
-    "build-serve": "vite build --mode dev; serve ./ -p 6025",
+    "serve": "serve ./ -p 6025",
     "preview": "vite preview --port 6025",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
