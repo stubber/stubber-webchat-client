@@ -6,5 +6,14 @@ on:
       - dev
 
 env:
-  FOLDER_NAME: core
-  SERVICE_NAME: stubber-core
+  VITE_WEBCHAT_API_URL: http://localhost:6026
+  VITE_WEBCHAT_API_SOCKET_PATH: /v2/socket.io
+
+jobs:
+  build_dist:
+    runs-on: self-hosted
+    steps:
+      - name: Run vite build
+        id: vite_build
+        run: npm run build
+
