@@ -1,0 +1,10 @@
+name: Build dist devmaster
+
+on:
+  push:
+    branches:
+      - dev
+
+env:
+  FOLDER_NAME: core
+  SERVICE_NAME: stubber-core
