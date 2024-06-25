@@ -1,6 +1,8 @@
 // messageStore.js
 import { writable } from 'svelte/store';
 
+export const fullscreen = writable(false);
+
 export const switching_opened = writable(false);
 export const switch_whatsapp = writable(false);
 export const switch_sms = writable(false);

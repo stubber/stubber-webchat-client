@@ -1,6 +1,6 @@
 <script>
     import CircleXMarkRegular from "$/lib/icons/circle-xmark-regular.svelte";
-    import { webchat_enable } from "$/lib/stores/configStore.js";
+    import { webchat_enable, fullscreen } from "$/lib/stores/configStore.js";
 
     export let chat_display_name;
 </script>

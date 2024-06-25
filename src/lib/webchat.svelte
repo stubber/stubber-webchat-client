@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log("___Stubber Webchat v2.1.8");
+  console.log("___Stubber Webchat v2.2");
 
   import { onDestroy, onMount } from "svelte";
 
@@ -17,7 +17,8 @@
   import {
     switching_opened,
     webchat_enable,
-    openWebchat
+    openWebchat,
+    fullscreen
   } from "$/lib/stores/configStore.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -32,6 +33,7 @@
   export let connect_on_open;
   export let open_on_mount;
   export let pass_through_data;
+  export let fullscreen_mode;
 
   socket_initialize({
     orguuid,
@@ -40,7 +42,8 @@
   });
 
   onMount(() => {
-    if (open_on_mount === "true") {
+    fullscreen.set(fullscreen_mode === "true")
+    if (open_on_mount === "true" || fullscreen_mode === "true") { 
       openWebchat();
       socket_connect();
     }
@@ -57,12 +60,17 @@
   <WebchatEnableButton connect_on_open={connect_on_open} />
   {#if $webchat_enable}
     <div
-      class="stubber_webchat_box z-50 stubber_webchat_theme fixed right-0 bottom-0 flex w-full min-w-[250px] max-w-[500px] min-h-[200px] max-h-[1000px] pt-4"
+      class:stubber_webchat_box_fullscreen={$fullscreen}
+      class="z-50 stubber_webchat_theme stubber_webchat_box fixed right-0 bottom-0 flex w-full min-w-[250px] min-h-[200px]"
     >
       <div
-        class="flex flex-col flex-grow justify-end mx-4 transition duration-300 rounded-t-xl stubber_webchat_message_box"
+        class:mx-4={!$fullscreen}
+        class:stubber_webchat_message_box_fullscreen={fullscreen}
+        class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
       >
-        <WebchatTopBox {chat_display_name} />
+        {#if !$fullscreen}
+          <WebchatTopBox {chat_display_name} />
+        {/if}
         {#if !$switching_opened}
           <MessageBox />
           <MessageInputBox />
@@ -97,7 +105,22 @@
     border: 1px solid var(--border-color, var(--primary-color));
   }
 
-  .stubber_webchat_box {
-    height: 85vh;
+  .stubber_webchat_message_box_fullscreen {
+    border:0px
   }
+
+  .stubber_webchat_box {
+    height: 80vh;
+    padding-top: 16px;
+    max-width: 500px;
+    max-height: 1000px;
+  }
+
+  .stubber_webchat_box_fullscreen {
+    height: 100vh;
+    padding-top: 0px;
+    max-width: none;
+    max-height: none;
+  }
+
 </style>
