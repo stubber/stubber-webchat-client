@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.3 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.3.1 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -18,7 +18,9 @@
     switching_opened,
     webchat_enable,
     openWebchat,
-    fullscreen
+    fullscreen,
+    voicenote_enable, 
+    files_enable
   } from "$/lib/stores/configStore.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -34,6 +36,8 @@
   export let open_on_mount;
   export let pass_through_data;
   export let fullscreen_mode;
+  export let enable_voice_notes;
+  export let enable_file_uploads;
 
   socket_initialize({
     orguuid,
@@ -43,6 +47,9 @@
 
   onMount(() => {
     fullscreen.set(fullscreen_mode === "true")
+    voicenote_enable.set(enable_voice_notes === "true")
+    files_enable.set(enable_file_uploads === "true")
+    
     if (open_on_mount === "true" || fullscreen_mode === "true") { 
       openWebchat();
       socket_connect();
@@ -65,7 +72,7 @@
     >
       <div
         class:mx-4={!$fullscreen}
-        class:stubber_webchat_message_box_fullscreen={fullscreen}
+        class:stubber_webchat_message_box_fullscreen={$fullscreen}
         class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
       >
         {#if !$fullscreen}
