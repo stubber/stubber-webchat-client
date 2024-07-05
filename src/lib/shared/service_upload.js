@@ -122,6 +122,10 @@ export const socket_connect = () => {
 
     callback();
   });
+  
+  SOCKET_CONNECTION.on("error", async (data) => {
+    console.log(data);
+  })
 };
 
 export const settings_switching = writable({});
