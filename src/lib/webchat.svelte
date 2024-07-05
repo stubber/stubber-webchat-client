@@ -6,22 +6,22 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.3.1 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.4 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
   import {
     socket_initialize,
-    socket_connect
+    socket_connect,
   } from "$/lib/shared/service_upload.js";
   import {
     switching_opened,
     webchat_enable,
     openWebchat,
     fullscreen,
-    voicenote_enable, 
-    files_enable
-  } from "$/lib/stores/configStore.js";
+    voicenote_enable,
+    files_enable,
+  } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
   import MessageBox from "./browser/components/MessageBox.svelte";
@@ -32,25 +32,73 @@
   export let orguuid;
   export let chat_name;
   export let chat_display_name;
-  export let connect_on_open;
   export let open_on_mount;
   export let pass_through_data;
   export let fullscreen_mode;
   export let enable_voice_notes;
   export let enable_file_uploads;
+  export let profile_uuid;
 
-  socket_initialize({
-    orguuid,
-    chat_name: chat_name,
-    pass_through_data,
-  });
+  if (!profile_uuid) {
+    socket_initialize({
+      orguuid,
+      chat_name: chat_name,
+      pass_through_data,
+    });
+  }
 
-  onMount(() => {
-    fullscreen.set(fullscreen_mode === "true")
-    voicenote_enable.set(enable_voice_notes === "true")
-    files_enable.set(enable_file_uploads === "true")
-    
-    if (open_on_mount === "true" || fullscreen_mode === "true") { 
+  onMount(async () => {
+    if (profile_uuid) {
+      let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
+      let CONFIG_PATH = import.meta.env.VITE_WEBCHAT_API_CONFIG_PATH;
+      let config_request = await fetch(
+        `${API_URL}${CONFIG_PATH}/${profile_uuid}`
+      );
+      let config_request_json = await config_request.json();
+      console.log(config_request_json);
+
+      orguuid = config_request_json.orguuid;
+      chat_name = config_request_json.webchat_insance_name;
+
+      let webchat_client_config = config_request_json.webchat_client_config;
+
+      chat_display_name = webchat_client_config.webchat_title;
+      open_on_mount = webchat_client_config.display_settings.open_on_load;
+      fullscreen_mode = webchat_client_config.display_settings.fullscreen;
+      enable_voice_notes = webchat_client_config.voice_notes.enabled;
+      enable_file_uploads = webchat_client_config.file_uploads.enabled;
+
+      fullscreen.set(fullscreen_mode);
+      voicenote_enable.set(enable_voice_notes);
+      files_enable.set(enable_file_uploads);
+
+      let webchat_css_config = webchat_client_config.display_settings.css;
+
+      if (webchat_css_config) {
+        let root_css = document.querySelector(":root");
+        root_css.style.setProperty(
+          "--primary-color",
+          webchat_css_config["--primary-color"]
+        );
+      }
+
+      socket_initialize({
+        orguuid,
+        chat_name: chat_name,
+        pass_through_data,
+      });
+    } else {
+      fullscreen_mode = fullscreen_mode === "true"
+      enable_voice_notes = enable_voice_notes === "true"
+      enable_file_uploads = enable_file_uploads === "true"
+      open_on_mount = open_on_mount === "true"
+    }
+
+    fullscreen.set(fullscreen_mode);
+    voicenote_enable.set(enable_voice_notes);
+    files_enable.set(enable_file_uploads);
+
+    if (open_on_mount || $fullscreen) {
       openWebchat();
       socket_connect();
     }
@@ -64,7 +112,7 @@
 </script>
 
 <div part="host" class="stubber_webchat_outer_box">
-  <WebchatEnableButton connect_on_open={connect_on_open} />
+  <WebchatEnableButton />
   {#if $webchat_enable}
     <div
       class:stubber_webchat_box_fullscreen={$fullscreen}
@@ -89,6 +137,7 @@
     </div>
   {/if}
 </div>
+
 <!-- h-5/6 -->
 <style>
   @tailwind base;
@@ -113,7 +162,7 @@
   }
 
   .stubber_webchat_message_box_fullscreen {
-    border:0px
+    border: 0px;
   }
 
   .stubber_webchat_box {
@@ -129,5 +178,4 @@
     max-width: none;
     max-height: none;
   }
-
 </style>

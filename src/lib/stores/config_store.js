@@ -1,5 +1,5 @@
 // messageStore.js
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
 export const fullscreen = writable(false);
 
@@ -23,10 +23,10 @@ export const default_country_code = writable("US");
 export const webchat_agent_name = writable("Agent");
 
 export const openWebchat = () => {
-    webchat_enable.set(true);
-    webchat_opened.set(true);
+  webchat_enable.set(true);
+  webchat_opened.set(true);
 };
 
 export const openSwitching = () => {
-    switching_opened.set(true);
-}
+  switching_opened.set(true);
+};

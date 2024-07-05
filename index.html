@@ -13,7 +13,7 @@
   <style>
     stubber-webchat::part(host) {
       /* --background: linear-gradient(to right, white , grey); */
-      /* --primary-color: black; */
+      /* --primary-color: red; */
       /* --primary-color: rgb(9, 103, 210); */
       /* --border-color: none;
       --text-color: black; */
@@ -38,57 +38,69 @@
           console.error(e.toString());
         }
       }
+      if (webchat_demo_settings) {
+        console.log(webchat_demo_settings);
+        document.documentElement.style.setProperty(
+          "--primary-color",
+          `${webchat_demo_settings.webchat_css.primary_color_hex}`
+        );
+        if (
+          webchat_demo_settings.webchat_css.gradient_color_left != "" &&
+          webchat_demo_settings.webchat_css.gradient_color_right != ""
+        ) {
+          document.documentElement.style.setProperty(
+            "--background",
+            `linear-gradient(to right, ${webchat_demo_settings.webchat_css.gradient_color_left} , ${webchat_demo_settings.webchat_css.gradient_color_right})`
+          );
+        } else {
+          document.documentElement.style.setProperty("--background", ``);
+        }
+        if (webchat_demo_settings.webchat_css.text_color_hex != "") {
+          document.documentElement.style.setProperty(
+            "--text-color",
+            `${webchat_demo_settings.webchat_css.text_color_hex}`
+          );
+        } else {
+          document.documentElement.style.setProperty("--text-color", ``);
+        }
+        if (webchat_demo_settings.webchat_css.border_color_hex != "") {
+          document.documentElement.style.setProperty(
+            "--border-color",
+            `${webchat_demo_settings.webchat_css.border_color_hex}`
+          );
+        } else {
+          document.documentElement.style.setProperty("--border-color", ``);
+        }
+      }
+  
+      window.onload = function () {
+        const body = (document.getElementById("body").innerHTML = `
+            <stubber-webchat
+              orguuid="${webchat_demo_settings.webchat_params.orguuid}"
+              chat_name="${webchat_demo_settings.webchat_params.chat_name}"
+              connect_on_open="${webchat_demo_settings.webchat_params.connect_on_open}"
+              open_on_mount="${webchat_demo_settings.webchat_params.open_on_mount}"
+              pass_through_data="${webchat_demo_settings.webchat_params.pass_through_data}"
+              chat_display_name="${webchat_demo_settings.webchat_params.chat_display_name}"
+              fullscreen_mode="true"
+              profile_uuid="3977b424-16b8-4495-9ef9-ab0171e3f2d0"
+            >
+            </stubber-webchat>
+        `);
+      };
     }
 
-    if (webchat_demo_settings) {
-      console.log(webchat_demo_settings);
-      document.documentElement.style.setProperty(
-        "--primary-color",
-        `${webchat_demo_settings.webchat_css.primary_color_hex}`
+    if (searchParams.has("profile_uuid")){
+      const profile_uuid = searchParams.get(
+        "profile_uuid"
       );
-      if (
-        webchat_demo_settings.webchat_css.gradient_color_left != "" &&
-        webchat_demo_settings.webchat_css.gradient_color_right != ""
-      ) {
-        document.documentElement.style.setProperty(
-          "--background",
-          `linear-gradient(to right, ${webchat_demo_settings.webchat_css.gradient_color_left} , ${webchat_demo_settings.webchat_css.gradient_color_right})`
-        );
-      } else {
-        document.documentElement.style.setProperty("--background", ``);
-      }
-      if (webchat_demo_settings.webchat_css.text_color_hex != "") {
-        document.documentElement.style.setProperty(
-          "--text-color",
-          `${webchat_demo_settings.webchat_css.text_color_hex}`
-        );
-      } else {
-        document.documentElement.style.setProperty("--text-color", ``);
-      }
-      if (webchat_demo_settings.webchat_css.border_color_hex != "") {
-        document.documentElement.style.setProperty(
-          "--border-color",
-          `${webchat_demo_settings.webchat_css.border_color_hex}`
-        );
-      } else {
-        document.documentElement.style.setProperty("--border-color", ``);
-      }
+      window.onload = function () {
+        const body = (document.getElementById("body").innerHTML = `
+            <stubber-webchat profile_uuid="${profile_uuid}">
+            </stubber-webchat>
+        `);
+      };
     }
-
-    window.onload = function () {
-      const body = (document.getElementById("body").innerHTML = `
-          <stubber-webchat
-            orguuid="${webchat_demo_settings.webchat_params.orguuid}"
-            chat_name="${webchat_demo_settings.webchat_params.chat_name}"
-            connect_on_open="${webchat_demo_settings.webchat_params.connect_on_open}"
-            open_on_mount="${webchat_demo_settings.webchat_params.open_on_mount}"
-            pass_through_data="${webchat_demo_settings.webchat_params.pass_through_data}"
-            chat_display_name="${webchat_demo_settings.webchat_params.chat_display_name}"
-            fullscreen_mode="true"
-          >
-          </stubber-webchat>
-      `);
-    };
   </script>
 
   <body id="body"></body>

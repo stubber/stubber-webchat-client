@@ -1,15 +1,18 @@
 <script>
   import { onDestroy, onMount } from "svelte";
-  import { writable } from 'svelte/store';
+  import { writable } from "svelte/store";
   import DOMPurify from "dompurify";
   import CheckDoubleRegular from "$/lib/icons/check-double-regular.svelte";
   import PeriodSolid from "$/lib/icons/period-solid.svelte";
   import { marked } from "marked";
-  import { payloads, payload_buffer_worker } from "$/lib/shared/service_upload.js";
+  import {
+    payloads,
+    payload_buffer_worker,
+  } from "$/lib/shared/service_upload.js";
   import {
     webchat_incoming_animation,
     webchat_agent_name,
-  } from "$/lib/stores/configStore.js";
+  } from "$/lib/stores/config_store.js";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
   import Form from "$/lib/forms/Form.svelte";
@@ -48,7 +51,7 @@
     setTimeout(() => {
       let host = document.querySelector("stubber-webchat");
       let message_box = host.shadowRoot.getElementById(
-        "stubber_webchat_message_box",
+        "stubber_webchat_message_box"
       );
       message_box.scrollTop = message_box.scrollHeight;
     }, 100);
@@ -91,7 +94,7 @@
           dateTime: payload.payload_date,
           delivered: false,
           attachments: payload.attachments,
-        };  
+        };
 
         // if (payload.payload_direction == "OUT"){
         //   console.log(`Payload subscription`, payload)
@@ -124,20 +127,20 @@
                 "loadend",
                 () =>
                   (attachments_loaded[attachment.attachment_uuid] =
-                    reader.result),
+                    reader.result)
               );
               reader.readAsDataURL(attachment.blob);
             }
           }
         }
 
-        if (messageObject.message.type == "form"){
-          if (!form_writables[messageObject.payload_uuid]){
+        if (messageObject.message.type == "form") {
+          if (!form_writables[messageObject.payload_uuid]) {
             form_writables[messageObject.payload_uuid] = {
-              writable:writable(),
+              writable: writable(),
               spec: messageObject.message.data.spec,
-              form_name: messageObject.message.data.form_name
-            } 
+              form_name: messageObject.message.data.form_name,
+            };
           }
         }
 
@@ -154,7 +157,7 @@
         if (webchat_incoming_animation) {
           animateTyping();
         }
-      },
+      }
     );
   });
 
@@ -163,18 +166,18 @@
   let complete = {};
 
   let animateSending = () => {
-        submitDots += ".";
+    submitDots += ".";
 
-        if (submitDots.length > 5) {
-            submitDots = ".";
-        }
+    if (submitDots.length > 5) {
+      submitDots = ".";
+    }
 
-        if (isSaving) {
-            setTimeout(() => {
-                animateSending();
-            }, 150);
-        }
-    };
+    if (isSaving) {
+      setTimeout(() => {
+        animateSending();
+      }, 150);
+    }
+  };
 
   onDestroy(() => {
     if (payload_subscription) {
@@ -184,7 +187,6 @@
       webchat_incoming_animation_subscription();
     }
   });
-
 </script>
 
 <div
@@ -202,7 +204,7 @@
         >
           {#if messageObject.message.type == "markdown"}
             {@html DOMPurify.sanitize(
-              marked(messageObject.message.data.trim()),
+              marked(messageObject.message.data.trim())
             )}
           {/if}
           {#if messageObject.message.type == "text"}
@@ -214,43 +216,52 @@
             </div>
           {/if}
           {#if messageObject.message.type == "form"}
-            <Form bind:form={form_writables[messageObject.payload_uuid].writable} initial_form={messageObject?.message?.data}/>
+            <Form
+              bind:form={form_writables[messageObject.payload_uuid].writable}
+              initial_form={messageObject?.message?.data}
+            />
             <button
               class="w-[90px] h-10 mt-2 rounded-md transition duration-300 ml-auto stubber_webchat_general_input bg-gray-300"
-                on:click={() => {
-                  isSaving[messageObject.payload_uuid] = true;
-                  animateSending();
-                  form_writables[messageObject.payload_uuid].writable.subscribe(form_data => {
+              on:click={() => {
+                isSaving[messageObject.payload_uuid] = true;
+                animateSending();
+                form_writables[messageObject.payload_uuid].writable.subscribe(
+                  (form_data) => {
                     payload_buffer_worker({
                       message: {
                         type: "form",
                         data: {
                           form_data: form_data.data,
-                          form_name: form_writables[messageObject.payload_uuid].form_name
+                          form_name:
+                            form_writables[messageObject.payload_uuid]
+                              .form_name,
                         },
-                        spec: form_writables[messageObject.payload_uuid].spec
+                        spec: form_writables[messageObject.payload_uuid].spec,
                       },
                       attachments: [],
-                      payload_uuid: crypto.randomUUID()
-                    }).then(() => {
-                      isSaving[messageObject.payload_uuid] = false;
-                      complete[messageObject.payload_uuid] = true;
-                      webchat_incoming_animation.set(true);
-                    }).catch(e => {
-                      isSaving[messageObject.payload_uuid] = false;
-                      complete[messageObject.payload_uuid] = false;
-                    });
-                  })();
-                }}
-              >
+                      payload_uuid: crypto.randomUUID(),
+                    })
+                      .then(() => {
+                        isSaving[messageObject.payload_uuid] = false;
+                        complete[messageObject.payload_uuid] = true;
+                        webchat_incoming_animation.set(true);
+                      })
+                      .catch((e) => {
+                        isSaving[messageObject.payload_uuid] = false;
+                        complete[messageObject.payload_uuid] = false;
+                      });
+                  }
+                )();
+              }}
+            >
               {#if isSaving[messageObject.payload_uuid]}
-                  {submitDots}
+                {submitDots}
               {/if}
               {#if !isSaving[messageObject.payload_uuid] && !complete[messageObject.payload_uuid]}
-                  Submit
+                Submit
               {/if}
               {#if complete[messageObject.payload_uuid] && !isSaving[messageObject.payload_uuid]}
-                  Sent
+                Sent
               {/if}
             </button>
           {/if}
@@ -290,11 +301,11 @@
                     </video>
                   {:else if attachment.blob.type.startsWith("audio")}
                     <div class="w-[20px] h-[20px] m-auto">
-                        <FileAudioRegular/>
+                      <FileAudioRegular />
                     </div>
                   {:else}
                     <div class="w-[20px] h-[20px] m-auto">
-                        <FileRegular/>
+                      <FileRegular />
                     </div>
                   {/if}
                 </div>
