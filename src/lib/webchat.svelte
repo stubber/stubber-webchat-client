@@ -44,6 +44,7 @@
       orguuid,
       chat_name: chat_name,
       pass_through_data,
+      profile_uuid: ``
     });
   }
 
@@ -55,10 +56,9 @@
         `${API_URL}${CONFIG_PATH}/${profile_uuid}`
       );
       let config_request_json = await config_request.json();
-      console.log(config_request_json);
 
       orguuid = config_request_json.orguuid;
-      chat_name = config_request_json.webchat_insance_name;
+      chat_name = config_request_json.webchat_instance_name;
 
       let webchat_client_config = config_request_json.webchat_client_config;
 
@@ -86,6 +86,7 @@
         orguuid,
         chat_name: chat_name,
         pass_through_data,
+        profile_uuid
       });
     } else {
       fullscreen_mode = fullscreen_mode === "true"
