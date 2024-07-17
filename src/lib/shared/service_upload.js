@@ -18,6 +18,7 @@ let API_CONFIG_ORG_UUID = ``;
 let API_CONFIG_CHAT_NAME = ``;
 let API_CONFIG_PASS_THROUGH_DATA = ``;
 let API_CONFIG_PROFILE_UUID = ``;
+let API_CONFIG_BRANCH = ``;
 
 let SOCKET_CONNECT = true;
 
@@ -29,6 +30,7 @@ export const socket_initialize = (CONFIG) => {
   API_CONFIG_CHAT_NAME = CONFIG.chat_name;
   API_CONFIG_PASS_THROUGH_DATA = CONFIG.pass_through_data;
   API_CONFIG_PROFILE_UUID = CONFIG?.profile_uuid;
+  API_CONFIG_BRANCH = CONFIG?.branch;
 };
 
 export const socket_connect = () => {
@@ -54,6 +56,7 @@ export const socket_connect = () => {
         orguuid: API_CONFIG_ORG_UUID,
         chat_name: API_CONFIG_CHAT_NAME,
         pass_through_data: API_CONFIG_PASS_THROUGH_DATA,
+        branch: API_CONFIG_BRANCH
       },
       (response) => {
         if (response?.sessionuuid) {

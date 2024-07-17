@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.4 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.6 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -38,6 +38,7 @@
   export let enable_voice_notes;
   export let enable_file_uploads;
   export let profile_uuid;
+  export let branch;
 
   if (!profile_uuid) {
     socket_initialize({
@@ -55,12 +56,17 @@
       let config_request = await fetch(
         `${API_URL}${CONFIG_PATH}/${profile_uuid}`
       );
+
+      if (branch != 'draft'){
+        branch = 'live';
+      };
+
       let config_request_json = await config_request.json();
-
+      
       orguuid = config_request_json.orguuid;
-      chat_name = config_request_json.webchat_instance_name;
+      chat_name = config_request_json.branch[branch].webchat_routing_config.webchat_instance_name;
 
-      let webchat_client_config = config_request_json.webchat_client_config;
+      let webchat_client_config = config_request_json.branch[branch].webchat_client_config;
 
       chat_display_name = webchat_client_config.webchat_title;
       open_on_mount = webchat_client_config.display_settings.open_on_load;
@@ -86,7 +92,8 @@
         orguuid,
         chat_name: chat_name,
         pass_through_data,
-        profile_uuid
+        profile_uuid,
+        branch
       });
     } else {
       fullscreen_mode = fullscreen_mode === "true"

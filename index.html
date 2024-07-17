@@ -15,8 +15,8 @@
       /* --background: linear-gradient(to right, white , grey); */
       /* --primary-color: red; */
       /* --primary-color: rgb(9, 103, 210); */
-      /* --border-color: none;
-      --text-color: black; */
+      /* --border-color: none; */
+      /* --text-color: black; */
     }
   </style>
 
@@ -83,7 +83,6 @@
               pass_through_data="${webchat_demo_settings.webchat_params.pass_through_data}"
               chat_display_name="${webchat_demo_settings.webchat_params.chat_display_name}"
               fullscreen_mode="true"
-              profile_uuid="3977b424-16b8-4495-9ef9-ab0171e3f2d0"
             >
             </stubber-webchat>
         `);
@@ -94,9 +93,14 @@
       const profile_uuid = searchParams.get(
         "profile_uuid"
       );
+      const branch = searchParams.get(
+        "branch"
+      );
+
+      console.log(profile_uuid, branch)
       window.onload = function () {
         const body = (document.getElementById("body").innerHTML = `
-            <stubber-webchat profile_uuid="${profile_uuid}">
+            <stubber-webchat profile_uuid="${profile_uuid}" branch="${branch}">
             </stubber-webchat>
         `);
       };
