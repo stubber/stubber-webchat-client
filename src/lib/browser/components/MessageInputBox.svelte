@@ -264,7 +264,7 @@
       {#if !recording}
         <input
           type="text"
-          class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2"
+          class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2 text-blue"
           bind:value={$payload_buffer_message}
           on:keydown={handleEnterPress}
           placeholder={"Type message..."}

@@ -12,6 +12,7 @@
   import {
     webchat_incoming_animation,
     webchat_agent_name,
+    fullscreen
   } from "$/lib/stores/config_store.js";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
@@ -200,7 +201,9 @@
           <p class="m-auto mx-2 text-sm">{messageObject?.agent.name}</p>
         {/if}
         <div
-          class="bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble"
+          class={$fullscreen
+            ? "bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble max-w-[880px] overflow-x-auto"
+            : "bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble max-w-[370px] overflow-x-auto"}
         >
           {#if messageObject.message.type == "markdown"}
             {@html DOMPurify.sanitize(

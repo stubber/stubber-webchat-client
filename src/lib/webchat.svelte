@@ -86,6 +86,14 @@
           "--primary-color",
           webchat_css_config["--primary-color"]
         );
+        root_css.style.setProperty(
+          "--border-color",
+          webchat_css_config["--border-color"]
+        );
+        root_css.style.setProperty(
+          "--text-color",
+          webchat_css_config["--text-color"]
+        );
       }
 
       socket_initialize({
@@ -131,9 +139,9 @@
         class:stubber_webchat_message_box_fullscreen={$fullscreen}
         class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
       >
-        {#if !$fullscreen}
+        <!-- {#if !$fullscreen} -->
           <WebchatTopBox {chat_display_name} />
-        {/if}
+        <!-- {/if} -->
         {#if !$switching_opened}
           <MessageBox />
           <MessageInputBox />
