@@ -64,8 +64,6 @@
 
       let config_request_json = await config_request.json();
 
-      console.log(config_request_json);
-
       orguuid = config_request_json.orguuid;
       chat_name =
         config_request_json.branch[branch].webchat_routing_config
