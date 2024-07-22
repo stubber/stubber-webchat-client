@@ -198,7 +198,7 @@
     {#if messageObject.direction == "IN"}
       <div class="mb-2 mr-10 flex flex-col">
         {#if messageObject?.agent?.display}
-          <p class="m-auto mx-2 text-sm">{messageObject?.agent.name}</p>
+          <p class="m-auto mx-2 text-sm text-black">{messageObject?.agent.name}</p>
         {/if}
         <div
           class={$fullscreen
@@ -404,6 +404,8 @@
   .stubber_message_bubble {
     word-break: break-word;
     text-align: left;
+    color-scheme: light;
+    color: black;
   }
 
   .stubber_webchat_general_input {

@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.6 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.6.6 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -60,7 +60,7 @@
 
       if (branch != "draft") {
         branch = "live";
-      }
+      };
 
       let config_request_json = await config_request.json();
 
@@ -172,6 +172,7 @@
   .stubber_webchat_outer_box {
     z-index: 500;
     font-size: 16px !important;
+    color-scheme: light;
   }
 
   .stubber_webchat_theme {
