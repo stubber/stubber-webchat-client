@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.6.6 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.6.8 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -22,6 +22,7 @@
     voicenote_enable,
     files_enable,
     fullscreen_toggle,
+    links_open_in_new_tab
   } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -84,6 +85,7 @@
       );
       voicenote_enable.set(enable_voice_notes);
       files_enable.set(enable_file_uploads);
+      links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
 
       let webchat_css_config = webchat_client_config.display_settings.css;
 

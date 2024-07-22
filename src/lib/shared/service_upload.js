@@ -22,6 +22,8 @@ let API_CONFIG_BRANCH = ``;
 
 let SOCKET_CONNECT = true;
 
+let FIRST_MESSAGE = true;
+
 let SOCKET_CONNECTION = {};
 const SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
@@ -190,6 +192,9 @@ export const payload_buffer_append = () => {
     };
   }
 
+  payload.FIRST_MESSAGE = FIRST_MESSAGE;
+  FIRST_MESSAGE = false;
+
   if (buffer_attachments.length > 0) {
     for (let attachment of buffer_attachments) {
       payload.attachments.push(attachment);
@@ -228,6 +233,7 @@ export const payload_buffer_worker = async (payload) => {
           message: payload.message,
           attachments: attachments_uploaded,
           payload_uuid: payload.payload_uuid,
+          FIRST_MESSAGE: payload.FIRST_MESSAGE
         },
       },
       () => {

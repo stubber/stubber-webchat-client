@@ -12,7 +12,8 @@
   import {
     webchat_incoming_animation,
     webchat_agent_name,
-    fullscreen
+    fullscreen,
+    links_open_in_new_tab,
   } from "$/lib/stores/config_store.js";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
@@ -33,17 +34,19 @@
     return hours + ":" + minutes + " " + am_pm;
   };
 
-  DOMPurify.addHook("afterSanitizeAttributes", function (node) {
-    if ("target" in node) {
-      node.setAttribute("target", "_blank");
-    }
-    if (
-      !node.hasAttribute("target") &&
-      (node.hasAttribute("xlink:href") || node.hasAttribute("href"))
-    ) {
-      node.setAttribute("xlink:show", "new");
-    }
-  });
+  if ($links_open_in_new_tab) {
+    DOMPurify.addHook("afterSanitizeAttributes", function (node) {
+      if ("target" in node) {
+        node.setAttribute("target", "_blank");
+      }
+      if (
+        !node.hasAttribute("target") &&
+        (node.hasAttribute("xlink:href") || node.hasAttribute("href"))
+      ) {
+        node.setAttribute("xlink:show", "new");
+      }
+    });
+  }
 
   let autoScroll = () => {
     // this is dirty i feel like there is a cleaner way to do this
@@ -198,7 +201,9 @@
     {#if messageObject.direction == "IN"}
       <div class="mb-2 mr-10 flex flex-col">
         {#if messageObject?.agent?.display}
-          <p class="m-auto mx-2 text-sm text-black">{messageObject?.agent.name}</p>
+          <p class="m-auto mx-2 text-sm text-black">
+            {messageObject?.agent.name}
+          </p>
         {/if}
         <div
           class={$fullscreen

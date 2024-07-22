@@ -3,7 +3,6 @@
   import ArrowLeftSolid from "$/lib/icons/arrow-left-solid.svelte";
   import MessageSmsRegular from "$/lib/icons/message-sms-regular.svelte";
   import Whatsapp from "$/lib/icons/whatsapp.svelte";
-
   import {
     switching_opened,
     switch_whatsapp,
@@ -24,6 +23,7 @@
 
   export let isSaving = false;
   export let complete = false;
+
   //components
   let isError;
   let formattedNumber;
