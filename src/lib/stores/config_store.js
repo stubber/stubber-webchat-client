@@ -2,6 +2,11 @@
 import { writable } from "svelte/store";
 
 export const fullscreen = writable(false);
+export const fullscreen_toggle = writable(false);
+
+fullscreen_toggle.subscribe(why => {
+  console.log('fullscreen_toggle',why)
+})
 
 export const switching_opened = writable(false);
 export const switch_whatsapp = writable(false);

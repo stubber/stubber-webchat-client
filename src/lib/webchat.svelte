@@ -21,6 +21,7 @@
     fullscreen,
     voicenote_enable,
     files_enable,
+    fullscreen_toggle,
   } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -45,7 +46,7 @@
       orguuid,
       chat_name: chat_name,
       pass_through_data,
-      profile_uuid: ``
+      profile_uuid: ``,
     });
   }
 
@@ -57,16 +58,21 @@
         `${API_URL}${CONFIG_PATH}/${profile_uuid}`
       );
 
-      if (branch != 'draft'){
-        branch = 'live';
-      };
+      if (branch != "draft") {
+        branch = "live";
+      }
 
       let config_request_json = await config_request.json();
-      
-      orguuid = config_request_json.orguuid;
-      chat_name = config_request_json.branch[branch].webchat_routing_config.webchat_instance_name;
 
-      let webchat_client_config = config_request_json.branch[branch].webchat_client_config;
+      console.log(config_request_json);
+
+      orguuid = config_request_json.orguuid;
+      chat_name =
+        config_request_json.branch[branch].webchat_routing_config
+          .webchat_instance_name;
+
+      let webchat_client_config =
+        config_request_json.branch[branch].webchat_client_config;
 
       chat_display_name = webchat_client_config.webchat_title;
       open_on_mount = webchat_client_config.display_settings.open_on_load;
@@ -75,6 +81,9 @@
       enable_file_uploads = webchat_client_config.file_uploads.enabled;
 
       fullscreen.set(fullscreen_mode);
+      fullscreen_toggle.set(
+        webchat_client_config.display_settings.fullscreen_toggle
+      );
       voicenote_enable.set(enable_voice_notes);
       files_enable.set(enable_file_uploads);
 
@@ -101,13 +110,13 @@
         chat_name: chat_name,
         pass_through_data,
         profile_uuid,
-        branch
+        branch,
       });
     } else {
-      fullscreen_mode = fullscreen_mode === "true"
-      enable_voice_notes = enable_voice_notes === "true"
-      enable_file_uploads = enable_file_uploads === "true"
-      open_on_mount = open_on_mount === "true"
+      fullscreen_mode = fullscreen_mode === "true";
+      enable_voice_notes = enable_voice_notes === "true";
+      enable_file_uploads = enable_file_uploads === "true";
+      open_on_mount = open_on_mount === "true";
     }
 
     fullscreen.set(fullscreen_mode);
@@ -140,7 +149,7 @@
         class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
       >
         <!-- {#if !$fullscreen} -->
-          <WebchatTopBox {chat_display_name} />
+        <WebchatTopBox {chat_display_name} />
         <!-- {/if} -->
         {#if !$switching_opened}
           <MessageBox />
