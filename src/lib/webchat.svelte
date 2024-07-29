@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.6.8 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.9 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -141,7 +141,7 @@
   {#if $webchat_enable}
     <div
       class:stubber_webchat_box_fullscreen={$fullscreen}
-      class="z-50 stubber_webchat_theme stubber_webchat_box fixed right-0 bottom-0 flex w-full min-w-[250px] min-h-[200px]"
+      class="stubber_webchat_theme stubber_webchat_box fixed right-0 bottom-0 flex w-full min-w-[250px] min-h-[200px]"
     >
       <div
         class:mx-4={!$fullscreen}
@@ -196,6 +196,7 @@
     padding-top: 16px;
     max-width: 500px;
     max-height: 1000px;
+    z-index: 1000;
   }
 
   .stubber_webchat_box_fullscreen {
@@ -203,5 +204,6 @@
     padding-top: 0px;
     max-width: none;
     max-height: none;
+    z-index: 1000;
   }
 </style>

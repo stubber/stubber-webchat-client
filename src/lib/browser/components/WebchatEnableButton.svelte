@@ -5,7 +5,7 @@
 </script>
 
 <div
-  class="z-50 stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
+  class="stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
 >
   {#if !$webchat_enable}
     <button
@@ -46,5 +46,6 @@
   .stubber_webchat_theme {
     --background-color: white;
     --neutral-color: #909090;
+    z-index: 1000;
   }
 </style>

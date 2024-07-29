@@ -280,78 +280,82 @@
       </div>
     {/if}
     {#if messageObject.direction == "OUT"}
-      <div class="mb-2 ml-10 text-right flex flex-col">
+      <div class="mb-2 ml-10 text-right flex flex-col flex-end">
         <p class="m-auto mx-2 text-sm">You</p>
-        <div
-          class="bg-gray-100 rounded-lg py-1 px-1 flex flex-col stubber_message_bubble"
-        >
-          {#each messageObject.attachments as attachment}
-            {#if attachment.display}
-              <div class="w-full flex mb-1">
-                <div
-                  class="min-w-[52px] min-h-[52px] fill-gray-900 bg-gray-300 p-auto rounded-lg flex"
-                >
-                  {#if attachment.blob.type.startsWith("image")}
-                    <img
-                      src={attachments_loaded[attachment.attachment_uuid]}
-                      alt=""
-                      class="w-[52px] h-[52px] object-cover rounded-lg"
-                    />
-                  {:else if attachment.blob.type.startsWith("video")}
-                    <video
-                      controls={false}
-                      autoplay
-                      loop
-                      src={attachments_loaded[attachment.attachment_uuid]}
-                      class="w-[52px] h-[52px] object-cover rounded-lg"
-                    >
-                      <track kind="captions" />
-                    </video>
-                  {:else if attachment.blob.type.startsWith("audio")}
-                    <div class="w-[20px] h-[20px] m-auto">
-                      <FileAudioRegular />
-                    </div>
-                  {:else}
-                    <div class="w-[20px] h-[20px] m-auto">
-                      <FileRegular />
-                    </div>
-                  {/if}
-                </div>
-                <div class="flex-col my-2">
-                  <div class="text-sm line-clamp-1 pl-2">
-                    <span>
-                      {attachment.blob.name}
-                    </span>
+        <div class="flex justify-end">
+          <div
+            class={$fullscreen
+              ? "bg-gray-100 rounded-lg py-1 px-1 mr-1 flex flex-col max-w-[880px] flex-grow stubber_message_bubble"
+              : "bg-gray-100 rounded-lg py-1 px-1 mr-1 flex flex-col max-w-[370px] flex-grow stubber_message_bubble"}
+          >
+            {#each messageObject.attachments as attachment}
+              {#if attachment.display}
+                <div class="w-full flex mb-1">
+                  <div
+                    class="min-w-[52px] min-h-[52px] fill-gray-900 bg-gray-300 p-auto rounded-lg flex"
+                  >
+                    {#if attachment.blob.type.startsWith("image")}
+                      <img
+                        src={attachments_loaded[attachment.attachment_uuid]}
+                        alt=""
+                        class="w-[52px] h-[52px] object-cover rounded-lg"
+                      />
+                    {:else if attachment.blob.type.startsWith("video")}
+                      <video
+                        controls={false}
+                        autoplay
+                        loop
+                        src={attachments_loaded[attachment.attachment_uuid]}
+                        class="w-[52px] h-[52px] object-cover rounded-lg"
+                      >
+                        <track kind="captions" />
+                      </video>
+                    {:else if attachment.blob.type.startsWith("audio")}
+                      <div class="w-[20px] h-[20px] m-auto">
+                        <FileAudioRegular />
+                      </div>
+                    {:else}
+                      <div class="w-[20px] h-[20px] m-auto">
+                        <FileRegular />
+                      </div>
+                    {/if}
                   </div>
-                  <div class="text-xs text-gray-400 pl-2">
-                    {attachment.blob.type}
+                  <div class="flex-col my-2">
+                    <div class="text-sm line-clamp-1 pl-2">
+                      <span>
+                        {attachment.blob.name}
+                      </span>
+                    </div>
+                    <div class="text-xs text-gray-400 pl-2">
+                      {attachment.blob.type}
+                    </div>
                   </div>
                 </div>
-              </div>
+              {/if}
+            {/each}
+            {#if messageObject.message.type == "text"}
+              <div class="px-2">{messageObject.message.data}</div>
             {/if}
-          {/each}
-          {#if messageObject.message.type == "text"}
-            <div class="px-2">{messageObject.message.data}</div>
-          {/if}
-          {#if messageObject.message.type == "voice"}
-            <video
-              controls
-              src={attachments_loaded[messageObject.message.data]}
-              class="h-10"
-              controlsList="nodownload"
-            />
-          {/if}
-          <div class="flex w-full px-2">
-            <p class="text-sm ml-auto mr-2">
-              {timeFormat(messageObject.dateTime)}
-            </p>
-            <span
-              class="w-3 my-auto bg-red"
-              class:stubber_webchat_message_tick_received={messageObject.delivered}
-              class:stubber_webchat_message_tick_pending={!messageObject.delivered}
-            >
-              <CheckDoubleRegular />
-            </span>
+            {#if messageObject.message.type == "voice"}
+              <video
+                controls
+                src={attachments_loaded[messageObject.message.data]}
+                class="h-10"
+                controlsList="nodownload"
+              />
+            {/if}
+            <div class="flex w-full px-2">
+              <p class="text-sm ml-auto mr-2">
+                {timeFormat(messageObject.dateTime)}
+              </p>
+              <span
+                class="w-3 my-auto bg-red"
+                class:stubber_webchat_message_tick_received={messageObject.delivered}
+                class:stubber_webchat_message_tick_pending={!messageObject.delivered}
+              >
+                <CheckDoubleRegular />
+              </span>
+            </div>
           </div>
         </div>
       </div>
