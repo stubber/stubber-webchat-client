@@ -64,23 +64,23 @@
         if (branch != "draft") {
           branch = "live";
         }
-  
+
         let config_request_json = await config_request.json();
-  
+
         orguuid = config_request_json.orguuid;
         chat_name =
           config_request_json.branch[branch].webchat_routing_config
             .webchat_instance_name;
-  
+
         let webchat_client_config =
           config_request_json.branch[branch].webchat_client_config;
-  
+
         chat_display_name = webchat_client_config.webchat_title;
         open_on_mount = webchat_client_config.display_settings.open_on_load;
         fullscreen_mode = webchat_client_config.display_settings.fullscreen;
         enable_voice_notes = webchat_client_config.voice_notes.enabled;
         enable_file_uploads = webchat_client_config.file_uploads.enabled;
-  
+
         fullscreen.set(fullscreen_mode);
         fullscreen_toggle.set(
           webchat_client_config.display_settings.fullscreen_toggle
@@ -88,9 +88,9 @@
         voicenote_enable.set(enable_voice_notes);
         files_enable.set(enable_file_uploads);
         links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
-  
+
         let webchat_css_config = webchat_client_config.display_settings.css;
-  
+
         if (webchat_css_config) {
           let root_css = document.querySelector(":root");
           root_css.style.setProperty(
@@ -106,7 +106,7 @@
             webchat_css_config["--text-color"]
           );
         }
-  
+
         socket_initialize({
           orguuid,
           chat_name: chat_name,
@@ -115,7 +115,7 @@
           branch,
         });
       } catch (err) {
-        console.err("failed to load profile")
+        console.err("failed to load profile");
       }
     } else {
       fullscreen_mode = fullscreen_mode === "true";
@@ -183,7 +183,7 @@
   @tailwind utilities;
 
   .stubber_webchat_outer_box {
-    z-index: 500;
+    z-index: 2147483647;
     font-size: 16px !important;
     color-scheme: light;
   }
@@ -209,7 +209,7 @@
     padding-top: 16px;
     max-width: 500px;
     max-height: 1000px;
-    z-index: 1000;
+    z-index: 2147483647;
   }
 
   .stubber_webchat_box_fullscreen {
@@ -217,6 +217,6 @@
     padding-top: 0px;
     max-width: none;
     max-height: none;
-    z-index: 1000;
+    z-index: 2147483647;
   }
 </style>

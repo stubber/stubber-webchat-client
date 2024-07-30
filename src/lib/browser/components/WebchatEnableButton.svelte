@@ -46,6 +46,6 @@
   .stubber_webchat_theme {
     --background-color: white;
     --neutral-color: #909090;
-    z-index: 1000;
+    z-index: 2147483647;
   }
 </style>
