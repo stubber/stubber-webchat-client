@@ -5,8 +5,8 @@ export const fullscreen = writable(false);
 export const fullscreen_toggle = writable(false);
 export const links_open_in_new_tab = writable(true);
 
-export const switching_opened = writable(true);
-export const switch_whatsapp = writable(true);
+export const switching_opened = writable(false);
+export const switch_whatsapp = writable(false);
 export const switch_sms = writable(false);
 export const switch_email = writable(false);
 export const switch_submit = writable(false);
