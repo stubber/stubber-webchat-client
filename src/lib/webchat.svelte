@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.9 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.10 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -58,12 +58,17 @@
       let config_request = await fetch(
         `${API_URL}${CONFIG_PATH}/${profile_uuid}`
       );
-
+      let meta_request = await fetch(
+        `${API_URL}/v2/meta`
+      )
       if (branch != "draft") {
         branch = "live";
       };
 
       let config_request_json = await config_request.json();
+      let meta_request_json = await meta_request.json();
+
+      console.log(`${API_URL}${CONFIG_PATH}/meta`, meta_request_json);
 
       orguuid = config_request_json.orguuid;
       chat_name =
