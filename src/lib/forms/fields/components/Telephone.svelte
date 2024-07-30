@@ -9,7 +9,7 @@
     getCountries,
     getCountryCallingCode,
   } from "libphonenumber-js";
-
+  import { default_country_code } from "../../../stores/config_store";
   export let field;
 
   const internal = writable();
@@ -25,7 +25,7 @@
   $: hide_label = $field.spec?.hide_label;
   $: isValid = !$field.state?.validation || $field.state?.validation?.valid;
   $: validationMessage = $field.state?.validation?.message;
-  $: internal.selected_country = { iso2: "US" };
+  $: internal.selected_country = { iso2: $default_country_code };
 
   function getFlagEmoji(countryCode) {
     const codePoints = countryCode
@@ -92,7 +92,7 @@
     let formatted = f?.data?.base ?? "";
     let raw = formatted;
     let is_valid_number = false;
-    let selected_country = { iso2: "US" };
+    let selected_country = { iso2: $default_country_code };
     let initial_data = {
       ...f?.data,
       base: formatted,

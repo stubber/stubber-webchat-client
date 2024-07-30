@@ -22,7 +22,8 @@
     voicenote_enable,
     files_enable,
     fullscreen_toggle,
-    links_open_in_new_tab
+    links_open_in_new_tab,
+    default_country_code,
   } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -53,75 +54,83 @@
 
   onMount(async () => {
     if (profile_uuid) {
-      let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
-      let CONFIG_PATH = import.meta.env.VITE_WEBCHAT_API_CONFIG_PATH;
-      let config_request = await fetch(
-        `${API_URL}${CONFIG_PATH}/${profile_uuid}`
-      );
-      let meta_request = await fetch(
-        `${API_URL}/v2/meta`
-      )
-      if (branch != "draft") {
-        branch = "live";
-      };
-
-      let config_request_json = await config_request.json();
-      let meta_request_json = await meta_request.json();
-
-      console.log(`${API_URL}${CONFIG_PATH}/meta`, meta_request_json);
-
-      orguuid = config_request_json.orguuid;
-      chat_name =
-        config_request_json.branch[branch].webchat_routing_config
-          .webchat_instance_name;
-
-      let webchat_client_config =
-        config_request_json.branch[branch].webchat_client_config;
-
-      chat_display_name = webchat_client_config.webchat_title;
-      open_on_mount = webchat_client_config.display_settings.open_on_load;
-      fullscreen_mode = webchat_client_config.display_settings.fullscreen;
-      enable_voice_notes = webchat_client_config.voice_notes.enabled;
-      enable_file_uploads = webchat_client_config.file_uploads.enabled;
-
-      fullscreen.set(fullscreen_mode);
-      fullscreen_toggle.set(
-        webchat_client_config.display_settings.fullscreen_toggle
-      );
-      voicenote_enable.set(enable_voice_notes);
-      files_enable.set(enable_file_uploads);
-      links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
-
-      let webchat_css_config = webchat_client_config.display_settings.css;
-
-      if (webchat_css_config) {
-        let root_css = document.querySelector(":root");
-        root_css.style.setProperty(
-          "--primary-color",
-          webchat_css_config["--primary-color"]
+      try {
+        let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
+        let CONFIG_PATH = import.meta.env.VITE_WEBCHAT_API_CONFIG_PATH;
+        let config_request = await fetch(
+          `${API_URL}${CONFIG_PATH}/${profile_uuid}`
         );
-        root_css.style.setProperty(
-          "--border-color",
-          webchat_css_config["--border-color"]
+        if (branch != "draft") {
+          branch = "live";
+        }
+  
+        let config_request_json = await config_request.json();
+  
+        orguuid = config_request_json.orguuid;
+        chat_name =
+          config_request_json.branch[branch].webchat_routing_config
+            .webchat_instance_name;
+  
+        let webchat_client_config =
+          config_request_json.branch[branch].webchat_client_config;
+  
+        chat_display_name = webchat_client_config.webchat_title;
+        open_on_mount = webchat_client_config.display_settings.open_on_load;
+        fullscreen_mode = webchat_client_config.display_settings.fullscreen;
+        enable_voice_notes = webchat_client_config.voice_notes.enabled;
+        enable_file_uploads = webchat_client_config.file_uploads.enabled;
+  
+        fullscreen.set(fullscreen_mode);
+        fullscreen_toggle.set(
+          webchat_client_config.display_settings.fullscreen_toggle
         );
-        root_css.style.setProperty(
-          "--text-color",
-          webchat_css_config["--text-color"]
-        );
+        voicenote_enable.set(enable_voice_notes);
+        files_enable.set(enable_file_uploads);
+        links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
+  
+        let webchat_css_config = webchat_client_config.display_settings.css;
+  
+        if (webchat_css_config) {
+          let root_css = document.querySelector(":root");
+          root_css.style.setProperty(
+            "--primary-color",
+            webchat_css_config["--primary-color"]
+          );
+          root_css.style.setProperty(
+            "--border-color",
+            webchat_css_config["--border-color"]
+          );
+          root_css.style.setProperty(
+            "--text-color",
+            webchat_css_config["--text-color"]
+          );
+        }
+  
+        socket_initialize({
+          orguuid,
+          chat_name: chat_name,
+          pass_through_data,
+          profile_uuid,
+          branch,
+        });
+      } catch (err) {
+        console.err("failed to load profile")
       }
-
-      socket_initialize({
-        orguuid,
-        chat_name: chat_name,
-        pass_through_data,
-        profile_uuid,
-        branch,
-      });
     } else {
       fullscreen_mode = fullscreen_mode === "true";
       enable_voice_notes = enable_voice_notes === "true";
       enable_file_uploads = enable_file_uploads === "true";
       open_on_mount = open_on_mount === "true";
+    }
+
+    try {
+      let meta_request = await fetch(`${API_URL}/v2/meta`);
+      let meta_request_json = await meta_request.json();
+      console.log(`${API_URL}${CONFIG_PATH}/meta`, meta_request_json);
+
+      default_country_code.set(meta_request_json.geo_ip.country);
+    } catch (err) {
+      console.error("failed to load meta data");
     }
 
     fullscreen.set(fullscreen_mode);
