@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.10 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.10.1 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -53,9 +53,10 @@
   }
 
   onMount(async () => {
+    let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
+
     if (profile_uuid) {
       try {
-        let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
         let CONFIG_PATH = import.meta.env.VITE_WEBCHAT_API_CONFIG_PATH;
         let config_request = await fetch(
           `${API_URL}${CONFIG_PATH}/${profile_uuid}`
@@ -126,11 +127,9 @@
     try {
       let meta_request = await fetch(`${API_URL}/v2/meta`);
       let meta_request_json = await meta_request.json();
-      console.log(`${API_URL}${CONFIG_PATH}/meta`, meta_request_json);
-
       default_country_code.set(meta_request_json.geo_ip.country);
     } catch (err) {
-      console.error("failed to load meta data");
+      console.error(err, "failed to load meta data");
     }
 
     fullscreen.set(fullscreen_mode);
