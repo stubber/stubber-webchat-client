@@ -109,12 +109,21 @@
     recording_paused = false;
 
     voice_media_stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
+      // audio: true,
+      audio: {
+        channelCount: 1,
+        sampleRate: 16000,
+        sampleSize: 16,
+        volume: 1,
+      },
     });
 
     voice_media_recorder = new MediaRecorder(voice_media_stream);
     voice_media_recorder.ondataavailable = (e) => {
       let attachment_uuid = crypto.randomUUID();
+
+      e.data.name = "voicenote.webm";
+
       payload_buffer_voice.set({
         attachment_uuid,
         blob: e.data,
