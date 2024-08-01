@@ -121,8 +121,15 @@
     voice_media_recorder = new MediaRecorder(voice_media_stream);
     voice_media_recorder.ondataavailable = (e) => {
       let attachment_uuid = crypto.randomUUID();
+      const now = new Date();
+      const month = (now.getMonth() + 1).toString().padStart(2, "0");
+      const date = now.getDate().toString().padStart(2, "0");
+      const year = now.getFullYear();
+      const hours = now.getHours().toString().padStart(2, "0");
+      const minutes = now.getMinutes().toString().padStart(2, "0");
 
-      e.data.name = "voicenote.webm";
+      e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.webm`;
+      console.log(e.data);
 
       payload_buffer_voice.set({
         attachment_uuid,

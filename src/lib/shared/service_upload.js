@@ -211,9 +211,11 @@ export const payload_buffer_worker = async (payload) => {
     // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
 
     let form = new FormData();
+    console.log(payload?.attachments)
 
     for (let attachment of payload?.attachments) {
-      form.append(attachment.payload_uuid, attachment.blob);
+      console.log(attachment.blob.name, attachment.blob, attachment.blob.name);
+      form.append(attachment.blob.name, attachment.blob, attachment.blob.name);
     }
 
     const file_response = await fetch(
