@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.10.3 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.11.2 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -54,6 +54,7 @@
 
   onMount(async () => {
     let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
+    let webchat_client_config;
 
     if (profile_uuid) {
       try {
@@ -72,7 +73,7 @@
           config_request_json.branch[branch].webchat_routing_config
             .webchat_instance_name;
 
-        let webchat_client_config =
+        webchat_client_config =
           config_request_json.branch[branch].webchat_client_config;
 
         chat_display_name = webchat_client_config.webchat_title;
@@ -137,8 +138,15 @@
     files_enable.set(enable_file_uploads);
 
     if (open_on_mount || $fullscreen) {
-      openWebchat();
-      socket_connect();
+      if (webchat_client_config) {
+        setTimeout(() => {
+          openWebchat();
+          socket_connect();
+        }, webchat_client_config.display_settings.open_on_load_timeout_seconds * 1000);
+      } else {
+        openWebchat();
+        socket_connect();
+      }
     }
   });
 

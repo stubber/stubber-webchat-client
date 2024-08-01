@@ -210,28 +210,34 @@ export const payload_buffer_worker = async (payload) => {
   return new Promise(async (resolve, reject) => {
     // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
 
-    const attachments_uploaded = [];
+    let form = new FormData();
 
     for (let attachment of payload?.attachments) {
-      if (attachment.sent) {
-        continue;
-      }
-
-      attachment.payload_uuid = payload.payload_uuid;
-
-      let res = await upload_attachment(attachment);
-
-      attachment.sent = true;
-      attachments_uploaded.push(res);
-      payload_buffer_update_payload(payload);
+      form.append(attachment.payload_uuid, attachment.blob);
     }
+
+    const file_response = await fetch(
+      `${API_URL}/v2/attachments?${new URLSearchParams({
+          sessionuuid: API_SESSION_UUID,
+        })}`,
+      {
+        method: "POST",
+        body: form,
+      }
+    );
+
+    if (!file_response.ok){
+      console.error("Failed to upload files")
+    };
+
+    let file_response_json = await file_response.json();
 
     SOCKET_CONNECTION.emit(
       "payload",
       {
         payload: {
           message: payload.message,
-          attachments: attachments_uploaded,
+          attachments: file_response_json,
           payload_uuid: payload.payload_uuid,
           FIRST_MESSAGE: payload.FIRST_MESSAGE
         },
@@ -278,33 +284,4 @@ export const payload_buffer_upload_fields = (fields) => {
       console.log(`Received Payload ${payload.payload_uuid}`);
     }
   );
-};
-
-const upload_attachment = async (attachment) => {
-  return new Promise((resolve, reject) => {
-    let reader = new window.FileReader();
-
-    reader.addEventListener("loadend", async function () {
-      let formData = new FormData();
-      formData.append("content", reader.result);
-
-      let res = await fetch(
-        `${API_URL}/v2/attachments?${new URLSearchParams({
-          sessionuuid: API_SESSION_UUID,
-          payloaduuid: attachment.payload_uuid,
-          originalname: attachment.blob.name,
-          mimetype: attachment.blob.type,
-          size: attachment.blob.size,
-        })}`,
-        {
-          method: "POST",
-          body: reader.result,
-        }
-      );
-
-      resolve(res.json());
-    });
-
-    reader.readAsDataURL(attachment.blob);
-  });
 };
