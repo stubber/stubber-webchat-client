@@ -129,7 +129,6 @@
       const minutes = now.getMinutes().toString().padStart(2, "0");
 
       e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.webm`;
-      console.log(e.data);
 
       payload_buffer_voice.set({
         attachment_uuid,
