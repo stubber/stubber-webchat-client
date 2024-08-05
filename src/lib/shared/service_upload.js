@@ -192,9 +192,6 @@ export const payload_buffer_append = () => {
     };
   }
 
-  payload.FIRST_MESSAGE = FIRST_MESSAGE;
-  FIRST_MESSAGE = false;
-
   if (buffer_attachments.length > 0) {
     for (let attachment of buffer_attachments) {
       payload.attachments.push(attachment);
@@ -239,7 +236,7 @@ export const payload_buffer_worker = async (payload) => {
           message: payload.message,
           attachments: file_response_json,
           payload_uuid: payload.payload_uuid,
-          FIRST_MESSAGE: payload.FIRST_MESSAGE
+          FIRST_MESSAGE: FIRST_MESSAGE
         },
       },
       () => {
@@ -249,6 +246,8 @@ export const payload_buffer_worker = async (payload) => {
         resolve();
       }
     );
+    
+    FIRST_MESSAGE = false;
   });
 };
 

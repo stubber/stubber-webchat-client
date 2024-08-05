@@ -149,14 +149,18 @@
   };
 
   let recording_stop = async () => {
-    recording = false;
-    voice_media_recorder.stop();
-    voice_media_stream.getTracks().forEach((track) => track.stop());
+    setTimeout(() => {
+      recording = false;
+      voice_media_recorder.stop();
+      voice_media_stream.getTracks().forEach((track) => track.stop());
+    }, 250);
   };
 
   let recording_pause = async () => {
-    recording_paused = true;
-    voice_media_recorder.pause();
+    setTimeout(() => {
+      recording_paused = true;
+      voice_media_recorder.pause();
+    }, 250);
   };
 
   let recording_resume = async () => {
