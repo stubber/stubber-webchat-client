@@ -128,7 +128,13 @@
       const hours = now.getHours().toString().padStart(2, "0");
       const minutes = now.getMinutes().toString().padStart(2, "0");
 
-      e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.webm`;
+      if (e.data.type.includes('webm')){
+        e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.webm`;
+      }
+
+      if (e.data.type.includes('mp4')){
+        e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.mp4`;
+      }
 
       payload_buffer_voice.set({
         attachment_uuid,
