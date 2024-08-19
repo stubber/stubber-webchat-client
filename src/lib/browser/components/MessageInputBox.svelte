@@ -12,7 +12,7 @@
   import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
   import MicrophoneRegular from "$/lib/icons/microphone-regular.svelte";
   import PaperclipVerticalRegular from "$/lib/icons/paperclip-vertical-regular.svelte";
-  import XMarkRegular from "$/lib/icons/xmark-regular.svelte";
+  import CircleXSolid from "$/lib/icons/circle-x-solid.svelte";
   import PlayRegular from "$/lib/icons/play-regular.svelte";
   import PauseRegular from "$/lib/icons/pause-regular.svelte";
   import FileRegular from "$/lib/icons/file-regular.svelte";
@@ -38,7 +38,7 @@
 
   let handleEnterPress = (event) => {
     if (
-      event.key === "Enter" &&
+      event.key === "Enter" && !event.shiftKey &&
       ($payload_buffer_message != "" ||
         recording == true ||
         $payload_buffer_attachments.length != 0)
@@ -47,9 +47,16 @@
         recording_stop();
         return;
       }
-
+      if (event.key === "Enter") {
+        if (event.preventDefault){
+          event?.preventDefault();
+        }
+      }
       payload_buffer_append();
       webchat_incoming_animation.set(true);
+      if (event?.target?.style?.height) {
+        event.target.style.height = '40px';
+      }
     }
   };
 
@@ -128,11 +135,11 @@
       const hours = now.getHours().toString().padStart(2, "0");
       const minutes = now.getMinutes().toString().padStart(2, "0");
 
-      if (e.data.type.includes('webm')){
+      if (e.data.type.includes("webm")) {
         e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.webm`;
       }
 
-      if (e.data.type.includes('mp4')){
+      if (e.data.type.includes("mp4")) {
         e.data.name = `voicenote_${hours}:${minutes}_${date}_${month}_${year}.mp4`;
       }
 
@@ -223,10 +230,10 @@
                 on:click={() => {
                   click_remove_file(fileObject);
                 }}
-                class="w-3 h-3"
+                class="w-4 h-4"
               >
-                <div class="w-3 h-3 fill-white m-auto">
-                  <XMarkRegular />
+                <div class="w-4 h-4 fill-red-700 m-auto">
+                  <CircleXSolid />
                 </div>
               </button>
             </div>
@@ -275,11 +282,11 @@
   <div
     class="p-2 flex flex-col bg-gray-300 rounded-t-xl stubber_webchat_input_box"
   >
-    <div class="h-10 w-full bg-white flex rounded-lg text-black">
+    <div class="w-full bg-white flex rounded-lg text-black">
       {#if $files_enable}
         <button
           on:click={click_upload}
-          class="w-10 h-10 transition duration-300 mx-2"
+          class="w-10 h-10 transition duration-300 mx-2 mt-auto"
         >
           <div class="w-4 h-5 fill-gray-400 m-auto">
             <PaperclipVerticalRegular />
@@ -287,16 +294,25 @@
         </button>
       {/if}
       {#if !recording}
-        <input
-          type="text"
-          class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2 text-blue"
+        <textarea
+          id="stubber_text_message_input"
           bind:value={$payload_buffer_message}
           on:keydown={handleEnterPress}
+          on:input={(event) => {
+            if ($payload_buffer_message.length == 1){
+              return
+            }
+            const textarea = event.target;
+            if (textarea.scrollHeight > 136){
+              return;
+            }
+            textarea.style.height = textarea.scrollHeight + 'px';
+          }}
+          class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2 text-blue resize-none hide-scrollbar py-2"
+          style="height: 40px;"
           placeholder={"Type message..."}
-          autocomplete="off"
-          maxlength="1024"
           autofocus
-        />
+        ></textarea>
       {/if}
       {#if recording}
         <!-- svelte-ignore a11y-interactive-supports-focus -->
@@ -336,7 +352,7 @@
         {#if !recording}
           <button
             on:click={recording ? recording_stop : recording_start}
-            class="w-10 h-10 transition duration-300"
+            class="w-10 h-10 transition duration-300 mt-auto"
           >
             <div class="w-4 h-6 fill-gray-400 m-auto">
               <MicrophoneRegular />
@@ -345,7 +361,7 @@
         {/if}
       {/if}
       <button
-        class="w-10 h-10 transition duration-300 mx-2"
+        class="w-10 h-10 transition duration-300 mx-2 mt-auto"
         on:click={() => {
           handleEnterPress({ key: "Enter" });
         }}

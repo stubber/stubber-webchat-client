@@ -334,7 +334,8 @@
               {/if}
             {/each}
             {#if messageObject.message.type == "text"}
-              <div class="px-2">{messageObject.message.data}</div>
+              <p style="white-space: pre-wrap;" class="px-2">{messageObject.message.data}</p>
+              <!-- <div class="px-2">{messageObject.message.data}</div> -->
             {/if}
             {#if messageObject.message.type == "voice"}
               <video
