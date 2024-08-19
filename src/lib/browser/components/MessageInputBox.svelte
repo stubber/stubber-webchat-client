@@ -39,7 +39,7 @@
   let handleEnterPress = (event) => {
     if (
       event.key === "Enter" && !event.shiftKey &&
-      ($payload_buffer_message != "" ||
+      ($payload_buffer_message.trim() != "" ||
         recording == true ||
         $payload_buffer_attachments.length != 0)
     ) {
@@ -363,7 +363,11 @@
       <button
         class="w-10 h-10 transition duration-300 mx-2 mt-auto"
         on:click={() => {
-          handleEnterPress({ key: "Enter" });
+          const customElement = document.querySelector('stubber-webchat');
+          const shadowRoot = customElement.shadowRoot;
+          const stubber_text_message_input = shadowRoot.getElementById('stubber_text_message_input');
+
+          handleEnterPress({ key: "Enter", target: stubber_text_message_input });
         }}
       >
         <div class="w-4 h-5 fill-gray-400 mx-auto my-auto">

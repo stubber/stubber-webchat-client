@@ -187,7 +187,7 @@ export const payload_buffer_append = () => {
   } else {
     payload.message = {
       type: "text",
-      data: buffer_message,
+      data: buffer_message.trim(),
       sent: false,
     };
   }
