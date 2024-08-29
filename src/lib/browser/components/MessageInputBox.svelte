@@ -13,6 +13,7 @@
   import MicrophoneRegular from "$/lib/icons/microphone-regular.svelte";
   import PaperclipVerticalRegular from "$/lib/icons/paperclip-vertical-regular.svelte";
   import CircleXSolid from "$/lib/icons/circle-x-solid.svelte";
+  import CircleXmarkSharpDuotoneSolid from "$/lib/icons/circle-xmark-sharp-duotone-solid.svelte";
   import PlayRegular from "$/lib/icons/play-regular.svelte";
   import PauseRegular from "$/lib/icons/pause-regular.svelte";
   import FileRegular from "$/lib/icons/file-regular.svelte";
@@ -219,21 +220,21 @@
 
 <div>
   {#if $payload_buffer_attachments.length > 0}
-    <div class="overflow-x-scroll h-[100px] hide-scrollbar">
+    <div class="overflow-x-scroll h-[100px] hide-scrollbar pt-2">
       {#each $payload_buffer_attachments as fileObject}
         <div
           class="w-[80px] h-[80px] bg-gray-300 rounded-xl m-2 inline-block relative"
         >
           <div class="w-[80px] h-[80px] rounded-xl absolute flex">
-            <div class="w-4 h-4 ml-auto mb-auto mt-1 mr-1 z-50">
+            <div class="w-5 h-5 ml-auto mb-auto mt-1 mr-1 z-50">
               <button
                 on:click={() => {
                   click_remove_file(fileObject);
                 }}
-                class="w-4 h-4"
+                class="w-5 h-5 custom-offset z-50"
               >
-                <div class="w-4 h-4 fill-red-700 m-auto">
-                  <CircleXSolid />
+                <div class="w-5 h-5 fill-gray-600 m-auto">
+                  <CircleXmarkSharpDuotoneSolid />
                 </div>
               </button>
             </div>
@@ -432,5 +433,11 @@
 
   .file-display {
     display: inline-block;
+  }
+
+  .custom-offset {
+    position: absolute;
+    top: -10px;
+    right: -10px;
   }
 </style>
