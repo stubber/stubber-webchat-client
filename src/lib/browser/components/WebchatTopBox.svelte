@@ -3,6 +3,8 @@
   import WindowMaximizeRegular from "$/lib/icons/window-maximize-regular.svelte";
   import WindowRestoreRegular from "$/lib/icons/window-restore-regular.svelte";
   import CircleXMarkRegular from "$/lib/icons/circle-xmark-regular.svelte";
+  import Fullscreen from "../../icons/fullscreen.svelte";
+  import ArrowDownSolid from "../../icons/arrow-down-solid.svelte";
   import {
     webchat_enable,
     fullscreen,
@@ -13,59 +15,50 @@
 </script>
 
 {#if ($fullscreen && $fullscreen_toggle) || !$fullscreen}
-<div
-  class={$fullscreen
-    ? "pl-4 p-3 border-b flex justify-between items-center h-15 stubber_webchat_top_box"
-    : "pl-4 p-3 border-b rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"}
->
-  <p class="text-2xl font-semibold stubber_webchat_text">
-    {!chat_display_name ? "" : chat_display_name}
-  </p>
-  <div class="mt-auto">
-    <button
-      class="rounded-md w-5 mx-1"
-      on:click={() => {
-        webchat_enable.set(false);
-      }}
-    >
-      <div class="w-5 h-5 fill-white my-auto">
-        <span class="rotate-45">
-          {#if $fullscreen_toggle}
-            <WindowMinimizeRegular />
-          {/if}
-          {#if !$fullscreen_toggle}
-            <CircleXMarkRegular />
-          {/if}
-        </span>
-      </div>
-    </button>
-    {#if $fullscreen_toggle}
-      <button
-        class="rounded-md w-5 mx-1"
-        on:click={() => {
-          let ifuckinghatesubscriptions;
+  <div
+    class={$fullscreen
+      ? "pl-4 p-3 border-b flex justify-between items-center h-15 stubber_webchat_top_box"
+      : "pl-4 p-3 border-b rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"}
+  >
+    <p class="text-2xl font-semibold stubber_webchat_text">
+      {!chat_display_name ? "" : chat_display_name}
+    </p>
+    <div class="flex">
+      {#if $fullscreen_toggle}
+        <button
+          class="h-5 mx-2 flex"
+          on:click={() => {
+            let ifuckinghatesubscriptions;
 
-          fullscreen.subscribe((fullscreen_value) => {
-            ifuckinghatesubscriptions = fullscreen_value;
-          })();
+            fullscreen.subscribe((fullscreen_value) => {
+              ifuckinghatesubscriptions = fullscreen_value;
+            })();
 
-          fullscreen.set(!ifuckinghatesubscriptions);
-        }}
-      >
-        <div class="h-5 fill-white my-auto">
-          <span>
+            fullscreen.set(!ifuckinghatesubscriptions);
+          }}
+        >
+          <span class="w-4 flex my-auto">
             {#if $fullscreen}
               <WindowRestoreRegular />
             {/if}
             {#if !$fullscreen}
-              <WindowMaximizeRegular />
+              <Fullscreen />
             {/if}
           </span>
-        </div>
+        </button>
+      {/if}
+      <button
+        class="rounded-md h-5 flex mx-2"
+        on:click={() => {
+          webchat_enable.set(false);
+        }}
+      >
+        <span class="flex my-auto w-4">
+          <ArrowDownSolid />
+        </span>
       </button>
-    {/if}
+    </div>
   </div>
-</div>
 {/if}
 
 <style>

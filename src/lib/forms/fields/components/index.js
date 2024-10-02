@@ -11,9 +11,11 @@ import Multistep from "$/lib/forms/fields/components/Multistep.svelte";
 import Number from "$/lib/forms/fields/components/Number.svelte";
 import Radio from "$/lib/forms/fields/components/Radio.svelte";
 import Section from "$/lib/forms/fields/components/Section.svelte";
-import Select from "$/lib/forms/fields/components/Select.svelte";
+// import Select from "$/lib/forms/fields/components/Select.svelte";
+import Select from "./Select.svelte";
 import Telephone from "$/lib/forms/fields/components/Telephone.svelte";
-import Text from "$/lib/forms/fields/components/Text.svelte";
+// import Text from "$/lib/forms/fields/components/Text.svelte";
+import Text from "./Text.svelte";
 import Signature from "$/lib/forms/fields/components/Signature.svelte";
 import ScrollAndReadDisplay from "$/lib/forms/fields/components/Scrollandreaddisplay.svelte";
 

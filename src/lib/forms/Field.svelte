@@ -1,6 +1,7 @@
 <script>
   import { getContext, onDestroy, onMount } from "svelte";
-  import * as utils from "$/lib/forms/utils/index.js";
+  // import * as utils from "$/lib/forms/utils/index.js";
+  import * as utils from "./utils/index.js";
   import _ from "lodash-es";
 
   export let form;

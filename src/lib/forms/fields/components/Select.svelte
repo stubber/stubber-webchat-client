@@ -1,10 +1,12 @@
 <script>
-  import { syncStoreToStore } from "$/lib/forms/utils/syncing";
+  // import { syncStoreToStore } from "$/lib/forms/utils/syncing";
+  import { syncStoreToStore } from "../../utils/syncing.js";
   import { deepEqual } from "fast-equals";
   import _ from "lodash-es";
   import { onMount, onDestroy } from "svelte";
   import { writable } from "svelte/store";
-  import * as utils from "$/lib/forms/utils/index.js";
+  // import * as utils from "$/lib/forms/utils/index.js";
+  import * as utils from "../../utils/index.js";
 
   export let field;
 

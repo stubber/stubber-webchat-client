@@ -6,10 +6,13 @@ export const fullscreen_toggle = writable(false);
 export const links_open_in_new_tab = writable(true);
 
 export const switching_opened = writable(false);
+
 export const switch_whatsapp = writable(false);
 export const switch_sms = writable(false);
 export const switch_email = writable(false);
+
 export const switch_submit = writable(false);
+
 
 export const webchat_enable = writable(false);
 export const webchat_opened = writable(false);
@@ -29,6 +32,8 @@ export const openWebchat = () => {
   webchat_opened.set(true);
 };
 
-export const openSwitching = () => {
+export const openSwitching = (platform, type) => {
+  platform_name.set(platform);
+  contact_point_type.set(type);
   switching_opened.set(true);
 };

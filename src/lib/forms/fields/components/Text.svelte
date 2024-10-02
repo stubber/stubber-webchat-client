@@ -1,5 +1,6 @@
 <script>
-  import { syncStoreToStore } from "$/lib/forms/utils/syncing";
+  import { syncStoreToStore } from "../../utils/syncing.js";
+  // import { syncStoreToStore } from "$/lib/forms/utils/syncing";
   import { deepEqual } from "fast-equals";
   import _ from "lodash-es";
   import { onMount } from "svelte";

@@ -13,11 +13,18 @@
   import MicrophoneRegular from "$/lib/icons/microphone-regular.svelte";
   import PaperclipVerticalRegular from "$/lib/icons/paperclip-vertical-regular.svelte";
   import CircleXSolid from "$/lib/icons/circle-x-solid.svelte";
+  import Stubber from "$/lib/icons/stubber.svelte";
   import CircleXmarkSharpDuotoneSolid from "$/lib/icons/circle-xmark-sharp-duotone-solid.svelte";
   import PlayRegular from "$/lib/icons/play-regular.svelte";
   import PauseRegular from "$/lib/icons/pause-regular.svelte";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
+
+  import WhatsappCustom from "$/lib/icons/whatsapp-custom.svelte";
+  import SmsCustom from "../../icons/sms-custom.svelte";
+  import EmailCustom from "../../icons/email-custom.svelte";
+  import SwitchTo from "$/lib/icons/switch-to.svelte";
+
 
   import {
     payload_buffer_message,
@@ -39,7 +46,8 @@
 
   let handleEnterPress = (event) => {
     if (
-      event.key === "Enter" && !event.shiftKey &&
+      event.key === "Enter" &&
+      !event.shiftKey &&
       ($payload_buffer_message.trim() != "" ||
         recording == true ||
         $payload_buffer_attachments.length != 0)
@@ -49,14 +57,14 @@
         return;
       }
       if (event.key === "Enter") {
-        if (event.preventDefault){
+        if (event.preventDefault) {
           event?.preventDefault();
         }
       }
       payload_buffer_append();
       webchat_incoming_animation.set(true);
       if (event?.target?.style?.height) {
-        event.target.style.height = '40px';
+        event.target.style.height = "40px";
       }
     }
   };
@@ -300,14 +308,14 @@
           bind:value={$payload_buffer_message}
           on:keydown={handleEnterPress}
           on:input={(event) => {
-            if ($payload_buffer_message.length == 1){
-              return
-            }
-            const textarea = event.target;
-            if (textarea.scrollHeight > 136){
+            if ($payload_buffer_message.length == 1) {
               return;
             }
-            textarea.style.height = textarea.scrollHeight + 'px';
+            const textarea = event.target;
+            if (textarea.scrollHeight > 136) {
+              return;
+            }
+            textarea.style.height = textarea.scrollHeight + "px";
           }}
           class="w-full border-none rounded-lg focus:outline-none focus:border-none pl-2 pr-2 text-blue resize-none hide-scrollbar py-2"
           style="height: 40px;"
@@ -364,11 +372,16 @@
       <button
         class="w-10 h-10 transition duration-300 mx-2 mt-auto"
         on:click={() => {
-          const customElement = document.querySelector('stubber-webchat');
+          const customElement = document.querySelector("stubber-webchat");
           const shadowRoot = customElement.shadowRoot;
-          const stubber_text_message_input = shadowRoot.getElementById('stubber_text_message_input');
+          const stubber_text_message_input = shadowRoot.getElementById(
+            "stubber_text_message_input"
+          );
 
-          handleEnterPress({ key: "Enter", target: stubber_text_message_input });
+          handleEnterPress({
+            key: "Enter",
+            target: stubber_text_message_input,
+          });
         }}
       >
         <div class="w-4 h-5 fill-gray-400 mx-auto my-auto">
@@ -377,22 +390,69 @@
       </button>
     </div>
     {#if $switch_whatsapp || $switch_email || $switch_sms}
-      <div class="w-full flex">
-        <button
-          class="w-25 transition duration-300 my-2 mx-auto stubber_webchat_text"
-          on:click={openSwitching}
-        >
-          Switch Chat Channels
-        </button>
+      <div class="flex mt-2 mr-1">
+        <div class="flex-col w-auto">
+          <!-- <button
+            class="transition duration-300 stubber_webchat_text"
+            on:click={openSwitching}
+          > -->
+          <!-- </button> -->
+          <div class="w-full flex py-2">
+            <div class="flex px-1 my-auto">
+              <SwitchTo />
+            </div>
+            <div class="flex px-1 my-auto">
+              <p class="stubber_webchat_text text-sm text-nowrap">Switch to</p>
+            </div>
+            {#if $switch_whatsapp}
+              <button
+                class="flex px-3 my-auto"
+                on:click={() => {
+                  openSwitching("whatsapp", "mobile");
+                }}
+              >
+                <WhatsappCustom />
+              </button>
+            {/if}
+            {#if $switch_sms}
+              <button
+                class="flex px-3 my-auto"
+                on:click={() => {
+                  openSwitching("sms", "mobile")
+                }}
+              >
+                <SmsCustom />
+              </button>
+            {/if}
+            {#if $switch_email}
+              <button
+                class="flex px-3 my-auto"
+                on:click={() => {
+                  openSwitching("email", "email")
+                }}
+              >
+                <EmailCustom />
+              </button>
+            {/if}
+          </div>
+        </div>
+        <div class="flex items-center mt-auto ml-auto w-32">
+          <span class="ml-2 stubber_webchat_text text-xs text-nowrap">Powered By</span>
+          <div class="ml-1 my-auto">
+            <Stubber />
+          </div>
+        </div>
+      </div>
+    {:else}
+      <div class="flex mt-2 mr-1">
+        <div class="flex items-center mx-auto">
+          <span class="ml-2 stubber_webchat_text text-xs">Powered By</span>
+          <div class="ml-1 my-auto">
+            <Stubber />
+          </div>
+        </div>
       </div>
     {/if}
-    <a
-      class="text-fs w-full text-center mt-1 stubber_webchat_text"
-      href="https://www.stubber.com/"
-      target="_blank"
-    >
-      Powered by Stubber
-    </a>
   </div>
 </div>
 
