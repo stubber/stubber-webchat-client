@@ -436,21 +436,29 @@
             {/if}
           </div>
         </div>
-        <div class="flex items-center mt-auto ml-auto w-32">
+        <a 
+          class="flex items-center mt-auto ml-auto w-32"
+          href="https://stubber.com"
+          target="_blank"
+        >
           <span class="ml-2 stubber_webchat_text text-xs text-nowrap">Powered By</span>
           <div class="ml-1 my-auto">
             <Stubber />
           </div>
-        </div>
+        </a>
       </div>
     {:else}
       <div class="flex mt-2 mr-1">
-        <div class="flex items-center mx-auto">
+        <a 
+          class="flex items-center mx-auto"
+          href="https://stubber.com"
+          target="_blank"
+        >
           <span class="ml-2 stubber_webchat_text text-xs">Powered By</span>
           <div class="ml-1 my-auto">
             <Stubber />
           </div>
-        </div>
+        </a>
       </div>
     {/if}
   </div>
