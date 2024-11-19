@@ -217,7 +217,7 @@ export const payload_buffer_worker = async (payload) => {
     const file_response = await fetch(
       `${API_URL}/v2/attachments?${new URLSearchParams({
           sessionuuid: API_SESSION_UUID,
-          voicenote: payload.message.type == "voice"
+          // voicenote: payload.message.type == "voice"
           // voicenote: true
         })}`,
       {
