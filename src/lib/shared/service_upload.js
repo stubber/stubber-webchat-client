@@ -77,6 +77,7 @@ export const socket_connect = () => {
   });
 
   SOCKET_CONNECTION.on("webchat_payload", async (data, callback) => {
+    console.log('webchat_payload', data);
     let webchat_agent = data?.webchat_agent;
     let webchat_message = data?.webchat_message;
     let webchat_client_configuration = data?.webchat_client_configuration;
@@ -216,6 +217,8 @@ export const payload_buffer_worker = async (payload) => {
     const file_response = await fetch(
       `${API_URL}/v2/attachments?${new URLSearchParams({
           sessionuuid: API_SESSION_UUID,
+          voicenote: payload.message.type == "voice"
+          // voicenote: true
         })}`,
       {
         method: "POST",

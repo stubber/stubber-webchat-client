@@ -100,7 +100,7 @@
       console.log(profile_uuid, branch)
       window.onload = function () {
         const body = (document.getElementById("body").innerHTML = `
-            <stubber-webchat profile_uuid="${profile_uuid}" branch="${branch}">
+            <stubber-webchat profile_uuid="${profile_uuid}" branch="${branch}" pass_through_data="{'some','data'}">
             </stubber-webchat>
         `);
       };

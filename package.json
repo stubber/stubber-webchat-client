@@ -23,6 +23,7 @@
     "vite": "^5.0.8"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.10",
     "ag-grid-community": "^31.0.2",
     "ag-grid-enterprise": "^31.0.2",
     "axios": "^1.6.8",
