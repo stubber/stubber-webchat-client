@@ -209,6 +209,11 @@ export const payload_buffer_worker = async (payload) => {
     // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
 
     let form = new FormData();
+    let convert_voice_note = false;
+
+    if (payload.attachments[0].blob.type.includes("mp4")) {
+      convert_voice_note = true;
+    }
 
     for (let attachment of payload?.attachments) {
       form.append(attachment.blob.name, attachment.blob, attachment.blob.name);
@@ -217,8 +222,7 @@ export const payload_buffer_worker = async (payload) => {
     const file_response = await fetch(
       `${API_URL}/v2/attachments?${new URLSearchParams({
           sessionuuid: API_SESSION_UUID,
-          // voicenote: payload.message.type == "voice"
-          // voicenote: true
+          voicenote: convert_voice_note
         })}`,
       {
         method: "POST",
