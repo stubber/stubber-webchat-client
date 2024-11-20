@@ -211,7 +211,7 @@ export const payload_buffer_worker = async (payload) => {
     let form = new FormData();
     let convert_voice_note = false;
 
-    if (payload.message.type == "voice"){
+    if (payload.message.type == "voice" && payload.attachments[0]){
       if (payload.attachments[0].blob.type.includes("mp4")) {
         convert_voice_note = true;
       }
