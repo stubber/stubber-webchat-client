@@ -41,7 +41,7 @@
   {/if}
   {#if !$webchat_enable && button_mode == "svg"}
     <button
-      class="py-2 px-2 rounded-md transition duration-300 flex"
+      class="py-6 px-6 rounded-md transition duration-300 flex"
       on:click={() => {
         openWebchat();
         socket_connect();
