@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.14 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.14.1 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -77,8 +77,6 @@
 
         webchat_client_config =
           config_request_json.branch[branch].webchat_client_config;
-
-        console.log(webchat_client_config)
 
         chat_display_name = webchat_client_config.webchat_title;
         open_on_mount = webchat_client_config.display_settings.open_on_load;

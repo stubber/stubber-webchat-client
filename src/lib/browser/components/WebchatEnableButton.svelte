@@ -48,9 +48,11 @@
       }}
     >
       {#if button_mode == "svg"}
-        <img
+      <img
           src={$open_webchat_button_config.button_types_config.svg_url.url}
           alt="SVG Icon"
+          height="50"
+          width="50"
         />
       {/if}
     </button>
