@@ -9,8 +9,6 @@
 
   let button_mode = "none";
   open_webchat_button_config.subscribe((data) => {
-    console.log("opne button config", data);
-
     if (Object.keys(data).length == 0) {
       return;
     }

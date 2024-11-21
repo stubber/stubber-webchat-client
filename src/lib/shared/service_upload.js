@@ -77,7 +77,7 @@ export const socket_connect = () => {
   });
 
   SOCKET_CONNECTION.on("webchat_payload", async (data, callback) => {
-    console.log('webchat_payload', data);
+    // console.log('webchat_payload', data);
     let webchat_agent = data?.webchat_agent;
     let webchat_message = data?.webchat_message;
     let webchat_client_configuration = data?.webchat_client_configuration;
@@ -206,7 +206,7 @@ export const payload_buffer_append = () => {
 
 export const payload_buffer_worker = async (payload) => {
   return new Promise(async (resolve, reject) => {
-    console.log(`${payload.payload_uuid} WORKINGS...`, payload);
+    // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
 
     let form = new FormData();
     let convert_voice_note = false;
@@ -256,7 +256,7 @@ export const payload_buffer_worker = async (payload) => {
       () => {
         payload.message.sent = true;
         payload_buffer_update_payload(payload);
-        console.log(`${payload.payload_uuid} COMPLETE...`, payload);
+        // console.log(`${payload.payload_uuid} COMPLETE...`, payload);
         resolve();
       }
     );
