@@ -7,6 +7,7 @@
     webchat_incoming_animation,
     voicenote_enable,
     files_enable,
+    powered_by_enabled,
   } from "$/lib/stores/config_store.js";
 
   import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
@@ -24,7 +25,6 @@
   import SmsCustom from "../../icons/sms-custom.svelte";
   import EmailCustom from "../../icons/email-custom.svelte";
   import SwitchTo from "$/lib/icons/switch-to.svelte";
-
 
   import {
     payload_buffer_message,
@@ -115,7 +115,7 @@
   let click_remove_file = (file) => {
     payload_buffer_attachments.update((payload_buffer_attachments) => {
       return payload_buffer_attachments.filter(
-        (attachment) => attachment.attachment_uuid != file.attachment_uuid
+        (attachment) => attachment.attachment_uuid != file.attachment_uuid,
       );
     });
   };
@@ -375,7 +375,7 @@
           const customElement = document.querySelector("stubber-webchat");
           const shadowRoot = customElement.shadowRoot;
           const stubber_text_message_input = shadowRoot.getElementById(
-            "stubber_text_message_input"
+            "stubber_text_message_input",
           );
 
           handleEnterPress({
@@ -418,7 +418,7 @@
               <button
                 class="flex px-3 my-auto"
                 on:click={() => {
-                  openSwitching("sms", "mobile")
+                  openSwitching("sms", "mobile");
                 }}
               >
                 <SmsCustom />
@@ -428,7 +428,7 @@
               <button
                 class="flex px-3 my-auto"
                 on:click={() => {
-                  openSwitching("email", "email")
+                  openSwitching("email", "email");
                 }}
               >
                 <EmailCustom />
@@ -436,20 +436,24 @@
             {/if}
           </div>
         </div>
-        <a 
-          class="flex items-center mt-auto ml-auto w-32"
-          href="https://stubber.com"
-          target="_blank"
-        >
-          <span class="ml-2 stubber_webchat_text text-xs text-nowrap">Powered By</span>
-          <div class="ml-1 my-auto">
-            <Stubber />
-          </div>
-        </a>
+        {#if $powered_by_enabled}
+          <a
+            class="flex items-center mt-auto ml-auto w-32"
+            href="https://stubber.com"
+            target="_blank"
+          >
+            <span class="ml-2 stubber_webchat_text text-xs text-nowrap"
+              >Powered By</span
+            >
+            <div class="ml-1 my-auto">
+              <Stubber />
+            </div>
+          </a>
+        {/if}
       </div>
-    {:else}
+    {:else if $powered_by_enabled}
       <div class="flex mt-2 mr-1">
-        <a 
+        <a
           class="flex items-center mx-auto"
           href="https://stubber.com"
           target="_blank"

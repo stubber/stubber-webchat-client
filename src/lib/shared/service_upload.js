@@ -206,7 +206,7 @@ export const payload_buffer_append = () => {
 
 export const payload_buffer_worker = async (payload) => {
   return new Promise(async (resolve, reject) => {
-    // console.log(`${payload.payload_uuid} WORKINGS...`, payload);
+    console.log(`${payload.payload_uuid} WORKINGS...`, payload);
 
     let form = new FormData();
     let convert_voice_note = false;
@@ -216,27 +216,32 @@ export const payload_buffer_worker = async (payload) => {
         convert_voice_note = true;
       }
     }
-
+    
     for (let attachment of payload?.attachments) {
       form.append(attachment.blob.name, attachment.blob, attachment.blob.name);
     }
 
-    const file_response = await fetch(
-      `${API_URL}/v2/attachments?${new URLSearchParams({
-          sessionuuid: API_SESSION_UUID,
-          voicenote: convert_voice_note
-        })}`,
-      {
-        method: "POST",
-        body: form,
-      }
-    );
+    let file_response_json = [];
+    
+    if (payload.attachments.length > 0){
+      const file_response = await fetch(
+        `${API_URL}/v2/attachments?${new URLSearchParams({
+            sessionuuid: API_SESSION_UUID,
+            voicenote: convert_voice_note
+          })}`,
+        {
+          method: "POST",
+          body: form,
+        }
+      );
+  
+      if (!file_response.ok){
+        console.error("Failed to upload files")
+      };
+  
+      file_response_json = await file_response.json();
+    }
 
-    if (!file_response.ok){
-      console.error("Failed to upload files")
-    };
-
-    let file_response_json = await file_response.json();
 
     SOCKET_CONNECTION.emit(
       "payload",
@@ -251,7 +256,7 @@ export const payload_buffer_worker = async (payload) => {
       () => {
         payload.message.sent = true;
         payload_buffer_update_payload(payload);
-        // console.log(`${payload.payload_uuid} COMPLETE...`, payload);
+        console.log(`${payload.payload_uuid} COMPLETE...`, payload);
         resolve();
       }
     );

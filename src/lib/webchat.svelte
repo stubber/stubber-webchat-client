@@ -24,6 +24,8 @@
     fullscreen_toggle,
     links_open_in_new_tab,
     default_country_code,
+    powered_by_enabled,
+    open_webchat_button_config
   } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -76,6 +78,8 @@
         webchat_client_config =
           config_request_json.branch[branch].webchat_client_config;
 
+        console.log(webchat_client_config)
+
         chat_display_name = webchat_client_config.webchat_title;
         open_on_mount = webchat_client_config.display_settings.open_on_load;
         fullscreen_mode = webchat_client_config.display_settings.fullscreen;
@@ -89,6 +93,9 @@
         voicenote_enable.set(enable_voice_notes);
         files_enable.set(enable_file_uploads);
         links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
+
+        powered_by_enabled.set(webchat_client_config.display_settings.powered_by_enabled);
+        open_webchat_button_config.set(webchat_client_config.display_settings.open_button);
 
         let webchat_css_config = webchat_client_config.display_settings.css;
 
@@ -116,7 +123,7 @@
           branch,
         });
       } catch (err) {
-        console.err("failed to load profile");
+        console.error("failed to load profile", err);
       }
     } else {
       fullscreen_mode = fullscreen_mode === "true";
