@@ -81,6 +81,7 @@ export const socket_connect = () => {
     let webchat_agent = data?.webchat_agent;
     let webchat_message = data?.webchat_message;
     let webchat_client_configuration = data?.webchat_client_configuration;
+    let webchat_control_event = data?.webchat_control_event;
 
     if (data.webchat_message) {
       payloads.update((payloads) => [
@@ -124,6 +125,10 @@ export const socket_connect = () => {
           files_enable.set(webchat_client_configuration[key].value.enable);
         }
       });
+    }
+
+    if (webchat_control_event && window?.handle_server_control_event) {
+      window.handle_server_control_event(webchat_control_event);
     }
 
     callback();
@@ -241,7 +246,10 @@ export const payload_buffer_worker = async (payload) => {
   
       file_response_json = await file_response.json();
     }
-
+    
+    if (window?.handle_page_control) {
+      payload = window.handle_page_control(payload);
+    }
 
     SOCKET_CONNECTION.emit(
       "payload",
@@ -250,13 +258,14 @@ export const payload_buffer_worker = async (payload) => {
           message: payload.message,
           attachments: file_response_json,
           payload_uuid: payload.payload_uuid,
+          webchat_control_event: payload?.control_event,
           FIRST_MESSAGE: FIRST_MESSAGE
         },
       },
       () => {
         payload.message.sent = true;
         payload_buffer_update_payload(payload);
-        // console.log(`${payload.payload_uuid} COMPLETE...`, payload);
+        console.log(`${payload.payload_uuid} COMPLETE...`, payload);
         resolve();
       }
     );
@@ -294,7 +303,25 @@ export const payload_buffer_upload_fields = (fields) => {
       payload,
     },
     () => {
-      console.log(`Received Payload ${payload.payload_uuid}`);
+      console.log(`Sent Payload ${payload.payload_uuid}`);
+    }
+  );
+};
+
+export const payload_buffer_upload_page_control_event = (webchat_control_event) => {
+  const payload = {
+    payload_uuid: crypto.randomUUID(),
+    payload_direction: "OUT",
+    webchat_control_event,
+  };
+
+  SOCKET_CONNECTION.emit(
+    "payload",
+    {
+      payload,
+    },
+    () => {
+      console.log(`Sent Payload ${payload.payload_uuid}`, payload);
     }
   );
 };

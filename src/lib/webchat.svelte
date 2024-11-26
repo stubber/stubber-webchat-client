@@ -6,13 +6,14 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.15 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v2.16 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
   import {
     socket_initialize,
     socket_connect,
+    payload_buffer_upload_page_control_event
   } from "$/lib/shared/service_upload.js";
   import {
     switching_opened,
@@ -54,7 +55,7 @@
     });
   }
 
-  onMount(async () => {
+  onMount(async function () {
     let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
     let webchat_client_config;
 
@@ -130,6 +131,11 @@
       open_on_mount = open_on_mount === "true";
     }
 
+    window.addEventListener("stubber_webchat_page_control_event", (data) => {
+      console.log(">>>>>>>>>>>> stubber_webchat_page_control_event", data.detail.data);
+      payload_buffer_upload_page_control_event(data.detail.data)
+    });
+
     try {
       let meta_request = await fetch(`${API_URL}/v2/meta`);
       let meta_request_json = await meta_request.json();
@@ -159,6 +165,9 @@
     if (ws) {
       ws.close();
     }
+
+    // const host = this;
+    // host.removeEventListener('stubber_webchat_page_control_event');
   });
 </script>
 
