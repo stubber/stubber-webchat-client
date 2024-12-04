@@ -7,6 +7,7 @@ import {
   platform_name,
   voicenote_enable,
   files_enable,
+  webchat_state
 } from "$/lib/stores/config_store.js";
 import { default_country_code } from "../stores/config_store";
 import io from "socket.io-client";
@@ -82,6 +83,7 @@ export const socket_connect = () => {
     let webchat_message = data?.webchat_message;
     let webchat_client_configuration = data?.webchat_client_configuration;
     let webchat_control_event = data?.webchat_control_event;
+    let webchat_server_debug = data?.debug;
 
     if (data.webchat_message) {
       payloads.update((payloads) => [
@@ -129,6 +131,13 @@ export const socket_connect = () => {
 
     if (webchat_control_event && window?.handle_server_control_event) {
       window.handle_server_control_event(webchat_control_event);
+    }
+
+    if (webchat_server_debug) {
+      webchat_state.update(current_webchat_state => {
+        current_webchat_state.debug.server = webchat_server_debug;
+        return current_webchat_state;
+      })
     }
 
     callback();
@@ -265,7 +274,7 @@ export const payload_buffer_worker = async (payload) => {
       () => {
         payload.message.sent = true;
         payload_buffer_update_payload(payload);
-        console.log(`${payload.payload_uuid} COMPLETE...`, payload);
+        // console.log(`${payload.payload_uuid} COMPLETE...`, payload);
         resolve();
       }
     );
