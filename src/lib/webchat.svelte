@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v2.16 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v3.1 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -26,7 +26,8 @@
     links_open_in_new_tab,
     default_country_code,
     powered_by_enabled,
-    open_webchat_button_config
+    open_webchat_button_config,
+    webchat_state
   } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -67,6 +68,11 @@
         );
         if (branch != "draft") {
           branch = "live";
+        } else {
+          webchat_state.update(current_webchat_state => {
+            current_webchat_state.debug.enabled = true;
+            return current_webchat_state;
+          })
         }
 
         let config_request_json = await config_request.json();

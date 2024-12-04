@@ -39,3 +39,9 @@ export const openSwitching = (platform, type) => {
   contact_point_type.set(type);
   switching_opened.set(true);
 };
+
+export const webchat_state = writable({
+  debug: {
+    enabled: false
+  }
+})

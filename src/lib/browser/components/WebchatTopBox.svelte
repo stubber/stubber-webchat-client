@@ -5,13 +5,28 @@
   import CircleXMarkRegular from "$/lib/icons/circle-xmark-regular.svelte";
   import Fullscreen from "../../icons/fullscreen.svelte";
   import ArrowDownSolid from "../../icons/arrow-down-solid.svelte";
+  import TicketSolid from "$/lib/icons/ticket-solid.svelte";
   import {
     webchat_enable,
     fullscreen,
     fullscreen_toggle,
+    webchat_state
   } from "$/lib/stores/config_store.js";
+  const STUBBER_SQUARED_URL = import.meta.env.VITE_WEBCHAT_STUBBER_SQUARED_URL;
 
   export let chat_display_name;
+
+  let debug = false
+  let stubref;
+
+  webchat_state.subscribe((current_webchat_state) => {
+    if (current_webchat_state.debug.enabled) {
+      debug = true;
+      if (current_webchat_state.debug?.server?.stubref) {
+        stubref = current_webchat_state.debug.server.stubref;
+      }
+    }
+  });
 </script>
 
 {#if ($fullscreen && $fullscreen_toggle) || !$fullscreen}
@@ -24,6 +39,17 @@
       {!chat_display_name ? "" : chat_display_name}
     </p>
     <div class="flex">
+      {#if debug && stubref}
+      <a
+        class="h-5 mx-2 flex"
+        href={`${STUBBER_SQUARED_URL}/s/${stubref}`}
+        target="_blank"
+      >
+        <span class="w-5 flex my-auto fill-white">
+          <TicketSolid />
+        </span>
+      </a>
+    {/if}
       {#if $fullscreen_toggle}
         <button
           class="h-5 mx-2 flex"
