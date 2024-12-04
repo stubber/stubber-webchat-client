@@ -46,6 +46,8 @@
   export let enable_file_uploads;
   export let profile_uuid;
   export let branch;
+  export let on_server_control_event;
+  export let page_control_hook;
 
   if (!profile_uuid) {
     socket_initialize({
@@ -126,6 +128,8 @@
           pass_through_data,
           profile_uuid,
           branch,
+          on_server_control_event,
+          page_control_hook,
         });
       } catch (err) {
         console.error("failed to load profile", err);

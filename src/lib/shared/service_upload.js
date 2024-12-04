@@ -25,6 +25,9 @@ let SOCKET_CONNECT = true;
 
 let FIRST_MESSAGE = true;
 
+let ON_SERVER_CONTRL_EVENT;
+let PAGE_CONTROL_HOOK;
+
 let SOCKET_CONNECTION = {};
 const SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
@@ -34,6 +37,8 @@ export const socket_initialize = (CONFIG) => {
   API_CONFIG_PASS_THROUGH_DATA = CONFIG.pass_through_data;
   API_CONFIG_PROFILE_UUID = CONFIG?.profile_uuid;
   API_CONFIG_BRANCH = CONFIG?.branch;
+  ON_SERVER_CONTRL_EVENT = CONFIG?.on_server_control_event;
+  PAGE_CONTROL_HOOK = CONFIG?.page_control_hook;
 };
 
 export const socket_connect = () => {
@@ -129,8 +134,8 @@ export const socket_connect = () => {
       });
     }
 
-    if (webchat_control_event && window?.handle_server_control_event) {
-      window.handle_server_control_event(webchat_control_event);
+    if (webchat_control_event && window?.[ON_SERVER_CONTRL_EVENT]) {
+      window[ON_SERVER_CONTRL_EVENT](webchat_control_event);
     }
 
     if (webchat_server_debug) {
@@ -256,8 +261,8 @@ export const payload_buffer_worker = async (payload) => {
       file_response_json = await file_response.json();
     }
     
-    if (window?.handle_page_control) {
-      payload = window.handle_page_control(payload);
+    if (PAGE_CONTROL_HOOK && window?.[PAGE_CONTROL_HOOK]) {
+      payload = window?.[PAGE_CONTROL_HOOK](payload);
     }
 
     SOCKET_CONNECTION.emit(
