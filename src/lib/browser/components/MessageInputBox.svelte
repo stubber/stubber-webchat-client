@@ -475,7 +475,7 @@
 
   .stubber_webchat_input_box {
     background-color: var(--stubber-webchat-primary-color);
-    background: var(--background, var(--stubber-webchat-primary-color));
+    background: var(--stubber-webchat-primary-color);
     color: var(--stubber-webchat-background-color);
   }
 
