@@ -93,9 +93,9 @@
   @tailwind utilities;
 
   .stubber_webchat_top_box {
-    background-color: var(--primary-color);
-    background: var(--background, var(--primary-color));
-    color: var(--background-color);
+    background-color: var(--stubber-webchat-primary-color);
+    background: var(--background, var(--stubber-webchat-primary-color));
+    color: var(--stubber-webchat-background-color);
   }
 
   .stubber_webchat_text {

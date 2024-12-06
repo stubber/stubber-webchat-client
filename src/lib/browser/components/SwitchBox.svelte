@@ -259,19 +259,19 @@
   @tailwind utilities;
 
   .stubber_webchat_breadcrumb_fill {
-    color: var(--primary-color);
-    fill: var(--primary-color);
+    color: var(--stubber-webchat-primary-color);
+    fill: var(--stubber-webchat-primary-color);
   }
 
   .stubber_webchat_chat_button_border_fill {
-    background-color: var(--background-color);
-    border: var(--neutral-color);
-    fill: var(--neutral-color);
+    background-color: var(--stubber-webchat-background-color);
+    border: var(--stubber-webchat-neutral-color);
+    fill: var(--stubber-webchat-neutral-color);
   }
 
   .stubber_webchat_chat_button_border_fill_selected {
-    border-color: var(--primary-color);
-    fill: var(--primary-color);
+    border-color: var(--stubber-webchat-primary-color);
+    fill: var(--stubber-webchat-primary-color);
   }
 
   .stubber_webchat_switch_box {
@@ -279,11 +279,11 @@
   }
 
   .stubber_webchat_general_input {
-    background-color: var(--primary-color);
+    background-color: var(--stubber-webchat-primary-color);
     color: white;
   }
 
   .stubber_webchat_general_input_error {
-    background-color: var(--neutral-color);
+    background-color: var(--stubber-webchat-neutral-color);
   }
 </style>

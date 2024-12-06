@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v3.2 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v3.2.1 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -109,11 +109,11 @@
         if (webchat_css_config) {
           let root_css = document.querySelector(":root");
           root_css.style.setProperty(
-            "--primary-color",
+            "--stubber-webchat-primary-color",
             webchat_css_config["--primary-color"]
           );
           root_css.style.setProperty(
-            "--border-color",
+            "--stubber-webchat-border-color",
             webchat_css_config["--border-color"]
           );
           root_css.style.setProperty(
@@ -222,15 +222,15 @@
   }
 
   .stubber_webchat_theme {
-    --background-color: white;
-    --neutral-color: #909090;
+    --stubber-webchat-background-color: white;
+    --stubber-webchat-neutral-color: #909090;
   }
 
   .stubber_webchat_message_box {
     scrollbar-width: none;
     -ms-overflow-style: none;
-    background-color: var(--background-color);
-    border: 1px solid var(--border-color, var(--primary-color));
+    background-color: var(--stubber-webchat-background-color);
+    border: 1px solid var(--stubber-webchat-border-color, var(--stubber-webchat-primary-color));
   }
 
   .stubber_webchat_message_box_fullscreen {

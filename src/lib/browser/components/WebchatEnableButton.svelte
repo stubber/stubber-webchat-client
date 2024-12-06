@@ -65,9 +65,9 @@
   @tailwind utilities;
 
   .stubber_webchat_chat_button {
-    background-color: var(--primary-color);
-    background: var(--background, var(--primary-color));
-    color: var(--background-color);
+    background-color: var(--stubber-webchat-primary-color);
+    background: var(--background, var(--stubber-webchat-primary-color));
+    color: var(--stubber-webchat-background-color);
   }
 
   .stubber_webchat_chat_button:hover {
@@ -75,13 +75,13 @@
   }
 
   .stubber_webchat_chat_button:disabled {
-    background-color: var(--neutral-color);
-    color: var(--background-color);
+    background-color: var(--stubber-webchat-neutral-color);
+    color: var(--stubber-webchat-background-color);
   }
 
   .stubber_webchat_theme {
-    --background-color: white;
-    --neutral-color: #909090;
+    --stubber-webchat-background-color: white;
+    --stubber-webchat-neutral-color: #909090;
     z-index: 2147483647;
   }
 </style>

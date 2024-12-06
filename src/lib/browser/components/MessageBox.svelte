@@ -419,11 +419,11 @@
   }
 
   .stubber_webchat_general_input {
-    background-color: var(--primary-color);
+    background-color: var(--stubber-webchat-primary-color);
     color: white;
   }
 
   .stubber_webchat_general_input_error {
-    background-color: var(--neutral-color);
+    background-color: var(--stubber-webchat-neutral-color);
   }
 </style>
