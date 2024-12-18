@@ -13,7 +13,7 @@
   import {
     socket_initialize,
     socket_connect,
-    payload_buffer_upload_page_control_event
+    payload_buffer_upload_page_control_event,
   } from "$/lib/shared/service_upload.js";
   import {
     switching_opened,
@@ -29,6 +29,7 @@
     open_webchat_button_config,
     webchat_state
   } from "$/lib/stores/config_store.js";
+  import { webchat_socket_init } from "$/lib/shared/new_service.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
   import MessageBox from "./browser/components/MessageBox.svelte";
@@ -36,29 +37,16 @@
   import WebchatTopBox from "./browser/components/WebchatTopBox.svelte";
   import WebchatEnableButton from "./browser/components/WebchatEnableButton.svelte";
 
-  export let orguuid;
-  export let chat_name;
-  export let chat_display_name;
-  export let open_on_mount;
-  export let pass_through_data;
-  export let fullscreen_mode;
-  export let enable_voice_notes;
-  export let enable_file_uploads;
   export let profile_uuid;
   export let branch;
+  export let pass_through_data;
   export let on_server_control_event;
   export let page_control_hook;
 
-  if (!profile_uuid) {
-    socket_initialize({
-      orguuid,
-      chat_name: chat_name,
-      pass_through_data,
-      profile_uuid: ``,
-    });
-  }
+  webchat_socket_init(profile_uuid, branch, pass_through_data);
 
   onMount(async function () {
+    return;
     let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
     let webchat_client_config;
 
