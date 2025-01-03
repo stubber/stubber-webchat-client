@@ -22,81 +22,18 @@
 
   <script>
     const searchParams = new URLSearchParams(window.location.search);
-    let webchat_demo_settings = null;
-
-    if (searchParams.has("webchat_demo_settings_base64")) {
-      const webchat_demo_settings_base64 = searchParams.get(
-        "webchat_demo_settings_base64"
-      );
-
-      if (webchat_demo_settings_base64) {
-        let temp_params;
-        try {
-          temp_params = JSON.parse(atob(webchat_demo_settings_base64));
-          webchat_demo_settings = temp_params;
-        } catch (e) {
-          console.error(e.toString());
-        }
-      }
-      if (webchat_demo_settings) {
-        console.log(webchat_demo_settings);
-        document.documentElement.style.setProperty(
-          "--primary-color",
-          `${webchat_demo_settings.webchat_css.primary_color_hex}`
-        );
-        if (
-          webchat_demo_settings.webchat_css.gradient_color_left != "" &&
-          webchat_demo_settings.webchat_css.gradient_color_right != ""
-        ) {
-          document.documentElement.style.setProperty(
-            "--background",
-            `linear-gradient(to right, ${webchat_demo_settings.webchat_css.gradient_color_left} , ${webchat_demo_settings.webchat_css.gradient_color_right})`
-          );
-        } else {
-          document.documentElement.style.setProperty("--background", ``);
-        }
-        if (webchat_demo_settings.webchat_css.text_color_hex != "") {
-          document.documentElement.style.setProperty(
-            "--text-color",
-            `${webchat_demo_settings.webchat_css.text_color_hex}`
-          );
-        } else {
-          document.documentElement.style.setProperty("--text-color", ``);
-        }
-        if (webchat_demo_settings.webchat_css.border_color_hex != "") {
-          document.documentElement.style.setProperty(
-            "--border-color",
-            `${webchat_demo_settings.webchat_css.border_color_hex}`
-          );
-        } else {
-          document.documentElement.style.setProperty("--border-color", ``);
-        }
-      }
-  
-      window.onload = function () {
-        const body = (document.getElementById("body").innerHTML = `
-            <stubber-webchat
-              orguuid="${webchat_demo_settings.webchat_params.orguuid}"
-              chat_name="${webchat_demo_settings.webchat_params.chat_name}"
-              connect_on_open="${webchat_demo_settings.webchat_params.connect_on_open}"
-              open_on_mount="${webchat_demo_settings.webchat_params.open_on_mount}"
-              pass_through_data="${webchat_demo_settings.webchat_params.pass_through_data}"
-              chat_display_name="${webchat_demo_settings.webchat_params.chat_display_name}"
-              fullscreen_mode="true"
-            >
-            </stubber-webchat>
-        `);
-      };
-    }
 
     if (searchParams.has("profile_uuid")){
       const profile_uuid = searchParams.get(
         "profile_uuid"
       );
-      const branch = searchParams.get(
+      branch = searchParams.get(
         "branch"
       );
 
+      if (!branch){
+        branch = "live"
+      }
       console.log(profile_uuid, branch)
       window.onload = function () {
         const body = (document.getElementById("body").innerHTML = `

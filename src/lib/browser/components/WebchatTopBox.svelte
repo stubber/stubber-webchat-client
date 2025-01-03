@@ -7,14 +7,11 @@
   import ArrowDownSolid from "../../icons/arrow-down-solid.svelte";
   import TicketSolid from "$/lib/icons/ticket-solid.svelte";
   import {
-    webchat_enable,
     fullscreen,
     fullscreen_toggle,
-    webchat_state
-  } from "$/lib/stores/config_store.js";
+    webchat_state,
+    webchat_config  } from "$/lib/stores/config_store.js";
   const STUBBER_SQUARED_URL = import.meta.env.VITE_WEBCHAT_STUBBER_SQUARED_URL;
-
-  export let chat_display_name;
 
   let debug = false
   let stubref;
@@ -29,14 +26,14 @@
   });
 </script>
 
-{#if ($fullscreen && $fullscreen_toggle) || !$fullscreen}
+{#if ($webchat_state.fullscreen && $webchat_config.fullscreen_toggle) || !$webchat_state.fullscreen}
   <div
-    class={$fullscreen
+    class={$webchat_state.fullscreen
       ? "pl-4 p-3 border-b flex justify-between items-center h-15 stubber_webchat_top_box"
       : "pl-4 p-3 border-b rounded-t-lg flex justify-between items-center h-15 stubber_webchat_top_box"}
   >
     <p class="text-2xl font-semibold stubber_webchat_text">
-      {!chat_display_name ? "" : chat_display_name}
+      {$webchat_config.chat_display_name}
     </p>
     <div class="flex">
       {#if debug && stubref}
@@ -50,24 +47,21 @@
         </span>
       </a>
     {/if}
-      {#if $fullscreen_toggle}
+      {#if $webchat_config.fullscreen_toggle}
         <button
           class="h-5 mx-2 flex"
           on:click={() => {
-            let ifuckinghatesubscriptions;
-
-            fullscreen.subscribe((fullscreen_value) => {
-              ifuckinghatesubscriptions = fullscreen_value;
-            })();
-
-            fullscreen.set(!ifuckinghatesubscriptions);
+            webchat_state.update((state) => {
+              state.fullscreen = !state.fullscreen;
+              return state;
+            });
           }}
         >
           <span class="w-4 flex my-auto">
-            {#if $fullscreen}
+            {#if $webchat_state.fullscreen}
               <WindowRestoreRegular />
             {/if}
-            {#if !$fullscreen}
+            {#if !$webchat_state.fullscreen}
               <Fullscreen />
             {/if}
           </span>
@@ -76,7 +70,10 @@
       <button
         class="rounded-md h-5 flex mx-2"
         on:click={() => {
-          webchat_enable.set(false);
+          webchat_state.update((state) => {
+            state.webchat_enable = false;
+            return state;
+          });
         }}
       >
         <span class="flex my-auto w-4">

@@ -11,13 +11,7 @@
   import { onDestroy, onMount } from "svelte";
 
   import {
-    socket_initialize,
-    socket_connect,
-    payload_buffer_upload_page_control_event,
-  } from "$/lib/shared/service_upload.js";
-  import {
     switching_opened,
-    webchat_enable,
     openWebchat,
     fullscreen,
     voicenote_enable,
@@ -52,32 +46,7 @@
 
     if (profile_uuid) {
       try {
-        let CONFIG_PATH = import.meta.env.VITE_WEBCHAT_API_CONFIG_PATH;
-        let config_request = await fetch(
-          `${API_URL}${CONFIG_PATH}/${profile_uuid}`
-        );
-        if (branch != "draft") {
-          branch = "live";
-        } else {
-          webchat_state.update(current_webchat_state => {
-            current_webchat_state.debug.enabled = true;
-            return current_webchat_state;
-          })
-        }
-
-        let config_request_json = await config_request.json();
-
-        orguuid = config_request_json.orguuid;
-        chat_name =
-          config_request_json.branch[branch].webchat_routing_config
-            .webchat_instance_name;
-
-        webchat_client_config =
-          config_request_json.branch[branch].webchat_client_config;
-
-        chat_display_name = webchat_client_config.webchat_title;
-        open_on_mount = webchat_client_config.display_settings.open_on_load;
-        fullscreen_mode = webchat_client_config.display_settings.fullscreen;
+        
         enable_voice_notes = webchat_client_config.voice_notes.enabled;
         enable_file_uploads = webchat_client_config.file_uploads.enabled;
 
@@ -92,41 +61,9 @@
         powered_by_enabled.set(webchat_client_config.display_settings.powered_by_enabled);
         open_webchat_button_config.set(webchat_client_config.display_settings.open_button);
 
-        let webchat_css_config = webchat_client_config.display_settings.css;
-
-        if (webchat_css_config) {
-          let root_css = document.querySelector(":root");
-          root_css.style.setProperty(
-            "--stubber-webchat-primary-color",
-            webchat_css_config["--primary-color"]
-          );
-          root_css.style.setProperty(
-            "--stubber-webchat-border-color",
-            webchat_css_config["--border-color"]
-          );
-          root_css.style.setProperty(
-            "--text-color",
-            webchat_css_config["--text-color"]
-          );
-        }
-
-        socket_initialize({
-          orguuid,
-          chat_name: chat_name,
-          pass_through_data,
-          profile_uuid,
-          branch,
-          on_server_control_event,
-          page_control_hook,
-        });
       } catch (err) {
         console.error("failed to load profile", err);
       }
-    } else {
-      fullscreen_mode = fullscreen_mode === "true";
-      enable_voice_notes = enable_voice_notes === "true";
-      enable_file_uploads = enable_file_uploads === "true";
-      open_on_mount = open_on_mount === "true";
     }
 
     window.addEventListener("stubber_webchat_page_control_event", (data) => {
@@ -146,7 +83,7 @@
     voicenote_enable.set(enable_voice_notes);
     files_enable.set(enable_file_uploads);
 
-    if (open_on_mount || $fullscreen) {
+    if (open_on_mount || $webchat_state.fullscreen) {
       if (webchat_client_config) {
         setTimeout(() => {
           openWebchat();
@@ -171,18 +108,18 @@
 
 <div part="host" class="stubber_webchat_outer_box">
   <WebchatEnableButton />
-  {#if $webchat_enable}
+  {#if $webchat_state.webchat_enable}
     <div
-      class:stubber_webchat_box_fullscreen={$fullscreen}
+      class:stubber_webchat_box_fullscreen={$webchat_state.fullscreen}
       class="stubber_webchat_theme stubber_webchat_box fixed right-0 bottom-0 flex w-full min-w-[250px] min-h-[200px]"
     >
       <div
-        class:mx-4={!$fullscreen}
-        class:stubber_webchat_message_box_fullscreen={$fullscreen}
+        class:mx-4={!$webchat_state.fullscreen}
+        class:stubber_webchat_message_box_fullscreen={$webchat_state.fullscreen}
         class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
       >
-        <!-- {#if !$fullscreen} -->
-        <WebchatTopBox {chat_display_name} />
+        <!-- {#if !$webchat_state.fullscreen} -->
+        <WebchatTopBox />
         <!-- {/if} -->
         {#if !$switching_opened}
           <MessageBox />

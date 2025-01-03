@@ -16,8 +16,6 @@ export const switch_email = writable(false); //config
 
 export const switch_submit = writable(false); //state
 
-export const webchat_enable = writable(false); //state
-export const webchat_opened = writable(false); //state
 export const webchat_incoming_animation = writable(true); //state
 
 export const voicenote_enable = writable(false); //config
@@ -44,6 +42,8 @@ export const webchat_state = writable({
   debug: {
     enabled: false
   },
+  webchat_enabled: false,
+  webchat_opened: false,
   fullscreen: false,
   switching_opened: false,
   switch_submit: false,
@@ -63,4 +63,5 @@ export const webchat_config = writable({
   voicenote_enabled: false,
   files_enabled: false,
   webchat_agent_name: "Agent",
+  chat_display_name: "Chat"
 });

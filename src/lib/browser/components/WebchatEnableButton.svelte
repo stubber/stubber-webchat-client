@@ -1,20 +1,19 @@
 <script>
   import UserSolid from "$/lib/icons/user-solid.svelte";
   import {
-    webchat_enable,
-    openWebchat,
     open_webchat_button_config,
+    webchat_state
   } from "$/lib/stores/config_store.js";
   import { socket_connect } from "$/lib/shared/service_upload.js";
 
-  let button_mode = "none";
+  let button_mode = "default";
   open_webchat_button_config.subscribe((data) => {
     if (Object.keys(data).length == 0) {
       return;
     }
 
     if (data?.button_types_config.svg_url.enabled) {
-      button_mode = "svg";
+      button_mode = "svg";chat_display_name
       return;
     }
 
@@ -25,12 +24,16 @@
 <div
   class="stubber_webchat_theme fixed bottom-0 right-0 mb-4 mr-4 h-11 w-96 flex justify-end"
 >
-  {#if !$webchat_enable && button_mode == "default"}
+  {#if !$webchat_state.webchat_enable && button_mode == "default"}
     <button
       class="py-2 px-2 rounded-md transition duration-300 flex stubber_webchat_chat_button"
       on:click={() => {
-        openWebchat();
-        socket_connect();
+        // socket_connect();
+        webchat_state.update((state) => {
+          state.webchat_enable = true;
+          state.webchat_opened = true;
+          return state;
+        });
       }}
     >
       <p class="m-auto mx-2">Chat</p>
@@ -39,12 +42,16 @@
       </span>
     </button>
   {/if}
-  {#if !$webchat_enable && button_mode == "svg"}
+  {#if !$webchat_state.webchat_enable && button_mode == "svg"}
     <button
       class="py-6 px-6 rounded-md transition duration-300 flex"
       on:click={() => {
-        openWebchat();
-        socket_connect();
+        webchat_state.update((state) => {
+          state.webchat_enable = true;
+          state.webchat_opened = true;
+          return state;
+        });
+        // socket_connect();
       }}
     >
       {#if button_mode == "svg"}

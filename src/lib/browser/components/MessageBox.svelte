@@ -11,9 +11,10 @@
   } from "$/lib/shared/service_upload.js";
   import {
     webchat_incoming_animation,
-    webchat_agent_name,
     fullscreen,
     links_open_in_new_tab,
+    webchat_config,
+    webchat_state
   } from "$/lib/stores/config_store.js";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
@@ -206,7 +207,7 @@
           </p>
         {/if}
         <div
-          class={$fullscreen
+          class={$webchat_state.fullscreen
             ? "bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble max-w-[880px] overflow-x-auto"
             : "bg-gray-100 rounded-lg py-1 px-3 flex flex-col stubber_message_bubble max-w-[370px] overflow-x-auto"}
         >
@@ -284,7 +285,7 @@
         <p class="m-auto mx-2 text-sm">You</p>
         <div class="flex justify-end">
           <div
-            class={$fullscreen
+            class={$webchat_state.fullscreen
               ? "bg-gray-100 rounded-lg py-1 px-1 mr-1 flex flex-col max-w-[880px] flex-grow stubber_message_bubble"
               : "bg-gray-100 rounded-lg py-1 px-1 mr-1 flex flex-col max-w-[370px] flex-grow stubber_message_bubble"}
           >
@@ -364,7 +365,7 @@
   {/each}
   {#if $webchat_incoming_animation}
     <div class="mb-2 mr-10 flex flex-col">
-      <p class="m-auto mx-2 text-sm">{$webchat_agent_name}</p>
+      <p class="m-auto mx-2 text-sm">{$webchat_config.webchat_agent_name}</p>
       <div class="bg-gray-200 rounded-lg py-2 px-4 flex h-10">
         {#if typingAnimationIndex >= 0}
           <span class="h-2 w-2">
