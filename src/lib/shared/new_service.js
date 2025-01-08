@@ -24,17 +24,9 @@ export const webchat_socket_init = (profileuuid, branch) => {
 
     // sending ititial payload to server
     SOCKET_CONNECTION.emit("payload", {
-      config: {},
-      message: {
-        text: "Hello, I'm a stubber bot",
-        voicenote: new Blob(),
-        attachements: new Blob()
-      },
-      control_event: {
-
-      }
+      config: {}
     }, (data) => {
-      console.log("___Stubber Webchat payload sent", data);
+      console.log("___Stubber Webchat initial payload recieved", data);
       const payload = data.payload;
 
       if (!data.success) {
@@ -48,56 +40,11 @@ export const webchat_socket_init = (profileuuid, branch) => {
       }
 
       if (payload.config) {
-        // apply conifg
-
-        // appling css
-        let webchat_css_config = payload.config.webchat_client_config.display_settings.css;
-        if (webchat_css_config) {
-          let root_css = document.querySelector(":root");
-          root_css.style.setProperty(
-            "--stubber-webchat-primary-color",
-            webchat_css_config["--primary-color"]
-          );
-          root_css.style.setProperty(
-            "--stubber-webchat-border-color",
-            webchat_css_config["--border-color"]
-          );
-          root_css.style.setProperty(
-            "--text-color",
-            webchat_css_config["--text-color"]
-          );
-        }
-
-        webchat_config.update((config) => {
-          config.chat_display_name = payload.config.webchat_client_config.webchat_title;
-          config.open_on_mount = payload.config.webchat_client_config.display_settings.open_on_load;
-          config.webchat_agent_name = payload.config.webchat_client_config.chat_agent.name;
-          config.fullscreen_toggle = payload.config.webchat_client_config.display_settings.fullscreen_toggle;
-          
-          if (payload.config.webchat_client_config.display_settings.open_on_load) {
-            setTimeout(() => {
-              webchat_state.update((state) => {
-                state.webchat_enable = true;
-                state.webchat_opened = true;
-                return state;
-              });
-            }, payload.config.webchat_client_config.display_settings.open_on_load_timeout_milliseconds);
-          }
-          
-          console.log("___Stubber Webchat config", config);
-          return config;
-        })
-        webchat_state.update((state) => {
-          state.webchat_enabled = true;
-
-          state.fullscreen = payload.config.webchat_client_config.display_settings.fullscreen;
-          console.log("___Stubber Webchat state", state);
-          return state;
-        });
+        handle_config(payload.config);
       }
 
       if (payload.message) {
-        // apply message
+        handle_messages(payload.message);
       }
 
       if (payload.control_event) {
@@ -111,6 +58,78 @@ export const webchat_socket_init = (profileuuid, branch) => {
   });
 
   SOCKET_CONNECTION.on("payload", async (data) => {
+    console.log("___Stubber Webchat payload received", data);
+  });
+}
 
+function handle_messages(message) { 
+  console.log("___Stubber Webchat recieved", data);
+
+  webchat_state.update((state) => {
+    state.messages.push(message);
+    console.log("___Stubber Webchat state", state);
+    return state;
+  });
+}
+
+export const send_message = (message) => {
+  console.log("___Stubber Webchat sending message", message);
+
+  SOCKET_CONNECTION.emit("payload", message, (data) => {
+    console.log("___Stubber Webchat message sent", data);
+    webchat_state.update((state) => {
+     state.messages.push(message);
+     console.log("___Stubber Webchat state", state);
+     return state;
+    });
+  });
+}
+
+function handle_config(config) {
+  // appling css
+  let webchat_css_config = config.webchat_client_config.display_settings.css;
+  if (webchat_css_config) {
+    let root_css = document.querySelector(":root");
+    
+    root_css.style.setProperty(
+      "--stubber-webchat-primary-color",
+      webchat_css_config["--primary-color"]
+    );
+    root_css.style.setProperty(
+      "--stubber-webchat-border-color",
+      webchat_css_config["--border-color"]
+    );
+    root_css.style.setProperty(
+      "--text-color",
+      webchat_css_config["--text-color"]
+    );
+  }
+
+  webchat_config.update((current_config) => {
+    current_config.chat_display_name = config.webchat_client_config.webchat_title;
+    current_config.open_on_mount = config.webchat_client_config.display_settings.open_on_load;
+    current_config.webchat_agent_name = config.webchat_client_config.chat_agent.name;
+    current_config.fullscreen_toggle = config.webchat_client_config.display_settings.fullscreen_toggle;
+
+    if (config.webchat_client_config.display_settings.open_on_load) {
+      setTimeout(() => {
+        webchat_state.update((state) => {
+          state.webchat_enable = true;
+          state.webchat_opened = true;
+          return state;
+        });
+      }, config.webchat_client_config.display_settings.open_on_load_timeout_milliseconds);
+    }
+
+    console.log("___Stubber Webchat config", config);
+    return current_config;
+  });
+
+  webchat_state.update((state) => {
+    state.webchat_enabled = true;
+
+    state.fullscreen = config.webchat_client_config.display_settings.fullscreen;
+    console.log("___Stubber Webchat state", state);
+    return state;
   });
 }

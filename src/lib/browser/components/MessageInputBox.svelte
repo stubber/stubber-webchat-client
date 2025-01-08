@@ -32,6 +32,7 @@
     payload_buffer_attachments,
     payload_buffer_append,
   } from "$/lib/shared/service_upload.js";
+  // import { send_message } from "$/lib/shared/new_service.js";
 
   let recording = false;
   let recording_paused = false;
@@ -61,7 +62,13 @@
           event?.preventDefault();
         }
       }
-      payload_buffer_append();
+      //payload_buffer_append();
+      send_message({
+        message: {
+          type: "text",
+          data: $payload_buffer_message,
+        }
+      })
       webchat_incoming_animation.set(true);
       if (event?.target?.style?.height) {
         event.target.style.height = "40px";
