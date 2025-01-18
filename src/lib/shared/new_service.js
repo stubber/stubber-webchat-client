@@ -21,37 +21,18 @@ export const webchat_socket_init = (profileuuid, branch) => {
 
   SOCKET_CONNECTION.on("connect", async () => {
     console.log("___Stubber Webchat connected to server");
-
-    // sending ititial payload to server
-    SOCKET_CONNECTION.emit("payload", {
-      config: {}
-    }, (data) => {
-      console.log("___Stubber Webchat initial payload recieved", data);
-      const payload = data.payload;
-
-      if (!data.success) {
-        console.error("___Stubber Webchat server error", data);
-      }
-
-      if (payload.sessionuuid) {
-        SESSIONUUID = payload.sessionuuid;
-        SOCKET_CONNECTION.auth.sessionuuid = payload.sessionuuid;
-        console.log("applied session", payload.sessionuuid);
-      }
-
-      if (payload.config) {
-        handle_config(payload.config);
-      }
-
-      if (payload.message) {
-        handle_messages(payload.message);
-      }
-
-      if (payload.control_event) {
-        // apply control_event
-      }
-    })
   });
+  
+  SOCKET_CONNECTION.on("ready", (data) => {
+    console.log("___Stubber Webchat ready", data);
+    if (!SESSIONUUID) {
+      SOCKET_CONNECTION.auth.sessionuuid = data.sessionuuid;
+      console.log("applied session", data.sessionuuid);
+    }
+    if (data.config) {
+      handle_config(data.config);
+    }
+  })
 
   SOCKET_CONNECTION.on("error", async (error) => {
     console.error("___Stubber Webchat error", error);
@@ -62,7 +43,7 @@ export const webchat_socket_init = (profileuuid, branch) => {
   });
 }
 
-function handle_messages(message) { 
+function handle_messages(message) {
   console.log("___Stubber Webchat recieved", data);
 
   webchat_state.update((state) => {
@@ -78,9 +59,9 @@ export const send_message = (message) => {
   SOCKET_CONNECTION.emit("payload", message, (data) => {
     console.log("___Stubber Webchat message sent", data);
     webchat_state.update((state) => {
-     state.messages.push(message);
-     console.log("___Stubber Webchat state", state);
-     return state;
+      state.messages.push(message);
+      console.log("___Stubber Webchat state", state);
+      return state;
     });
   });
 }
@@ -90,7 +71,7 @@ function handle_config(config) {
   let webchat_css_config = config.webchat_client_config.display_settings.css;
   if (webchat_css_config) {
     let root_css = document.querySelector(":root");
-    
+
     root_css.style.setProperty(
       "--stubber-webchat-primary-color",
       webchat_css_config["--primary-color"]

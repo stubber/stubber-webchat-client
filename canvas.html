@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stubber Webchat</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
+    <script
+      type="module"
+      src="/v2/client/index.js"
+    ></script>
+    <!-- load tailwind from cnd -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  </head>
+
+  <style>
+    stubber-webchat::part(host) {
+      /* --background: linear-gradient(to right, white , grey); */
+      /* --primary-color: red; */
+      /* --primary-color: rgb(9, 103, 210); */
+      /* --border-color: none; */
+      /* --text-color: black; */
+    }
+  </style>
+
+  <script>
+    const searchParams = new URLSearchParams(window.location.search);
+
+    if (searchParams.has("profile_uuid")){
+      const profile_uuid = searchParams.get(
+        "profile_uuid"
+      );
+      branch = searchParams.get(
+        "branch"
+      );
+
+      if (!branch){
+        branch = "live"
+      }
+      console.log(profile_uuid, branch)
+      window.onload = function () {
+        const body = (document.getElementById("body").innerHTML = `
+            <stubber-webchat profile_uuid="${profile_uuid}" branch="${branch}" pass_through_data="{'some','data'}">
+            </stubber-webchat>
+        `);
+      };
+    }
+  </script>
+
+  <body>
+    <div class="flex p-2">
+
+    </div>
+    <div>
+        
+    </div>
+  </body>
+</html>
