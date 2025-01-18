@@ -33,6 +33,8 @@
     payload_buffer_append,
   } from "$/lib/shared/service_upload.js";
 
+  export let mode = "sticky";
+
   let recording = false;
   let recording_paused = false;
   let recording_time_minutes = false;
@@ -289,6 +291,7 @@
     </div>
   {/if}
   <div
+    class:rounded-b-xl={mode == "manual"}
     class="p-2 flex flex-col bg-gray-300 rounded-t-xl stubber_webchat_input_box"
   >
     <div class="w-full bg-white flex rounded-lg text-black">

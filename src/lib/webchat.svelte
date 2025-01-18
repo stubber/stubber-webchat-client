@@ -13,7 +13,7 @@
   import {
     socket_initialize,
     socket_connect,
-    payload_buffer_upload_page_control_event
+    payload_buffer_upload_page_control_event,
   } from "$/lib/shared/service_upload.js";
   import {
     switching_opened,
@@ -27,7 +27,7 @@
     default_country_code,
     powered_by_enabled,
     open_webchat_button_config,
-    webchat_state
+    webchat_state,
   } from "$/lib/stores/config_store.js";
 
   import SwitchBox from "./browser/components/SwitchBox.svelte";
@@ -48,6 +48,7 @@
   export let branch;
   export let on_server_control_event;
   export let page_control_hook;
+  export let mode = "sticky";
 
   if (!profile_uuid) {
     socket_initialize({
@@ -66,15 +67,15 @@
       try {
         let CONFIG_PATH = import.meta.env.VITE_WEBCHAT_API_CONFIG_PATH;
         let config_request = await fetch(
-          `${API_URL}${CONFIG_PATH}/${profile_uuid}`
+          `${API_URL}${CONFIG_PATH}/${profile_uuid}`,
         );
         if (branch != "draft") {
           branch = "live";
         } else {
-          webchat_state.update(current_webchat_state => {
+          webchat_state.update((current_webchat_state) => {
             current_webchat_state.debug.enabled = true;
             return current_webchat_state;
-          })
+          });
         }
 
         let config_request_json = await config_request.json();
@@ -95,14 +96,23 @@
 
         fullscreen.set(fullscreen_mode);
         fullscreen_toggle.set(
-          webchat_client_config.display_settings.fullscreen_toggle
+          webchat_client_config.display_settings.fullscreen_toggle,
         );
         voicenote_enable.set(enable_voice_notes);
         files_enable.set(enable_file_uploads);
         links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
+        
+        powered_by_enabled.set(
+          webchat_client_config.display_settings.powered_by_enabled,
+        );
 
-        powered_by_enabled.set(webchat_client_config.display_settings.powered_by_enabled);
-        open_webchat_button_config.set(webchat_client_config.display_settings.open_button);
+        if (mode == "manual") {
+          powered_by_enabled.set(false);
+        }
+
+        open_webchat_button_config.set(
+          webchat_client_config.display_settings.open_button,
+        );
 
         let webchat_css_config = webchat_client_config.display_settings.css;
 
@@ -110,15 +120,15 @@
           let root_css = document.querySelector(":root");
           root_css.style.setProperty(
             "--stubber-webchat-primary-color",
-            webchat_css_config["--primary-color"]
+            webchat_css_config["--primary-color"],
           );
           root_css.style.setProperty(
             "--stubber-webchat-border-color",
-            webchat_css_config["--border-color"]
+            webchat_css_config["--border-color"],
           );
           root_css.style.setProperty(
             "--text-color",
-            webchat_css_config["--text-color"]
+            webchat_css_config["--text-color"],
           );
         }
 
@@ -142,8 +152,11 @@
     }
 
     window.addEventListener("stubber_webchat_page_control_event", (data) => {
-      console.log(">>>>>>>>>>>> stubber_webchat_page_control_event", data.detail.data);
-      payload_buffer_upload_page_control_event(data.detail.data)
+      console.log(
+        ">>>>>>>>>>>> stubber_webchat_page_control_event",
+        data.detail.data,
+      );
+      payload_buffer_upload_page_control_event(data.detail.data);
     });
 
     try {
@@ -181,32 +194,43 @@
   });
 </script>
 
-<div part="host" class="stubber_webchat_outer_box">
-  <WebchatEnableButton />
-  {#if $webchat_enable}
-    <div
-      class:stubber_webchat_box_fullscreen={$fullscreen}
-      class="stubber_webchat_theme stubber_webchat_box fixed right-0 bottom-0 flex w-full min-w-[250px] min-h-[200px]"
-    >
+{#if mode == "sticky"}
+  <div part="host" class="stubber_webchat_outer_box">
+    <WebchatEnableButton />
+    {#if $webchat_enable}
       <div
-        class:mx-4={!$fullscreen}
-        class:stubber_webchat_message_box_fullscreen={$fullscreen}
-        class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
+        class:stubber_webchat_box_fullscreen={$fullscreen}
+        class="stubber_webchat_theme stubber_webchat_box fixed right-0 bottom-0 flex w-full min-w-[250px] min-h-[200px]"
       >
-        <!-- {#if !$fullscreen} -->
-        <WebchatTopBox {chat_display_name} />
-        <!-- {/if} -->
-        {#if !$switching_opened}
-          <MessageBox />
-          <MessageInputBox />
-        {/if}
-        {#if $switching_opened}
-          <SwitchBox />
-        {/if}
+        <div
+          class:mx-4={!$fullscreen}
+          class:stubber_webchat_message_box_fullscreen={$fullscreen}
+          class="flex flex-col flex-grow justify-end transition duration-300 rounded-t-xl stubber_webchat_message_box"
+        >
+          <!-- {#if !$fullscreen} -->
+          <WebchatTopBox {chat_display_name} />
+          <!-- {/if} -->
+          {#if !$switching_opened}
+            <MessageBox />
+            <MessageInputBox />
+          {/if}
+          {#if $switching_opened}
+            <SwitchBox />
+          {/if}
+        </div>
       </div>
-    </div>
-  {/if}
-</div>
+    {/if}
+  </div>
+{/if}
+
+{#if mode == "manual"}
+  <div
+    class="stubber_webchat_theme flex flex-col w-full h-full"
+  >
+      <MessageBox />
+      <MessageInputBox mode="manual" />
+  </div>
+{/if}
 
 <!-- h-5/6 -->
 <style>
@@ -230,7 +254,14 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     background-color: var(--stubber-webchat-background-color);
-    border: 1px solid var(--stubber-webchat-border-color, var(--stubber-webchat-primary-color));
+    border: 1px solid
+      var(--stubber-webchat-border-color, var(--stubber-webchat-primary-color));
+  }
+
+  .stubber_webchat_message_box_manual {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    background-color: var(--stubber-webchat-background-color);
   }
 
   .stubber_webchat_message_box_fullscreen {
