@@ -9,6 +9,7 @@ const SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
 let SOCKET_CONNECTION = {};
 let SESSIONUUID;
+let FIRST_MESSAGE = true;
 
 export const webchat_socket_init = (profileuuid, branch) => {
   SOCKET_CONNECTION = io(API_URL, {
@@ -22,15 +23,28 @@ export const webchat_socket_init = (profileuuid, branch) => {
   SOCKET_CONNECTION.on("connect", async () => {
     console.log("___Stubber Webchat connected to server");
   });
-  
+
   SOCKET_CONNECTION.on("ready", (data) => {
     console.log("___Stubber Webchat ready", data);
     if (!SESSIONUUID) {
+      //save current session for disconnect
       SOCKET_CONNECTION.auth.sessionuuid = data.sessionuuid;
-      console.log("applied session", data.sessionuuid);
-    }
-    if (data.config) {
       handle_config(data.config);
+      console.log("New session", data.sessionuuid);
+
+      // display first message
+      webchat_state.update((state) => {
+        state.payloads.push({
+          type: "IN",
+          payload: {
+            webchat_message: data.config
+          },
+          payloaduuid: crypto.randomUUID(),
+          payload_date: new Date()
+        });
+        console.log("___Stubber Webchat state", state);
+        return state;
+      });
     }
   })
 
@@ -38,32 +52,53 @@ export const webchat_socket_init = (profileuuid, branch) => {
     console.error("___Stubber Webchat error", error);
   });
 
-  SOCKET_CONNECTION.on("payload", async (data) => {
-    console.log("___Stubber Webchat payload received", data);
+  SOCKET_CONNECTION.on("payload", async (payload, callback) => {
+    handle_payload(payload, callback);
+    console.log("___Stubber Webchat payload received", payload);
   });
 }
 
-function handle_messages(message) {
-  console.log("___Stubber Webchat recieved", data);
+function handle_payload(payload, callback) {
+  console.log("___Stubber Webchat recieved", payload);
 
   webchat_state.update((state) => {
-    state.messages.push(message);
+    state.payloads.push({
+      type: "IN",
+      payload,
+      payloaduuid: crypto.randomUUID(),
+      payload_date: new Date()
+    });
     console.log("___Stubber Webchat state", state);
     return state;
   });
+
+  callback()
 }
 
-export const send_message = (message) => {
-  console.log("___Stubber Webchat sending message", message);
+export const send_payload = (payload) => {
+  console.log("___Stubber Webchat sending message", payload);
 
-  SOCKET_CONNECTION.emit("payload", message, (data) => {
-    console.log("___Stubber Webchat message sent", data);
-    webchat_state.update((state) => {
-      state.messages.push(message);
-      console.log("___Stubber Webchat state", state);
-      return state;
-    });
+  webchat_state.update((state) => {
+    state.payloads.push(
+      {
+        type: "OUT",
+        payload,
+        payloaduuid: crypto.randomUUID(),
+        payload_date: new Date()
+      }
+    );
+    console.log("___Stubber Webchat state", state);
+    return state;
   });
+
+  if (payload.message) {
+    payload.FIRST_MESSAGE = FIRST_MESSAGE;
+  }
+
+  SOCKET_CONNECTION.emit("payload", payload, (data) => {
+    console.log("___Stubber Webchat message sent", data);
+  });
+  FIRST_MESSAGE = false;
 }
 
 function handle_config(config) {

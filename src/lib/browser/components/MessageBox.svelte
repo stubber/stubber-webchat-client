@@ -3,23 +3,15 @@
   import { writable } from "svelte/store";
   import DOMPurify from "dompurify";
   import CheckDoubleRegular from "$/lib/icons/check-double-regular.svelte";
-  import PeriodSolid from "$/lib/icons/period-solid.svelte";
-  import { marked } from "marked";
-  import {
-    payloads,
-    payload_buffer_worker,
-  } from "$/lib/shared/service_upload.js";
-  import {
-    webchat_incoming_animation,
-    fullscreen,
-    links_open_in_new_tab,
-    webchat_config,
-    webchat_state
-  } from "$/lib/stores/config_store.js";
   import FileRegular from "$/lib/icons/file-regular.svelte";
   import FileAudioRegular from "$/lib/icons/file-audio-regular.svelte";
   import Form from "$/lib/forms/Form.svelte";
-
+  import PeriodSolid from "$/lib/icons/period-solid.svelte";
+  import { marked } from "marked";
+  import {
+    webchat_config,
+    webchat_state
+  } from "$/lib/stores/config_store.js";
   let form_writables = {};
   let messages = [];
   let attachments_loaded = {};
@@ -35,7 +27,7 @@
     return hours + ":" + minutes + " " + am_pm;
   };
 
-  if ($links_open_in_new_tab) {
+  if ($webchat_config.links_open_in_new_tab) {
     DOMPurify.addHook("afterSanitizeAttributes", function (node) {
       if ("target" in node) {
         node.setAttribute("target", "_blank");
@@ -71,7 +63,7 @@
       typingAnimationIndex = 0;
     }
 
-    if ($webchat_incoming_animation) {
+    if ($webchat_state.webchat_incoming_animation) {
       setTimeout(() => {
         animateTyping();
       }, 250);
@@ -79,11 +71,44 @@
   };
 
   let payload_subscription;
-  let webchat_incoming_animation_subscription;
 
   let forms = {};
 
   onMount(() => {
+    payload_subscription = webchat_state.subscribe((state) => {
+      console.log(`Payloads`, state.payloads);
+      let previous_agent = null;
+      let previous_direction = "IN";
+
+      for (let payload of state.payloads) {
+        let messageObject = {
+          payload_uuid: payload.payloaduuid,
+          direction: payload.type,
+          dateTime: payload.payload_date,
+          delivered: false,
+          attachments: [],
+        };
+
+        if (payload.type == "OUT") {
+          messageObject.message = payload.payload.message;
+        } 
+
+        if (payload.type == "IN") {
+          messageObject.message = {
+            type: payload.payload.message.webchat_message.type,
+            data: payload.payload.message.webchat_message.value
+          }
+        }
+
+        messages.push(messageObject);
+        // previous_agent = messageObject.agent.name;
+        previous_direction = payload.direction;
+      };
+
+
+      console.log("Message object", messages);
+    });
+    return;
     payload_subscription = payloads.subscribe((PAYLOADS) => {
       messages = [];
       let previous_agent = null;
@@ -155,15 +180,7 @@
       }
       messages = messages;
       autoScroll();
-    });
-
-    webchat_incoming_animation_subscription = payloads.subscribe(
-      (webchat_incoming_animation) => {
-        if (webchat_incoming_animation) {
-          animateTyping();
-        }
-      }
-    );
+    })
   });
 
   let isSaving = {};
@@ -187,9 +204,6 @@
   onDestroy(() => {
     if (payload_subscription) {
       payload_subscription();
-    }
-    if (webchat_incoming_animation_subscription) {
-      webchat_incoming_animation_subscription();
     }
   });
 </script>
@@ -236,29 +250,31 @@
                 animateSending();
                 form_writables[messageObject.payload_uuid].writable.subscribe(
                   (form_data) => {
-                    payload_buffer_worker({
-                      message: {
-                        type: "form",
-                        data: {
-                          form_data: form_data.data,
-                          form_name:
-                            form_writables[messageObject.payload_uuid]
-                              .form_name,
-                        },
-                        spec: form_writables[messageObject.payload_uuid].spec,
-                      },
-                      attachments: [],
-                      payload_uuid: crypto.randomUUID(),
-                    })
-                      .then(() => {
-                        isSaving[messageObject.payload_uuid] = false;
-                        complete[messageObject.payload_uuid] = true;
-                        webchat_incoming_animation.set(true);
-                      })
-                      .catch((e) => {
-                        isSaving[messageObject.payload_uuid] = false;
-                        complete[messageObject.payload_uuid] = false;
-                      });
+                    // payload_buffer_worker({
+                    //   message: {
+                    //     type: "form",
+                    //     data: {
+                    //       form_data: form_data.data,
+                    //       form_name:
+                    //         form_writables[messageObject.payload_uuid]
+                    //           .form_name,
+                    //     },
+                    //     spec: form_writables[messageObject.payload_uuid].spec,
+                    //   },
+                    //   attachments: [],
+                    //   payload_uuid: crypto.randomUUID(),
+                    // }).then(() => {
+                    //     isSaving[messageObject.payload_uuid] = false;
+                    //     complete[messageObject.payload_uuid] = true;
+                    //     webchat_state.update((state) => {
+                    //       state.webchat_incoming_animation = true;
+                    //       return state;
+                    //     });
+                    //   })
+                    //   .catch((e) => {
+                    //     isSaving[messageObject.payload_uuid] = false;
+                    //     complete[messageObject.payload_uuid] = false;
+                    //   });
                   }
                 )();
               }}
@@ -363,7 +379,7 @@
       </div>
     {/if}
   {/each}
-  {#if $webchat_incoming_animation}
+  {#if $webchat_state.webchat_incoming_animation}
     <div class="mb-2 mr-10 flex flex-col">
       <p class="m-auto mx-2 text-sm">{$webchat_config.webchat_agent_name}</p>
       <div class="bg-gray-200 rounded-lg py-2 px-4 flex h-10">

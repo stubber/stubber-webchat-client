@@ -50,7 +50,8 @@ export const webchat_state = writable({
   platform_name: "whatsapp",
   contact_point_type: "mobile",
   default_country_code: "US",
-  messages: []
+  webchat_incoming_animation: true,
+  payloads: []
 })
 
 export const webchat_config = writable({

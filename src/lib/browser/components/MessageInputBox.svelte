@@ -9,11 +9,10 @@
     files_enable,
     powered_by_enabled,
   } from "$/lib/stores/config_store.js";
-
+  
   import PaperPlaneTopRegular from "$/lib/icons/paper-plane-top-regular.svelte";
   import MicrophoneRegular from "$/lib/icons/microphone-regular.svelte";
   import PaperclipVerticalRegular from "$/lib/icons/paperclip-vertical-regular.svelte";
-  import CircleXSolid from "$/lib/icons/circle-x-solid.svelte";
   import Stubber from "$/lib/icons/stubber.svelte";
   import CircleXmarkSharpDuotoneSolid from "$/lib/icons/circle-xmark-sharp-duotone-solid.svelte";
   import PlayRegular from "$/lib/icons/play-regular.svelte";
@@ -32,7 +31,7 @@
     payload_buffer_attachments,
     payload_buffer_append,
   } from "$/lib/shared/service_upload.js";
-  // import { send_message } from "$/lib/shared/new_service.js";
+  import { send_payload } from "$/lib/shared/new_service.js";
 
   let recording = false;
   let recording_paused = false;
@@ -63,7 +62,7 @@
         }
       }
       //payload_buffer_append();
-      send_message({
+      send_payload({
         message: {
           type: "text",
           data: $payload_buffer_message,

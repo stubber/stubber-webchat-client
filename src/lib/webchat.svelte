@@ -40,60 +40,7 @@
   webchat_socket_init(profile_uuid, branch, pass_through_data);
 
   onMount(async function () {
-    return;
-    let API_URL = import.meta.env.VITE_WEBCHAT_API_URL;
-    let webchat_client_config;
-
-    if (profile_uuid) {
-      try {
-        
-        enable_voice_notes = webchat_client_config.voice_notes.enabled;
-        enable_file_uploads = webchat_client_config.file_uploads.enabled;
-
-        fullscreen.set(fullscreen_mode);
-        fullscreen_toggle.set(
-          webchat_client_config.display_settings.fullscreen_toggle
-        );
-        voicenote_enable.set(enable_voice_notes);
-        files_enable.set(enable_file_uploads);
-        links_open_in_new_tab.set(webchat_client_config.links.open_in_new_tab);
-
-        powered_by_enabled.set(webchat_client_config.display_settings.powered_by_enabled);
-        open_webchat_button_config.set(webchat_client_config.display_settings.open_button);
-
-      } catch (err) {
-        console.error("failed to load profile", err);
-      }
-    }
-
-    window.addEventListener("stubber_webchat_page_control_event", (data) => {
-      console.log(">>>>>>>>>>>> stubber_webchat_page_control_event", data.detail.data);
-      payload_buffer_upload_page_control_event(data.detail.data)
-    });
-
-    try {
-      let meta_request = await fetch(`${API_URL}/v2/meta`);
-      let meta_request_json = await meta_request.json();
-      default_country_code.set(meta_request_json.geo_ip.country);
-    } catch (err) {
-      console.error(err, "failed to load meta data");
-    }
-
-    fullscreen.set(fullscreen_mode);
-    voicenote_enable.set(enable_voice_notes);
-    files_enable.set(enable_file_uploads);
-
-    if (open_on_mount || $webchat_state.fullscreen) {
-      if (webchat_client_config) {
-        setTimeout(() => {
-          openWebchat();
-          socket_connect();
-        }, webchat_client_config.display_settings.open_on_load_timeout_milliseconds);
-      } else {
-        openWebchat();
-        socket_connect();
-      }
-    }
+    
   });
 
   onDestroy(() => {
