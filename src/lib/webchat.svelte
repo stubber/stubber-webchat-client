@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v3.2.2 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v3.2.3 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -171,7 +171,7 @@
     voicenote_enable.set(enable_voice_notes);
     files_enable.set(enable_file_uploads);
 
-    if (open_on_mount || $fullscreen) {
+    if (open_on_mount || $fullscreen || mode == "manual") {
       if (webchat_client_config) {
         setTimeout(() => {
           openWebchat();
