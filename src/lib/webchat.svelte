@@ -49,13 +49,16 @@
   export let on_server_control_event;
   export let page_control_hook;
   export let mode = "sticky";
+  export let sessionuuid;
 
   if (!profile_uuid) {
+    console.log("sessionuuid preset", sessionuuid);
     socket_initialize({
       orguuid,
       chat_name: chat_name,
       pass_through_data,
       profile_uuid: ``,
+      sessionuuid
     });
   }
 
@@ -140,6 +143,7 @@
           branch,
           on_server_control_event,
           page_control_hook,
+          sessionuuid
         });
       } catch (err) {
         console.error("failed to load profile", err);
