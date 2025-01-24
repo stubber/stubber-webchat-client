@@ -93,75 +93,39 @@ export const socket_connect = () => {
   });
 
   SOCKET_CONNECTION.on("webchat_payload", async (data, callback) => {
-    // console.log('webchat_payload', data);
-
-    if (ON_MESSAGE_RECEIVED_HOOK && window?.[ON_MESSAGE_RECEIVED_HOOK]) {
-      data = window[ON_MESSAGE_RECEIVED_HOOK](data);
-    }
-
-    let webchat_agent = data?.webchat_agent;
-    let webchat_message = data?.webchat_message;
-    let webchat_client_configuration = data?.webchat_client_configuration;
-    let webchat_control_event = data?.webchat_control_event;
-    let webchat_server_debug = data?.debug;
-
-    if (data.webchat_message) {
-      payloads.update((payloads) => [
-        ...payloads,
-        {
-          payload_direction: "IN",
-          payload_uuid: crypto.randomUUID(),
-          payload_date: new Date(),
-          webchat_agent,
-          webchat_message: {
-            type: webchat_message.type,
-            data: webchat_message.value,
-          },
-        },
-      ]);
-
-      webchat_incoming_animation.set(false);
-    }
-
-    if (webchat_client_configuration) {
-      let settings = Object.keys(webchat_client_configuration);
-
-      settings.forEach((key) => {
-        if (webchat_client_configuration[key].type == "switching") {
-          switch_whatsapp.set(
-            webchat_client_configuration[key]?.value?.whatsapp
-          );
-          switch_sms.set(webchat_client_configuration[key]?.value?.sms);
-          switch_email.set(webchat_client_configuration[key]?.value?.email);
-        }
-
-        if (webchat_client_configuration[key].type == "default_country_code") {
-          default_country_code.set(webchat_client_configuration[key].value);
-        }
-
-        if (webchat_client_configuration[key].type == "voicenote") {
-          voicenote_enable.set(webchat_client_configuration[key].value.enable);
-        }
-
-        if (webchat_client_configuration[key].type == "files") {
-          files_enable.set(webchat_client_configuration[key].value.enable);
-        }
-      });
-    }
-
-    if (webchat_control_event && window?.[ON_SERVER_CONTRL_EVENT]) {
-      window[ON_SERVER_CONTRL_EVENT](webchat_control_event);
-    }
-
-    if (webchat_server_debug) {
-      webchat_state.update(current_webchat_state => {
-        current_webchat_state.debug.server = webchat_server_debug;
-        return current_webchat_state;
-      })
-    }
-
-    callback();
+    return handle_webchat_payload(data, callback);
   });
+
+  SOCKET_CONNECTION.on("webchat_payload_previous", async (data, callback) => {
+    for (let payload of data) {
+      if (payload.direction == "OUT") {
+        await handle_webchat_payload(payload.notification, callback);
+      }
+
+      if (payload.direction == "IN") {
+        try {
+          payloads.update((payloads) => [
+            ...payloads,
+            {
+              payload_direction: "OUT",
+              payload_uuid: payload.comuuid,
+              payload_date: new Date(),
+              // webchat_agent: payload.notification,
+              webchat_message: {
+                type: payload.notification.webchat_message.type,
+                data: payload.notification.webchat_message.value,
+              },
+              attachments: []
+            },
+          ]);
+        } catch (error) {
+          // console.error('error', error);
+        }
+      }
+
+    }
+
+  })
 
   SOCKET_CONNECTION.on("error", async (data) => {
     console.log(data);
@@ -245,37 +209,37 @@ export const payload_buffer_worker = async (payload) => {
     let form = new FormData();
     let convert_voice_note = false;
 
-    if (payload.message.type == "voice" && payload.attachments[0]){
+    if (payload.message.type == "voice" && payload.attachments[0]) {
       if (payload.attachments[0].blob.type.includes("mp4")) {
         convert_voice_note = true;
       }
     }
-    
+
     for (let attachment of payload?.attachments) {
       form.append(attachment.blob.name, attachment.blob, attachment.blob.name);
     }
 
     let file_response_json = [];
-    
-    if (payload.attachments.length > 0){
+
+    if (payload.attachments.length > 0) {
       const file_response = await fetch(
         `${API_URL}/v2/attachments?${new URLSearchParams({
-            sessionuuid: API_SESSION_UUID,
-            voicenote: convert_voice_note
-          })}`,
+          sessionuuid: API_SESSION_UUID,
+          voicenote: convert_voice_note
+        })}`,
         {
           method: "POST",
           body: form,
         }
       );
-  
-      if (!file_response.ok){
+
+      if (!file_response.ok) {
         console.error("Failed to upload files")
       };
-  
+
       file_response_json = await file_response.json();
     }
-    
+
     if (PAGE_CONTROL_HOOK && window?.[PAGE_CONTROL_HOOK]) {
       payload = window?.[PAGE_CONTROL_HOOK](payload);
     }
@@ -298,7 +262,7 @@ export const payload_buffer_worker = async (payload) => {
         resolve();
       }
     );
-    
+
     FIRST_MESSAGE = false;
   });
 };
@@ -354,3 +318,75 @@ export const payload_buffer_upload_page_control_event = (webchat_control_event) 
     }
   );
 };
+
+const handle_webchat_payload = async (data, callback) => {
+  // console.log('webchat_payload', data);
+
+  if (ON_MESSAGE_RECEIVED_HOOK && window?.[ON_MESSAGE_RECEIVED_HOOK]) {
+    data = window[ON_MESSAGE_RECEIVED_HOOK](data);
+  }
+
+  let webchat_agent = data?.webchat_agent;
+  let webchat_message = data?.webchat_message;
+  let webchat_client_configuration = data?.webchat_client_configuration;
+  let webchat_control_event = data?.webchat_control_event;
+  let webchat_server_debug = data?.debug;
+
+  if (data.webchat_message) {
+    payloads.update((payloads) => [
+      ...payloads,
+      {
+        payload_direction: "IN",
+        payload_uuid: data.comuuid,
+        payload_date: new Date(),
+        webchat_agent,
+        webchat_message: {
+          type: webchat_message.type,
+          data: webchat_message.value,
+        },
+      },
+    ]);
+
+    webchat_incoming_animation.set(false);
+  }
+
+  if (webchat_client_configuration) {
+    let settings = Object.keys(webchat_client_configuration);
+
+    settings.forEach((key) => {
+      if (webchat_client_configuration[key].type == "switching") {
+        switch_whatsapp.set(
+          webchat_client_configuration[key]?.value?.whatsapp
+        );
+        switch_sms.set(webchat_client_configuration[key]?.value?.sms);
+        switch_email.set(webchat_client_configuration[key]?.value?.email);
+      }
+
+      if (webchat_client_configuration[key].type == "default_country_code") {
+        default_country_code.set(webchat_client_configuration[key].value);
+      }
+
+      if (webchat_client_configuration[key].type == "voicenote") {
+        voicenote_enable.set(webchat_client_configuration[key].value.enable);
+      }
+
+      if (webchat_client_configuration[key].type == "files") {
+        files_enable.set(webchat_client_configuration[key].value.enable);
+      }
+    });
+  }
+
+  if (webchat_control_event && window?.[ON_SERVER_CONTRL_EVENT]) {
+    window[ON_SERVER_CONTRL_EVENT](webchat_control_event);
+  }
+
+  if (webchat_server_debug) {
+    webchat_state.update(current_webchat_state => {
+      current_webchat_state.debug.server = webchat_server_debug;
+      return current_webchat_state;
+    })
+  }
+
+  callback();
+
+}
