@@ -99,6 +99,7 @@ export const socket_connect = () => {
   SOCKET_CONNECTION.on("webchat_payload_previous", async (data, callback) => {
     for (let payload of data) {
       if (payload.direction == "OUT") {
+        payload.notification.OLD_PAYLOAD = true;
         await handle_webchat_payload(payload.notification, callback);
       }
 
@@ -320,7 +321,7 @@ export const payload_buffer_upload_page_control_event = (webchat_control_event) 
 };
 
 const handle_webchat_payload = async (data, callback) => {
-  // console.log('webchat_payload', data);
+  console.log('webchat_payload', data);
 
   if (ON_MESSAGE_RECEIVED_HOOK && window?.[ON_MESSAGE_RECEIVED_HOOK]) {
     data = window[ON_MESSAGE_RECEIVED_HOOK](data);
