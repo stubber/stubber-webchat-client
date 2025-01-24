@@ -28,11 +28,13 @@ let FIRST_MESSAGE = true;
 
 let ON_SERVER_CONTRL_EVENT;
 let PAGE_CONTROL_HOOK;
+let ON_MESSAGE_RECEIVED_HOOK;
 
 let SOCKET_CONNECTION = {};
 const SOCKET_PATH = import.meta.env.VITE_WEBCHAT_API_SOCKET_PATH;
 
 export const socket_initialize = (CONFIG) => {
+  console.log("___Stubber Webchat initializing...", CONFIG);
   API_CONFIG_ORG_UUID = CONFIG.orguuid;
   API_CONFIG_CHAT_NAME = CONFIG.chat_name;
   API_CONFIG_PASS_THROUGH_DATA = CONFIG.pass_through_data;
@@ -40,6 +42,7 @@ export const socket_initialize = (CONFIG) => {
   API_CONFIG_BRANCH = CONFIG?.branch;
   ON_SERVER_CONTRL_EVENT = CONFIG?.on_server_control_event;
   PAGE_CONTROL_HOOK = CONFIG?.page_control_hook;
+  ON_MESSAGE_RECEIVED_HOOK = CONFIG?.on_message_received;
 
   if (CONFIG.sessionuuid) {
     API_SESSION_UUID = CONFIG.sessionuuid;
@@ -91,6 +94,11 @@ export const socket_connect = () => {
 
   SOCKET_CONNECTION.on("webchat_payload", async (data, callback) => {
     // console.log('webchat_payload', data);
+
+    if (ON_MESSAGE_RECEIVED_HOOK && window?.[ON_MESSAGE_RECEIVED_HOOK]) {
+      data = window[ON_MESSAGE_RECEIVED_HOOK](data);
+    }
+
     let webchat_agent = data?.webchat_agent;
     let webchat_message = data?.webchat_message;
     let webchat_client_configuration = data?.webchat_client_configuration;

@@ -6,7 +6,7 @@
 />
 
 <script>
-  console.log(`___Stubber Webchat v3.3 ${import.meta.env.MODE}`);
+  console.log(`___Stubber Webchat v3.4 ${import.meta.env.MODE}`);
 
   import { onDestroy, onMount } from "svelte";
 
@@ -46,8 +46,11 @@
   export let enable_file_uploads;
   export let profile_uuid;
   export let branch;
+  
   export let on_server_control_event;
   export let page_control_hook;
+  export let on_message_received;
+
   export let mode = "sticky";
   export let sessionuuid;
 
@@ -143,6 +146,7 @@
           branch,
           on_server_control_event,
           page_control_hook,
+          on_message_received,
           sessionuuid
         });
       } catch (err) {
